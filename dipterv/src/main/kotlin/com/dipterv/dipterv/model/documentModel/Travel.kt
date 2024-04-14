@@ -1,8 +1,6 @@
 package com.dipterv.dipterv.model.documentModel
 
 import org.springframework.data.mongodb.core.mapping.Document
-import org.springframework.data.mongodb.core.mapping.FieldType
-import org.springframework.data.mongodb.core.mapping.MongoId
 
 
 @Document(collection = "travel")
@@ -16,7 +14,7 @@ data class Travel(
         var price: Int,
         var description: String?,
         var tags: List<String>?,
-        var pictureFilePath: String?,
+        var pictureFileName: String?,
         var participants: List<User>?,
 //        val spends: Array<Spend>,
 //        val points: Array<Activity>,

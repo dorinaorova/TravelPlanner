@@ -6,6 +6,7 @@ import com.dipterv.dipterv.model.dto.TravelDTO
 import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.repository.TravelRepository
 import org.springframework.stereotype.Service
+import java.util.concurrent.TimeUnit
 
 @Service
 class TravelService (val travelRepository: TravelRepository) {
@@ -48,11 +49,15 @@ class TravelService (val travelRepository: TravelRepository) {
         return travels.filter { containsAllTags(it.tags ,tags) }
     }
 
-//    fun daysFilter(days: Int, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
-//        return travels.filter { it. }
-//    }
+    fun minDaysFilter(days: Int, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
+        return travels.filter{ calculateDurationInDays(it.endDate, it.startDate) >= days}
+    }
 
-    fun createNew(travelDTO: TravelDTO): TravelDTO{
+    fun maxDaysFilter(days: Int, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
+        return travels.filter{ calculateDurationInDays(it.endDate, it.startDate) <= days}
+    }
+
+    fun createNew(id: String, travelDTO: TravelDTO): TravelDTO{
         val travel = Travel(
             null,
             travelDTO.travelInfo.name,
@@ -68,6 +73,7 @@ class TravelService (val travelRepository: TravelRepository) {
             false
         )
         val newTravel = travelRepository.save(travel)
+        //userService.addTravel(id, newTravel)
         return TravelDTO(
             newTravel._id,
             travelToTravelInfoDto(newTravel),
@@ -78,22 +84,22 @@ class TravelService (val travelRepository: TravelRepository) {
 
     fun update(travelDTO: TravelDTO) : TravelDTO{
         try{
-        val travel = getById(travelDTO._id!!)
-        travel.name= travelDTO.travelInfo.name
-        travel.startDate= travelDTO.travelInfo.startDate
-        travel.endDate= travelDTO.travelInfo.endDate
-        travel.country= travelDTO.travelInfo.country
-        travel.city = travelDTO.travelInfo.city
-        travel.price = travelDTO.travelInfo.price
-        travel.description = travelDTO.travelInfo.description
-        travel.tags= travelDTO.travelInfo.tags
-        val updatedTravel = travelRepository.save(travel)
-        return TravelDTO(
-            updatedTravel._id,
-            travelToTravelInfoDto(updatedTravel),
-            updatedTravel.participants,
-            updatedTravel.public
-        )
+            val travel = getById(travelDTO._id!!)
+            travel.name= travelDTO.travelInfo.name
+            travel.startDate= travelDTO.travelInfo.startDate
+            travel.endDate= travelDTO.travelInfo.endDate
+            travel.country= travelDTO.travelInfo.country
+            travel.city = travelDTO.travelInfo.city
+            travel.price = travelDTO.travelInfo.price
+            travel.description = travelDTO.travelInfo.description
+            travel.tags= travelDTO.travelInfo.tags
+            val updatedTravel = travelRepository.save(travel)
+            return TravelDTO(
+                updatedTravel._id,
+                travelToTravelInfoDto(updatedTravel),
+                updatedTravel.participants,
+                updatedTravel.public
+            )
         }catch (e: NullPointerException){
             throw NotFoundException("User not found with id: ${travelDTO._id}")
         }
@@ -115,7 +121,7 @@ class TravelService (val travelRepository: TravelRepository) {
         }
     }
 
-    private fun travelToTravelInfoDto(travel: Travel): TravelInfoDTO{
+    fun travelToTravelInfoDto(travel: Travel): TravelInfoDTO{
         return TravelInfoDTO(
             travel._id,
             travel.name,
@@ -126,8 +132,15 @@ class TravelService (val travelRepository: TravelRepository) {
             travel.price,
             travel.description,
             travel.tags,
-            travel.pictureFilePath
+            travel.pictureFileName
         )
+    }
+
+    fun uploadImage(imageName: String, id: String) : TravelInfoDTO{
+        val travel = getById(id)
+        travel.pictureFileName=imageName
+        val updatedTravel = travelRepository.save(travel)
+        return travelToTravelInfoDto(updatedTravel)
     }
 
     private fun containsAllTags(base: List<String>?, tags: List<String>) : Boolean{
@@ -137,5 +150,10 @@ class TravelService (val travelRepository: TravelRepository) {
         return tags.all{
             baseSet.contains(it)
         }
+    }
+
+    private fun calculateDurationInDays(endDate: Long, startDate: Long) : Int{
+        val differenceInMillis = endDate - startDate
+        return TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
     }
 }

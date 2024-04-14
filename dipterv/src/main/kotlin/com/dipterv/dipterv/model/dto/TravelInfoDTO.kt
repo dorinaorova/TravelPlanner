@@ -10,5 +10,5 @@ data class TravelInfoDTO(
     val price: Int,
     val description: String?,
     val tags: List<String>?,
-    val pictureFilePath: String?
+    val pictureFileName: String?
 )

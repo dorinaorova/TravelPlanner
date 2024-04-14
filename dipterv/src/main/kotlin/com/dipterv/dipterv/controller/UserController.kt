@@ -17,15 +17,20 @@ class UserController
 {
 
     @GetMapping("/all")
-    fun getAllUser() : ResponseEntity<*>{
-        val users = userService.getAll()
+    fun getAllUser(
+        @RequestParam(required = false) name: String?
+    ) : ResponseEntity<*>{
+        var users = userService.getAll()
+        name?.let{
+            users= userService.nameFilter(name, users)
+        }
         return ResponseEntity(users, HttpStatus.OK)
     }
 
     @GetMapping("/findById/{id}")
-    fun findUserById(@PathVariable("id") id: String)  : ResponseEntity<User>{
+    fun findUserById(@PathVariable("id") id: String)  : ResponseEntity<UserInfoDTO>{
         try{
-            val user = userService.findById(id)
+            val user = userService.findUserInfoDTOById(id)
             return ResponseEntity(user, HttpStatus.OK)
         }catch (e: NotFoundException){
             return ResponseEntity.notFound().build()
@@ -69,12 +74,6 @@ class UserController
         }catch (e: Exception){
             return ResponseEntity.internalServerError().build()
         }
-    }
-
-    @GetMapping("/name/{name}")
-    fun findUsersByName(@PathVariable("name") name: String) : ResponseEntity<List<UserInfoDTO>>{
-        val users = userService.findByName(name)
-        return ResponseEntity(users, HttpStatus.OK)
     }
 
     @PostMapping("/add")

@@ -11,7 +11,7 @@ data class User(
         var email: String,
         var description: String?,
         val profilePictureFilePath: String?,
-        val travels: List<Travel>?,
-        var following: List<User>?,
-        val followers: List<User>?,
+        val travels: List<Travel>,
+        var following: List<User>,
+        val followers: List<User>,
 )
