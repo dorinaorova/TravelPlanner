@@ -36,6 +36,7 @@ class TravelController(
         @RequestParam(required = false) minDays: Int?,
         @RequestParam(required = false) maxDays: Int?,
         @RequestParam(required = false) name: String?,
+        @RequestParam(required = false) location: String?,
     ) : ResponseEntity<List<TravelInfoDTO>> {
         var travels = travelService.getAllTravels()
         maxPrice?.let {
@@ -51,10 +52,13 @@ class TravelController(
             travels = travelService.minDaysFilter(minDays, travels)
         }
         maxDays?.let{
-            travels = travelService.maxCostFiler(maxDays, travels)
+            travels = travelService.maxDaysFilter(maxDays, travels)
         }
         name?.let {
             travels= travelService.nameFilter(name, travels)
+        }
+        location?.let{
+            travels = travelService.locationFilter(location, travels)
         }
         return ResponseEntity.ok(travels)
     }

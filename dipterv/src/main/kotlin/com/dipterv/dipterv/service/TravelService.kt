@@ -28,9 +28,7 @@ class TravelService (val travelRepository: TravelRepository) {
     }
 
     fun locationFilter(location: String, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
-        val allTravels = travelRepository.findAll()
-        return allTravels.filter { it.country.contains(location, true) || it.city!!.contains(location, true) }
-            .map{travel -> travelToTravelInfoDto(travel)}
+        return travels.filter { it.country.contains(location, true) || it.city!!.contains(location, true) }
     }
 
     fun nameFilter(name: String, travels: List<TravelInfoDTO>): List<TravelInfoDTO>{
