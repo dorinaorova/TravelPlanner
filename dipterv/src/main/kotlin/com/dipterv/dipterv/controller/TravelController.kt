@@ -7,16 +7,12 @@ import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TravelService
 import com.dipterv.dipterv.service.UserService
 import org.springframework.core.io.Resource
-import org.springframework.core.io.UrlResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 
 
@@ -24,7 +20,6 @@ import java.nio.file.Paths
 @RequestMapping("/travel")
 class TravelController(
     private val travelService: TravelService,
-    private val userService: UserService,
     private val fileService: FileService
 ) {
 
@@ -66,7 +61,7 @@ class TravelController(
     @GetMapping("/user/{id}")
     fun getMyTravels(@PathVariable("id") id: String) : ResponseEntity<*>{
         try{
-            val travels = userService.findMyTravels(id)
+            val travels = travelService.findMyTravels(id)
             return ResponseEntity(travels, HttpStatus.OK)
         }catch (e: NotFoundException){
             return ResponseEntity(e, HttpStatus.NOT_FOUND)
@@ -125,4 +120,5 @@ class TravelController(
         headers.contentType = MediaType.IMAGE_JPEG
         return ResponseEntity.ok().headers(headers).body(image)
     }
+
 }

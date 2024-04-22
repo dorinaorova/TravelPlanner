@@ -15,9 +15,10 @@ data class Travel(
         var description: String?,
         var tags: List<String>?,
         var pictureFileName: String?,
-        var participants: List<User>?,
-//        val spends: Array<Spend>,
+        var participantIds: List<String>,
+        var spendIds: List<String>,
 //        val points: Array<Activity>,
-//        val tickets: Array<Ticket>,
-        var public: Boolean
+        var ticketIds: List<String>,
+        var public: Boolean,
+        var ownerId: String,
 )

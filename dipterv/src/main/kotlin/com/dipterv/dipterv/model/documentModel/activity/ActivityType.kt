@@ -1,4 +1,4 @@
-package com.dipterv.dipterv.model.activity
+package com.dipterv.dipterv.model.documentModel.activity
 
 enum class ActivityType {
     TRAVEL,

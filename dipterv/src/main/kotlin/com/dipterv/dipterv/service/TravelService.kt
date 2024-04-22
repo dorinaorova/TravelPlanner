@@ -1,7 +1,9 @@
 package com.dipterv.dipterv.service
 
 import com.dipterv.dipterv.exception.NotFoundException
+import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
+import com.dipterv.dipterv.model.documentModel.spend.Spend
 import com.dipterv.dipterv.model.dto.TravelDTO
 import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.repository.TravelRepository
@@ -9,8 +11,8 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 
 @Service
-class TravelService (val travelRepository: TravelRepository) {
-    private fun getById(id: String): Travel{
+class TravelService (val travelRepository: TravelRepository, val mapper: DTOMapper, val userService: UserService) {
+    fun getById(id: String): Travel{
         try{
             return travelRepository.findById(id).get()
         }catch(e:Exception){
@@ -20,11 +22,11 @@ class TravelService (val travelRepository: TravelRepository) {
 
     fun getAllTravels(): List<TravelInfoDTO> {
         val allTravels = travelRepository.findAll().filter { it.public }
-        return allTravels.map { travel-> travelToTravelInfoDto(travel) }
+        return allTravels.map { travel-> mapper.travelToTravelInfoDto(travel) }
     }
 
     fun getTravelInfoById(id: String): TravelInfoDTO{
-        return travelToTravelInfoDto(getById(id))
+        return mapper.travelToTravelInfoDto(getById(id))
     }
 
     fun locationFilter(location: String, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
@@ -67,17 +69,15 @@ class TravelService (val travelRepository: TravelRepository) {
             travelDTO.travelInfo.description,
             travelDTO.travelInfo.tags,
             null,
-            null,
-            false
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            travelDTO.public,
+            id
         )
         val newTravel = travelRepository.save(travel)
-        //userService.addTravel(id, newTravel)
-        return TravelDTO(
-            newTravel._id,
-            travelToTravelInfoDto(newTravel),
-            newTravel.participants,
-            newTravel.public
-        )
+        userService.addTravel(id, newTravel)
+        return mapper.travelToTravelDTO(travel)
     }
 
     fun update(travelDTO: TravelDTO) : TravelDTO{
@@ -92,53 +92,40 @@ class TravelService (val travelRepository: TravelRepository) {
             travel.description = travelDTO.travelInfo.description
             travel.tags= travelDTO.travelInfo.tags
             val updatedTravel = travelRepository.save(travel)
-            return TravelDTO(
-                updatedTravel._id,
-                travelToTravelInfoDto(updatedTravel),
-                updatedTravel.participants,
-                updatedTravel.public
-            )
+            return mapper.travelToTravelDTO(updatedTravel)
         }catch (e: NullPointerException){
             throw NotFoundException("User not found with id: ${travelDTO._id}")
         }
     }
 
-    fun updateParticipant(travelDTO: TravelDTO) : TravelDTO{
-        try{
-            val travel = getById(travelDTO._id!!)
-            travel.participants = travelDTO.participants
-            val updatedTravel = travelRepository.save(travel)
-            return TravelDTO(
-                updatedTravel._id,
-                travelToTravelInfoDto(updatedTravel),
-                updatedTravel.participants,
-                updatedTravel.public
-            )
-        }catch (e: NullPointerException){
-            throw NotFoundException("User not found with id: ${travelDTO._id}")
-        }
+    fun findMyTravels(id: String): List<TravelDTO>? {
+        val user = userService.findUserInfoDTOById(id)
+        val travels = mutableListOf<TravelDTO>()
+        user.travelIds?.forEach { travelId -> travels.add(mapper.travelToTravelDTO(getById(travelId))) }
+        return travels.toList()
     }
 
-    fun travelToTravelInfoDto(travel: Travel): TravelInfoDTO{
-        return TravelInfoDTO(
-            travel._id,
-            travel.name,
-            travel.startDate,
-            travel.endDate,
-            travel.country,
-            travel.city,
-            travel.price,
-            travel.description,
-            travel.tags,
-            travel.pictureFileName
-        )
-    }
+//    fun updateParticipant(travelDTO: TravelDTO) : TravelDTO{
+//        try{
+//            val travel = getById(travelDTO._id!!)
+//            travel.participants = travelDTO.participants
+//            val updatedTravel = travelRepository.save(travel)
+//            return TravelDTO(
+//                updatedTravel._id,
+//                travelToTravelInfoDto(updatedTravel),
+//                updatedTravel.participants,
+//                updatedTravel.public
+//            )
+//        }catch (e: NullPointerException){
+//            throw NotFoundException("User not found with id: ${travelDTO._id}")
+//        }
+//    }
 
     fun uploadImage(imageName: String, id: String) : TravelInfoDTO{
         val travel = getById(id)
         travel.pictureFileName=imageName
         val updatedTravel = travelRepository.save(travel)
-        return travelToTravelInfoDto(updatedTravel)
+        return mapper.travelToTravelInfoDto(updatedTravel)
     }
 
     private fun containsAllTags(base: List<String>?, tags: List<String>) : Boolean{
@@ -153,5 +140,12 @@ class TravelService (val travelRepository: TravelRepository) {
     private fun calculateDurationInDays(endDate: Long, startDate: Long) : Int{
         val differenceInMillis = endDate - startDate
         return TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
+    }
+
+    fun addSpend(spend: Spend, id: String){
+        val travel = getById(id)
+        val updatedSpendList = travel.spendIds.toMutableList().apply { add(spend._id) }
+        travel.spendIds=updatedSpendList.toList()
+        travelRepository.save(travel)
     }
 }

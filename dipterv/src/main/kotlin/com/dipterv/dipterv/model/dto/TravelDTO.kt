@@ -1,13 +1,11 @@
 package com.dipterv.dipterv.model.dto
 
-import com.dipterv.dipterv.model.documentModel.User
-
 data class TravelDTO(
     val _id: String?,
     val travelInfo: TravelInfoDTO,
-    val participants: List<User>?,
-//        val spends: Array<Spend>,
+    val participantIds: List<String>?,
+    val spendIds: List<String>,
 //        val points: Array<Activity>,
-//        val tickets: Array<Ticket>,
+    val ticketIds: List<String>,
     val public: Boolean
 )
