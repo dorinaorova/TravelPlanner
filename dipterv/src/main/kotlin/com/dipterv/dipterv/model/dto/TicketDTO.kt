@@ -1,7 +1,7 @@
 package com.dipterv.dipterv.model.dto
 
 data class TicketDTO(
-    val _id: Long,
+    val _id: String,
     val date: Long?,
     val name: String,
     val userName: String?,

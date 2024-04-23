@@ -1,6 +1,5 @@
 package com.dipterv.dipterv.controller
 
-import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.spend.Spend
 import com.dipterv.dipterv.service.SpendService
 import org.springframework.http.HttpStatus
@@ -21,5 +20,11 @@ class SpendsController (val spendService: SpendService) {
     fun addSpendForTravel(@PathVariable id: String, @RequestBody spend: Spend) : ResponseEntity<Spend>{
         val newSpend = spendService.addSpend(spend, id)
         return ResponseEntity(newSpend, HttpStatus.CREATED)
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteSpend(@PathVariable id: String): ResponseEntity<String>{
+        spendService.removeSpend(id)
+        return ResponseEntity.ok("deleted")
     }
 }

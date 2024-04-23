@@ -4,9 +4,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "ticket")
 data class Ticket(
-        val _id: Long,
-        val date: Long?,
-        val name: String,
-        val userName: String?,
-        val fileName: String
+        val _id: String,
+        var date: Long?,
+        var name: String,
+        var userName: String?,
+        var fileName: String
 )

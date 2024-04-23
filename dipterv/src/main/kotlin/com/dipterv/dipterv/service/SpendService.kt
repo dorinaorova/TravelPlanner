@@ -23,7 +23,8 @@ class SpendService (val spendRepository: SpendRepository, val travelService:Trav
         return savedSpend
     }
 
-    fun removeSpend(spend: Spend){
+    fun removeSpend(id: String){
+        val spend = findById(id)
         spendRepository.delete(spend)
     }
 

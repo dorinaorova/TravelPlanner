@@ -11,7 +11,11 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 
 @Service
-class TravelService (val travelRepository: TravelRepository, val mapper: DTOMapper, val userService: UserService) {
+class TravelService (
+    val travelRepository: TravelRepository,
+    val mapper: DTOMapper,
+    val userService: UserService
+) {
     fun getById(id: String): Travel{
         try{
             return travelRepository.findById(id).get()
@@ -146,6 +150,13 @@ class TravelService (val travelRepository: TravelRepository, val mapper: DTOMapp
         val travel = getById(id)
         val updatedSpendList = travel.spendIds.toMutableList().apply { add(spend._id) }
         travel.spendIds=updatedSpendList.toList()
+        travelRepository.save(travel)
+    }
+
+    fun uploadTicket(id: String, ticketId: String){
+        val travel = getById(id)
+        val updatedTicketIds = travel.ticketIds.toMutableList().apply { add(ticketId)}
+        travel.ticketIds=updatedTicketIds.toList()
         travelRepository.save(travel)
     }
 }

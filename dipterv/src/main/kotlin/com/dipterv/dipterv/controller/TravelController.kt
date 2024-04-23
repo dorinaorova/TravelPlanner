@@ -1,11 +1,12 @@
 package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
+import com.dipterv.dipterv.model.documentModel.Ticket
 import com.dipterv.dipterv.model.dto.TravelDTO
 import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.service.FileService
+import com.dipterv.dipterv.service.TicketService
 import com.dipterv.dipterv.service.TravelService
-import com.dipterv.dipterv.service.UserService
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -20,7 +21,8 @@ import java.nio.file.Paths
 @RequestMapping("/travel")
 class TravelController(
     private val travelService: TravelService,
-    private val fileService: FileService
+    private val fileService: FileService,
+    private val ticketService: TicketService
 ) {
 
     @GetMapping("/all")
@@ -119,6 +121,24 @@ class TravelController(
         val headers = HttpHeaders()
         headers.contentType = MediaType.IMAGE_JPEG
         return ResponseEntity.ok().headers(headers).body(image)
+    }
+
+    @PostMapping("/ticket/upload/{id}")
+    fun uploadTicket(@RequestPart("file") file: MultipartFile, @RequestBody ticket: Ticket, @PathVariable("id") id: String): ResponseEntity<*>{
+        val newTicket = ticketService.saveTicket(ticket, file, id)
+        return ResponseEntity(newTicket, HttpStatus.CREATED)
+    }
+
+    @GetMapping("/ticket/{id}")
+    fun getTicketById(@PathVariable("id") id: String) : ResponseEntity<*> {
+        val file = ticketService.findTicketById(id)
+        return ResponseEntity(file, HttpStatus.OK)
+    }
+
+    @GetMapping("/ticket/travel/{id}")
+    fun getTicketByTravelId(@PathVariable("id") id: String) : ResponseEntity<*> {
+        val tickets = ticketService.ticketsForTravel(id)
+        return ResponseEntity(tickets, HttpStatus.OK)
     }
 
 }
