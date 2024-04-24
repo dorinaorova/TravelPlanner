@@ -10,15 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e9110ae3-d0fc-4754-b7e6-3e0e3191a4d4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Screen.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_filter_list_24.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_favorite_24.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_favorite_border_24.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/image.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/TravelPlannerApp.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/TravelPlannerApp.app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/HomeScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/HomeScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Screen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Screen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/SearchScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/SearchScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,6 +82,11 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\BME\Dipterv\TravelPlanner\TravelPlannerApp\app\src\main\res\drawable" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="TravelPlannerApp.app.main" />

@@ -1,25 +1,28 @@
 package com.androidlab.travelplannerapp.screen
 
+import android.media.Image
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -47,6 +50,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.screen.navbar.NavBar
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun SearchScreen(navController: NavController){
@@ -59,7 +64,8 @@ fun SearchScreen(navController: NavController){
                 .background(colorResource(id = R.color.primary_background))) {
                 Column{
                     SearchBar()
-                    filterBtn()
+                    FilterBtn()
+                    SearchResultList(navController)
                 }
             }
         },
@@ -91,7 +97,6 @@ fun SearchBar(){
                     decorationBox = { innerTextField ->
                         Row(
                             modifier = Modifier
-                                .padding(horizontal = 30.dp, vertical = 10.dp)
                                 .fillMaxWidth()
                                 .background(
                                     color = colorResource(id = R.color.primary_background),
@@ -131,7 +136,7 @@ fun TravelOrUserPicker(){
     }
 
     Row(Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween){
+        horizontalArrangement = Arrangement.SpaceEvenly){
         TextButton(onClick = { travelPicked=true }) {
             Text(text = "Travel",
                 color = travelBtnColor)
@@ -143,7 +148,7 @@ fun TravelOrUserPicker(){
     }
 }
 @Composable
-private fun filterBtn(){
+private fun FilterBtn(){
     OutlinedButton(onClick = {
     },
         shape = RoundedCornerShape(16.dp),
@@ -162,6 +167,73 @@ private fun filterBtn(){
         )
     }
 }
+
+@Composable
+fun TravelListItem(navController: NavController) {
+    Row(
+        Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween){
+        Row {
+            Box(
+                Modifier
+                    .width(90.dp)
+                    .height(80.dp)
+                    .padding(horizontal = 10.dp)
+            ) {
+                Image(
+                    painterResource(id = R.drawable.image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.FillWidth,
+                )
+            }
+            Column {
+                Text("Label",
+                        fontSize = 18.sp)
+                Text("Country, City",
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start=8.dp))
+                Text("200-300$",
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start=8.dp))
+                Text("tag1, tag2",
+                        fontSize = 8.sp,
+                        modifier = Modifier.padding(start=10.dp, top= 10.dp))
+            }
+        }
+        Box {
+            val liked  = if (true) {
+                ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+            }else {
+                ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+            }
+            IconButton(onClick = { /*TODO*/ }, Modifier.padding(end=20.dp)) {
+                Icon(
+                    imageVector = liked,
+                    contentDescription = "like",
+                    tint = colorResource(id = R.color.primary),
+                    modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchResultList(navController: NavController){
+    LazyColumn {
+        items(1) { item ->
+            TravelListItem(navController)
+        }
+    }
+}
+
+
 @Composable
 @Preview(showBackground =  true)
 fun SearchScreenPreview(){
