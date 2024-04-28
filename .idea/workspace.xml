@@ -10,14 +10,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e9110ae3-d0fc-4754-b7e6-3e0e3191a4d4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_favorite_24.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_favorite_border_24.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/image.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_attach_money_24.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_calendar_month_24.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_directions_bus_24.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/drawable/baseline_map_24.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/assetWizardSettings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules/app/TravelPlannerApp.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/TravelPlannerApp.app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Screen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Screen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/SearchScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/SearchScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/TravelProfileScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/TravelProfileScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,21 +69,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev__app&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/BME/Dipterv/TravelPlanner/TravelPlannerApp/settings.gradle.kts&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Facets&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "dev__app",
+    "last_opened_file_path": "C:/BME/Dipterv/TravelPlanner/TravelPlannerApp/settings.gradle.kts",
+    "project.structure.last.edited": "Facets",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\BME\Dipterv\TravelPlanner\TravelPlannerApp\app\src\main\res\drawable" />

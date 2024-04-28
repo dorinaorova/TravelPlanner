@@ -10,6 +10,7 @@
     <color name="primary">#3CB0A9</color>
     <color name="primary_background">#F5E3DC</color>
     <color name="primary_text">#F4CBBA</color>
+    <color name="secondary_text">#153F3C</color>
     <color name="secondary">#F4A47E</color>
 
 </resources>
