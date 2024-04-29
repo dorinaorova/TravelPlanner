@@ -63,7 +63,7 @@ fun TravelProfileScreen(navController: NavController){
 }
 
 @Composable
-fun Details(navController: NavController){
+private fun Details(navController: NavController){
     Box(Modifier.fillMaxSize()){
         val scroll = rememberScrollState(0)
         Header()
