@@ -56,6 +56,7 @@ import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.screen.utils.CustomDivider
 import com.androidlab.travelplannerapp.screen.utils.SmallHeader
+import com.androidlab.travelplannerapp.screen.utils.TopBar
 
 
 @Composable
@@ -76,20 +77,7 @@ fun PaymentsScreen(navController: NavController){
             }
         },
         topBar = {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .background(colorResource(id = R.color.secondary)),
-                verticalAlignment = Alignment.CenterVertically){
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
-                        contentDescription = null,
-                        tint= colorResource(id = R.color.primary_text))
-                }
-                Text("Payments",
-                        fontSize=18.sp,
-                        modifier= Modifier.padding(vertical = 20.dp))
-            }
+            TopBar("Payments")
         },
         floatingActionButton = {
             IconButton(onClick = { showDialog.value = true},
@@ -105,7 +93,7 @@ fun PaymentsScreen(navController: NavController){
 }
 
 @Composable
-fun Details(){
+private fun Details(){
     Column(
         Modifier
             .background(colorResource(id = R.color.primary_background))

@@ -94,16 +94,15 @@ private fun Body(scroll: ScrollState, navController: NavController){
     val headerSize=100.dp
     val imageSize= 150.dp
     val padding=headerSize-imageSize/2
-    Box{
-        Column {
+    Box(Modifier.fillMaxSize()){
+        Column(Modifier.fillMaxSize()) {
             Spacer(
                 Modifier
                     .height(headerSize)
                     .fillMaxWidth())
-            Column(
-                Modifier
+            Column(Modifier
                     .verticalScroll(scroll)
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .background(
                         colorResource(id = R.color.primary_background),
                         shape = RoundedCornerShape(size = 30.dp)
@@ -119,7 +118,7 @@ private fun Body(scroll: ScrollState, navController: NavController){
                         )
                     }
                 }
-                Column(Modifier.fillMaxWidth(),
+                Column(Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally){
                     Text("Emma Philips",
                         fontWeight = FontWeight.Bold,
