@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.screen.navbar.NavBar
+import com.androidlab.travelplannerapp.screen.utils.CustomDivider
 
 @Composable
 fun ProfileScreen(navController: NavController){
@@ -130,9 +131,7 @@ private fun Body(scroll: ScrollState, navController: NavController){
                     )
                     Text("Cat ipsum dolor sit amet, why must they do that or eat a rug and furry furry hairs everywhere oh no human coming lie on counter don't get off counter sit on the laptop",
                         modifier = Modifier.padding(start=25.dp, end=25.dp, top = 15.dp))
-                    Divider(thickness = 1.dp,
-                        color = colorResource(id = R.color.primary),
-                        modifier = Modifier.padding(horizontal=25.dp, vertical=20.dp))
+                    CustomDivider()
                     Row(modifier = Modifier
                         .padding(horizontal = 25.dp)
                         .fillMaxWidth(),
@@ -154,9 +153,7 @@ private fun Body(scroll: ScrollState, navController: NavController){
                             }
                         }
                     }
-                    Divider(thickness = 1.dp,
-                        color = colorResource(id = R.color.primary),
-                        modifier = Modifier.padding(horizontal=25.dp, vertical=20.dp))
+                    CustomDivider()
                     LazyRow(
                         Modifier
                             .fillMaxWidth()
