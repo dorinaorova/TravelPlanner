@@ -17,6 +17,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
 
 @Composable
@@ -37,13 +38,13 @@ fun CustomDivider(){
 }
 
 @Composable
-fun TopBar(label: String){
+fun TopBar(label: String, navController: NavController, route: String){
     Row(
         Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.secondary)),
         verticalAlignment = Alignment.CenterVertically){
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { navController.navigate(route) }) {
             Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
                 contentDescription = null,
                 tint= colorResource(id = R.color.primary_text))

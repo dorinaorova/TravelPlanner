@@ -46,12 +46,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.screen.utils.SmallHeader
 import com.androidlab.travelplannerapp.screen.utils.TopBar
 
 @Composable
 fun TicketsScreen(navController: NavController){
-    val showDialog =  remember { mutableStateOf(true) }
+    val showDialog =  remember { mutableStateOf(false) }
     if(showDialog.value){
         AddDialog(setShowDialog = { showDialog.value = it})
     }
@@ -67,7 +68,7 @@ fun TicketsScreen(navController: NavController){
             }
         },
         topBar = {
-            TopBar("Tickets")
+            TopBar("Tickets", navController, Screen.VacationScreen.route)
         },
         floatingActionButton = {
             IconButton(onClick = { /*TODO*/ },

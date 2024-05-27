@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.screen.utils.TopBar
 
 @Composable
@@ -26,7 +27,7 @@ fun TicketViewerScreen(navController: NavController){
             }
         },
         topBar = {
-            TopBar("Museum-Emma")
+            TopBar("Museum-Emma", navController, Screen.TicketsScreen.route)
         },
     )
 }

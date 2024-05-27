@@ -37,25 +37,25 @@ class TravelController(
     ) : ResponseEntity<List<TravelInfoDTO>> {
         var travels = travelService.getAllTravels()
         maxPrice?.let {
-            travels= travelService.maxCostFiler(maxPrice, travels)
+            travels= travelService.maxCostFiler(it, travels)
         }
         minPrice?.let {
-            travels = travelService.minCostFilter(minPrice, travels)
+            travels = travelService.minCostFilter(it, travels)
         }
         tags?.let {
-            travels = travelService.tagFilter(tags, travels)
+            travels = travelService.tagFilter(it, travels)
         }
         minDays?.let {
-            travels = travelService.minDaysFilter(minDays, travels)
+            travels = travelService.minDaysFilter(it, travels)
         }
         maxDays?.let{
-            travels = travelService.maxDaysFilter(maxDays, travels)
+            travels = travelService.maxDaysFilter(it, travels)
         }
         name?.let {
-            travels= travelService.nameFilter(name, travels)
+            travels= travelService.nameFilter(it, travels)
         }
         location?.let{
-            travels = travelService.locationFilter(location, travels)
+            travels = travelService.locationFilter(it, travels)
         }
         return ResponseEntity.ok(travels)
     }

@@ -16,17 +16,17 @@ import com.androidlab.travelplannerapp.R
 val bottomNavItems = listOf(
     BottomNavItem(
         name = "Home",
-        route = "home_screen",
+        route = "home",
         icon = Icons.Rounded.Home,
     ),
     BottomNavItem(
         name = "Search",
-        route = "search_screen",
+        route = "search",
         icon = Icons.Rounded.Search,
     ),
     BottomNavItem(
         name = "Profile",
-        route = "profile_screen",
+        route = "profile",
         icon = Icons.Rounded.Person,
     ),
 )

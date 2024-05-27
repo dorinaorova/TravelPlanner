@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.screen.navbar.NavBar
 import com.androidlab.travelplannerapp.screen.utils.SmallHeader
 
@@ -65,13 +67,13 @@ fun VacationScreen(navController: NavController){
 private fun Details(navController: NavController){
     Box(Modifier.fillMaxSize()){
         val scroll = rememberScrollState(0)
-        Header()
+        Header(navController)
         Body(scroll, navController)
     }
 }
 
 @Composable
-private fun Header(){
+private fun Header(navController: NavController){
     Box(modifier = Modifier
         .fillMaxSize()) {
         Image(
@@ -83,7 +85,7 @@ private fun Header(){
                 .height(300.dp)
                 .blur(5.dp),
         )
-        Column(Modifier.padding(top = 75.dp)) {
+        Column(Modifier.padding(top = 75.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
             Text(
                 "Krakow",
                 color = colorResource(id = R.color.primary_text),
@@ -109,15 +111,15 @@ private fun Body(scroll: ScrollState, navController: NavController){
                     colorResource(id = R.color.primary_background),
                     shape = RoundedCornerShape(size = 30.dp)
                 )){
-            TravelBuddies()
-            Payments()
+            TravelBuddies(navController)
+            Payments(navController)
             Plan()
-            Tickets()
+            Tickets(navController )
         }}
 }
 
 @Composable
-private fun TravelBuddies(){
+private fun TravelBuddies(navController: NavController){
     val items= arrayOf("Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips")
     SmallHeader("Your travel buddies")
     LazyRow(
@@ -126,7 +128,8 @@ private fun TravelBuddies(){
             .padding(end = 25.dp, start = 30.dp)){
         items(items) {
             Column(horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(horizontal = 10.dp)) {
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                        .clickable { navController.navigate(Screen.ProfileScreen.route) }) {
                 Image(
                     painter = painterResource(id = R.drawable.profile),
                     contentDescription = null,
@@ -147,8 +150,8 @@ private fun TravelBuddies(){
 }
 
 @Composable
-private fun Payments(){
-    Column{
+private fun Payments(navController: NavController){
+    Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route)  }){
         SmallHeader("Payments")
         Row(verticalAlignment = Alignment.Top,
             modifier=Modifier.padding(horizontal=30.dp)){
@@ -193,17 +196,22 @@ private fun Plan(){
 }
 
 @Composable
-private fun Tickets(){
-    SmallHeader("Tickets")
+private fun Tickets(navController: NavController){
+    Box(Modifier.clickable { navController.navigate(Screen.TicketsScreen.route) }) {
+        SmallHeader("Tickets")
+    }
     LazyRow(
         Modifier
             .fillMaxWidth()
-            .padding(end = 25.dp, start = 30.dp, bottom=30.dp)){
+            .padding(end = 25.dp, start = 30.dp, bottom = 30.dp)){
         items(6) {
             Box(modifier = Modifier
                 .padding(horizontal = 10.dp)
                 .size(80.dp, 60.dp)
-                .background(colorResource(id = R.color.secondary), shape = RoundedCornerShape(15.dp))) {
+                .background(
+                    colorResource(id = R.color.secondary),
+                    shape = RoundedCornerShape(15.dp)
+                )) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxSize()){

@@ -10,13 +10,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e9110ae3-d0fc-4754-b7e6-3e0e3191a4d4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ticket/TicketViewer.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ticket/Tickets.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/TravelPlannerApp.app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/TravelPlannerApp.app.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Navigation.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/res/font/itim.ttf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/TravelPlannerApp.app.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Screen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/navigation/Screen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/HomeScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/HomeScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/Payments.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/Payments.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ProfileScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ProfileScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/utils/Label.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/utils/UtilComponents.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/SearchScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/SearchScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/TravelProfileScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/TravelProfileScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/VacationScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/VacationScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/navbar/Navbar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/navbar/Navbar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ticket/TicketViewer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ticket/TicketViewer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ticket/Tickets.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ticket/Tickets.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/utils/UtilComponents.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/utils/UtilComponents.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dipterv/src/main/kotlin/com/dipterv/dipterv/controller/TravelController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/dipterv/src/main/kotlin/com/dipterv/dipterv/controller/TravelController.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +86,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "dev__app",
-    "last_opened_file_path": "C:/BME/Dipterv/TravelPlanner/TravelPlannerApp/app/src/main/java/com/androidlab/travelplannerapp/screen/ticket",
+    "last_opened_file_path": "C:/BME/Dipterv/TravelPlanner/TravelPlannerApp/app/src/main/res/font",
     "project.structure.last.edited": "Facets",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -84,7 +94,11 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\BME\Dipterv\TravelPlanner\TravelPlannerApp\app\src\main\res\font" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\BME\Dipterv\TravelPlanner\TravelPlannerApp\app\src\main\res\font" />
       <recent name="C:\BME\Dipterv\TravelPlanner\TravelPlannerApp\app\src\main\res\drawable" />
       <recent name="C:\BME\Dipterv\TravelPlanner\TravelPlannerApp\app\src\main\java\com\androidlab\travelplannerapp\screen\ticket" />
     </key>

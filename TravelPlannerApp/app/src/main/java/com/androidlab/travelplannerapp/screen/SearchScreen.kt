@@ -1,15 +1,14 @@
 package com.androidlab.travelplannerapp.screen
 
-import android.media.Image
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,7 +37,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,9 +50,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.screen.navbar.NavBar
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 
 @Composable
 fun SearchScreen(navController: NavController){
@@ -79,7 +79,7 @@ fun SearchScreen(navController: NavController){
 fun SearchBar(){
     Box(Modifier.background(colorResource(id = R.color.secondary))){
         Column{
-            Row (Modifier.padding(top=10.dp)){
+            Row (Modifier.padding(top=10.dp, end=15.dp, start=15.dp)){
                 var value by remember { mutableStateOf("") }
                 BasicTextField(
                     value = value,
@@ -175,7 +175,7 @@ fun TravelListItem(navController: NavController) {
             .padding(16.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween){
-        Row {
+        Row(Modifier.clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
             Box(
                 Modifier
                     .width(90.dp)

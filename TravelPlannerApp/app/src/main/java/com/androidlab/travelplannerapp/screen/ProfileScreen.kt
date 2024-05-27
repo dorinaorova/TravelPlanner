@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.screen.navbar.NavBar
 import com.androidlab.travelplannerapp.screen.utils.CustomDivider
 
@@ -158,7 +160,7 @@ private fun Body(scroll: ScrollState, navController: NavController){
                             .fillMaxWidth()
                             .padding(horizontal = 25.dp)){
                             items(count=6){
-                                TravelItem()
+                                TravelItem(navController)
                             }
                     }
                     Divider(thickness = 1.dp,
@@ -190,12 +192,12 @@ private fun Body(scroll: ScrollState, navController: NavController){
 }
 
 @Composable
-private fun TravelItem(){
+private fun TravelItem(navController: NavController){
     Box(
         Modifier
             .height(100.dp)
             .width(120.dp)
-            .padding(horizontal = 10.dp)){
+            .padding(horizontal = 10.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
         Image(painter = painterResource(id = R.drawable.image), contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier= Modifier

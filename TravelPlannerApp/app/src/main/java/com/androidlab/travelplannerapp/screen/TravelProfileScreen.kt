@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -89,7 +90,8 @@ private fun Header(){
                 "Krakow",
                 color = colorResource(id = R.color.primary_text),
                 fontSize = 36.sp,
-                modifier = Modifier.padding(start = 25.dp)
+                modifier = Modifier.padding(start = 25.dp),
+                fontFamily = FontFamily(Font(R.font.itim))
             )
             Row(Modifier.padding(horizontal = 25.dp, vertical = 10.dp)) {
                 val list = arrayOf("Poland", "Shoprt trip")

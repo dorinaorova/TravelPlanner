@@ -20,13 +20,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Surface
-import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
@@ -54,6 +52,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.screen.utils.CustomDivider
 import com.androidlab.travelplannerapp.screen.utils.SmallHeader
 import com.androidlab.travelplannerapp.screen.utils.TopBar
@@ -77,7 +76,7 @@ fun PaymentsScreen(navController: NavController){
             }
         },
         topBar = {
-            TopBar("Payments")
+            TopBar("Payments", navController, Screen.VacationScreen.route)
         },
         floatingActionButton = {
             IconButton(onClick = { showDialog.value = true},
@@ -225,7 +224,8 @@ private fun SettleDept(){
 
 @Composable
 private fun AddDialog(setShowDialog: (Boolean) -> Unit,){
-    val txtField = remember { mutableStateOf("") }
+    val costTxtField = remember { mutableStateOf("") }
+    val reasonTxtField = remember { mutableStateOf("") }
     val items = listOf("A", "B", "C", "D", "E", "F")
     val selectedIndex = remember { mutableStateOf(0 )}
     val checkedStates = remember { mutableListOf(true, true, true,true, true, true) }
@@ -302,7 +302,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit,){
                             fontWeight= FontWeight.Bold,
                             color= colorResource(id = R.color.primary))
                         TextField(
-                            value = txtField.value,
+                            value = costTxtField.value,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = Color.Transparent,
@@ -311,9 +311,32 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit,){
                             ),
                             singleLine = true,
                             onValueChange = {
-                                txtField.value = it
+                                costTxtField.value = it
                             },
                             placeholder = { Text("Please enter the value")})
+                    }
+                    Row(
+                        Modifier
+                            .padding(horizontal = 15.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically){
+                        Text("For what",
+                            modifier=Modifier.padding(end=10.dp),
+                            fontWeight= FontWeight.Bold,
+                            color= colorResource(id = R.color.primary))
+                        TextField(
+                            value = reasonTxtField.value,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            ),
+                            singleLine = true,
+                            onValueChange = {
+                                reasonTxtField.value = it
+                            },
+                            placeholder = { Text("Please enter the reason")})
                     }
                     Column(
                         Modifier
