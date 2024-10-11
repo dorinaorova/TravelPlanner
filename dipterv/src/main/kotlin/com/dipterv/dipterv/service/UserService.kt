@@ -10,11 +10,38 @@ import com.dipterv.dipterv.model.dto.TravelDTO
 import com.dipterv.dipterv.model.dto.UserDTO
 import com.dipterv.dipterv.repository.TravelRepository
 import com.dipterv.dipterv.repository.UserRepository
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(val userRepository: UserRepository, val mapper: DTOMapper) {
+class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : UserDetailsService {
 
+    override fun loadUserByUsername(userName: String): UserDetails {
+        val user = userRepository.findByUsername(userName) ?: throw NotFoundException("User not found with name: $userName")
+        return org.springframework.security.core.userdetails.User(
+            user.username,
+            user.password,
+            emptyList()
+        )
+    }
+
+    fun register(userName: String, password: String): User{
+        val newUser = User(
+            null,
+            userName,
+            password,
+            "",
+            "",
+            "",
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList()
+        )
+        return userRepository.save(newUser)
+    }
 
     fun getAll(): List<UserInfoDTO>{
         return userRepository.findAll().map{
@@ -88,20 +115,21 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) {
             updated.followerIds)
     }
 
-    fun add(user: UserInfoDTO): User {
-        val newUser = User(
-            null,
-            user.username,
-            user.name,
-            user.email,
-            user.description,
-            user.profilePictureFilePath,
-            emptyList(),
-            emptyList(),
-            emptyList(),
-            emptyList()
-        )
-        return userRepository.save(newUser)
+    fun add(user: UserInfoDTO): User? {
+        return null
+//        val newUser = User(
+//            null,
+//            user.username,
+//            user.name,
+//            user.email,
+//            user.description,
+//            user.profilePictureFilePath,
+//            emptyList(),
+//            emptyList(),
+//            emptyList(),
+//            emptyList()
+//        )
+//        return userRepository.save(newUser)
     }
 
     fun addTravel(id: String, travel: Travel){
