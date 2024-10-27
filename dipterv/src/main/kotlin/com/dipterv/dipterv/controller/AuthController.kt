@@ -1,6 +1,8 @@
 package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.model.documentModel.User
+import com.dipterv.dipterv.model.dto.LoginDTO
+import com.dipterv.dipterv.model.dto.UserDTO
 import com.dipterv.dipterv.model.requestModel.LoginRequest
 import com.dipterv.dipterv.model.requestModel.RegisterRequest
 import com.dipterv.dipterv.repository.UserRepository
@@ -22,17 +24,17 @@ class AuthController(
     private val jwtUtil: JwtUtil
 ){
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: LoginRequest): String {
+    fun login(@RequestBody loginRequest: LoginRequest): LoginDTO {
         val authentication: Authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(loginRequest.userName, loginRequest.password)
         )
         SecurityContextHolder.getContext().authentication = authentication
-        return jwtUtil.generateToken(loginRequest.userName)
+        return userService.login(loginRequest, jwtUtil.generateToken(loginRequest.userName))
     }
 
     @PostMapping("/register")
     fun register(@RequestBody registerRequest: RegisterRequest): User {
         val encodedPassword = passwordEncoder.encode(registerRequest.password)
-        return userService.register(registerRequest.userName, encodedPassword)
+        return userService.register(registerRequest, encodedPassword)
     }
 }

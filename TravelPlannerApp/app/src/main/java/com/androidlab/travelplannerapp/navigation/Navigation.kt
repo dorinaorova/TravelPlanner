@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.androidlab.travelplannerapp.screen.HomeScreen
+import com.androidlab.travelplannerapp.screen.LoginScreen
 import com.androidlab.travelplannerapp.screen.PaymentsScreen
 import com.androidlab.travelplannerapp.screen.ProfileScreen
 import com.androidlab.travelplannerapp.screen.SearchScreen
@@ -40,6 +41,9 @@ fun Navigation(navController: NavHostController){
         }
         composable(route= Screen.TicketsScreen.route){
             TicketsScreen(navController = navController)
+        }
+        composable(route =Screen.LoginScreen.route){
+            LoginScreen(navController=navController)
         }
     }
 }

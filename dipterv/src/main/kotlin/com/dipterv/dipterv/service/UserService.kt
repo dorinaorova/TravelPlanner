@@ -3,16 +3,17 @@ package com.dipterv.dipterv.service
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.dto.UserInfoDTO
 import com.dipterv.dipterv.model.documentModel.User
-import com.dipterv.dipterv.model.dto.FollowDTO
-import com.dipterv.dipterv.model.dto.TravelDTO
-import com.dipterv.dipterv.model.dto.UserDTO
+import com.dipterv.dipterv.model.dto.*
+import com.dipterv.dipterv.model.requestModel.LoginRequest
+import com.dipterv.dipterv.model.requestModel.RegisterRequest
 import com.dipterv.dipterv.repository.TravelRepository
 import com.dipterv.dipterv.repository.UserRepository
+import org.springframework.boot.autoconfigure.security.oauth2.server.servlet.OAuth2AuthorizationServerProperties.Registration
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import kotlin.math.log
 
 @Service
 class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : UserDetailsService {
@@ -26,13 +27,13 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         )
     }
 
-    fun register(userName: String, password: String): User{
+    fun register(registration: RegisterRequest, password: String): User{
         val newUser = User(
             null,
-            userName,
+            registration.userName,
             password,
-            "",
-            "",
+            registration.name,
+            registration.email,
             "",
             "",
             emptyList(),
@@ -41,6 +42,11 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
             emptyList()
         )
         return userRepository.save(newUser)
+    }
+
+    fun login(loginRequest: LoginRequest, token: String): LoginDTO{
+        val user = findByUsername(loginRequest.userName)
+        return LoginDTO(user._id!!,token )
     }
 
     fun getAll(): List<UserInfoDTO>{
@@ -65,6 +71,10 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         }
     }
 
+    private fun findByUsername(username: String) : User{
+        return userRepository.findByUsername(username)!!
+    }
+
     fun nameFilter(name: String, users: List<UserInfoDTO>) : List<UserInfoDTO>{
         return users.filter{it.name.contains(name, true) }
     }
@@ -72,8 +82,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
     fun updateUser(id:String, user : User) : UserInfoDTO{
         try{
             val findUser = findById(id)
-            findUser.username = user.username
-            findUser.username = user.username
+            findUser.name= user.name
             findUser.email = user.email
             findUser.description = user.description
             val savedUser = userRepository.save(findUser)

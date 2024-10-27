@@ -1,6 +1,7 @@
 package com.androidlab.travelplannerapp.navigation
 
 sealed class Screen(val route: String) {
+    object LoginScreen: Screen("login")
     object HomeScreen : Screen("home")
     object VacationScreen : Screen("vacation")
     object SearchScreen: Screen("search")
