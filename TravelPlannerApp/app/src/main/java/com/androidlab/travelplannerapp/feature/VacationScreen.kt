@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.screen
+package com.androidlab.travelplannerapp.feature
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,8 +43,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.androidlab.travelplannerapp.screen.navbar.NavBar
-import com.androidlab.travelplannerapp.screen.utils.SmallHeader
+import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 
 @Composable
 fun VacationScreen(navController: NavController){

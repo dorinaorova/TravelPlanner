@@ -1,10 +1,9 @@
-package com.androidlab.travelplannerapp.screen
+package com.androidlab.travelplannerapp.feature
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -45,8 +43,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.androidlab.travelplannerapp.screen.navbar.NavBar
-import com.androidlab.travelplannerapp.screen.utils.CustomDivider
+import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 
 @Composable
 fun ProfileScreen(navController: NavController){

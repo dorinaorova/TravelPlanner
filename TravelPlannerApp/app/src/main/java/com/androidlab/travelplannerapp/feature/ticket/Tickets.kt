@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.screen.ticket
+package com.androidlab.travelplannerapp.feature.ticket
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,8 +47,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.androidlab.travelplannerapp.screen.utils.SmallHeader
-import com.androidlab.travelplannerapp.screen.utils.TopBar
+import com.androidlab.travelplannerapp.feature.utils.SmallHeader
+import com.androidlab.travelplannerapp.feature.utils.TopBar
 
 @Composable
 fun TicketsScreen(navController: NavController){

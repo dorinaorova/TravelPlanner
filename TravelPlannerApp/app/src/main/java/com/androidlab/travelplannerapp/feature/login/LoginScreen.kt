@@ -1,7 +1,5 @@
-package com.androidlab.travelplannerapp.screen
+package com.androidlab.travelplannerapp.feature.login
 
-import android.media.Image
-import android.text.InputType
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -20,22 +18,16 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -51,9 +43,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun LoginScreen(navController: NavController){
+fun LoginScreen(navController: NavController, vm : LoginViewModel = hiltViewModel()){
             Box(modifier = Modifier
                 .fillMaxSize(), contentAlignment = Alignment.Center
             ) {
@@ -62,7 +55,7 @@ fun LoginScreen(navController: NavController){
 }
 
 @Composable
-fun LoginForm(){
+fun LoginForm(vm: LoginViewModel = hiltViewModel()){
     var username =""
     var password=""
     Box(Modifier
@@ -90,7 +83,9 @@ fun LoginForm(){
                 modifier = Modifier
                     .padding(bottom = 3.dp)
                     .align(Alignment.CenterHorizontally),
-                onClick = {/* navController.navigate(route = Screen.SignUpScreen.route) */},
+                onClick = {
+                    vm.login(username,password)
+                /* navController.navigate(route = Screen.SignUpScreen.route) */},
                 style = TextStyle(
                     fontSize = 14.sp,
                     textDecoration = TextDecoration.Underline,

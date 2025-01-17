@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.screen.navbar
+package com.androidlab.travelplannerapp.feature.navbar
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

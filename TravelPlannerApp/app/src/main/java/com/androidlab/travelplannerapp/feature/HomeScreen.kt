@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.screen
+package com.androidlab.travelplannerapp.feature
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.androidlab.travelplannerapp.screen.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.navbar.NavBar
 
 @Composable
 fun HomeScreen(navController: NavController){

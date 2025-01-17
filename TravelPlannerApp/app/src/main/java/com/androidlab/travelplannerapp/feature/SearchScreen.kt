@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.screen
+package com.androidlab.travelplannerapp.feature
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -51,7 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.androidlab.travelplannerapp.screen.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.navbar.NavBar
 
 @Composable
 fun SearchScreen(navController: NavController){

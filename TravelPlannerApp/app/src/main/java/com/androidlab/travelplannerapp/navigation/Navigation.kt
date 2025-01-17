@@ -1,20 +1,17 @@
 package com.androidlab.travelplannerapp.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.androidlab.travelplannerapp.screen.HomeScreen
-import com.androidlab.travelplannerapp.screen.LoginScreen
-import com.androidlab.travelplannerapp.screen.PaymentsScreen
-import com.androidlab.travelplannerapp.screen.ProfileScreen
-import com.androidlab.travelplannerapp.screen.SearchScreen
-import com.androidlab.travelplannerapp.screen.TravelProfileScreen
-import com.androidlab.travelplannerapp.screen.VacationScreen
-import com.androidlab.travelplannerapp.screen.ticket.TicketsScreen
+import com.androidlab.travelplannerapp.feature.HomeScreen
+import com.androidlab.travelplannerapp.feature.login.LoginScreen
+import com.androidlab.travelplannerapp.feature.PaymentsScreen
+import com.androidlab.travelplannerapp.feature.ProfileScreen
+import com.androidlab.travelplannerapp.feature.SearchScreen
+import com.androidlab.travelplannerapp.feature.TravelProfileScreen
+import com.androidlab.travelplannerapp.feature.VacationScreen
+import com.androidlab.travelplannerapp.feature.ticket.TicketsScreen
 
 @Composable
 fun Navigation(navController: NavHostController){

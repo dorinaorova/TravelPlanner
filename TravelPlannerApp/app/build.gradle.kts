@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
+
 }
 
 android {
@@ -73,4 +76,11 @@ dependencies {
     implementation("androidx.compose.material:material:1.6.6")
     implementation("androidx.compose.material3:material3:1.2.0-alpha10")
     implementation("androidx.compose.material3:material3-window-size-class:1.2.0-alpha10")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.5.0")
+
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
 }

@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.screen.utils
+package com.androidlab.travelplannerapp.feature.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
