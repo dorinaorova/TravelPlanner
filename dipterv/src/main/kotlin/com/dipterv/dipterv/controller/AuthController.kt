@@ -25,6 +25,7 @@ class AuthController(
 ){
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: LoginRequest): LoginDTO {
+        System.out.println("login")
         val authentication: Authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(loginRequest.userName, loginRequest.password)
         )

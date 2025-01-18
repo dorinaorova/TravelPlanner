@@ -24,9 +24,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
@@ -36,6 +39,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,8 +61,9 @@ fun LoginScreen(navController: NavController, vm : LoginViewModel = hiltViewMode
 
 @Composable
 fun LoginForm(vm: LoginViewModel = hiltViewModel()){
-    var username =""
-    var password=""
+    val focusManager = LocalFocusManager.current
+    val username = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
     Box(Modifier
         .padding(bottom = 100.dp)
         .background(color=colorResource(R.color.secondary), shape = RoundedCornerShape(size = 10.dp))){
@@ -68,11 +74,102 @@ fun LoginForm(vm: LoginViewModel = hiltViewModel()){
                 color = colorResource(R.color.primary_background),
                 modifier =Modifier.padding(15.dp).align(Alignment.CenterHorizontally))
             Spacer(Modifier.height(20.dp))
-            InputField(username,KeyboardOptions(imeAction = ImeAction.Next), "Username", Icons.Rounded.AccountCircle )
+
+            BasicTextField(
+                value = username.value,
+                onValueChange = { username.value = it },
+                maxLines = 1,
+                textStyle = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colorResource(id = R.color.secondary_text)
+                ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                ),
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 30.dp, vertical = 10.dp)
+                            .fillMaxWidth(0.8f)
+                            .background(
+                                color = Color.White,
+                                shape = RoundedCornerShape(size = 16.dp)
+                            )
+                            .border(
+                                width = 2.dp,
+                                color = colorResource(id = R.color.primary),
+                                shape = RoundedCornerShape(size = 16.dp)
+                            )
+                            .padding(all = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.AccountCircle,
+                            contentDescription = null,
+                            tint = colorResource(id = R.color.primary)
+                        )
+                        Spacer(modifier = Modifier.width(width = 8.dp))
+                        innerTextField()
+                    }
+                }
+            )
+
             Spacer(Modifier.height(20.dp))
-            InputField(password, KeyboardOptions(keyboardType = KeyboardType.Password,imeAction = ImeAction.Next), "Password", Icons.Rounded.Lock)
+
+            BasicTextField(
+                value = password.value,
+                onValueChange = { password.value = it },
+                maxLines = 1,
+                textStyle = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colorResource(id = R.color.primary)
+                ),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                ),
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 30.dp, vertical = 10.dp)
+                            .fillMaxWidth(0.8f)
+                            .background(
+                                color = Color.White,
+                                shape = RoundedCornerShape(size = 16.dp)
+                            )
+                            .border(
+                                width = 2.dp,
+                                color = colorResource(id = R.color.primary),
+                                shape = RoundedCornerShape(size = 16.dp)
+                            )
+                            .padding(all = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Lock,
+                            contentDescription = null,
+                            tint = colorResource(id = R.color.primary))
+                        Spacer(modifier = Modifier.width(width = 8.dp))
+                        innerTextField()
+                    }
+                }
+            )
+
             Spacer(Modifier.height(10.dp))
-            Button(onClick={},
+            Button(onClick={
+                vm.login(username.value,password.value)
+            },
                 Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary_background))){
                 Text("Login", color= colorResource(R.color.secondary), fontWeight = FontWeight.Bold, fontSize = 15.sp)
@@ -84,7 +181,6 @@ fun LoginForm(vm: LoginViewModel = hiltViewModel()){
                     .padding(bottom = 3.dp)
                     .align(Alignment.CenterHorizontally),
                 onClick = {
-                    vm.login(username,password)
                 /* navController.navigate(route = Screen.SignUpScreen.route) */},
                 style = TextStyle(
                     fontSize = 14.sp,

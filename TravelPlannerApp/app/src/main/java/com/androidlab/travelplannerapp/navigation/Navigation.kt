@@ -16,7 +16,7 @@ import com.androidlab.travelplannerapp.feature.ticket.TicketsScreen
 @Composable
 fun Navigation(navController: NavHostController){
     NavHost(navController = navController,
-        startDestination = Screen.HomeScreen.route)
+        startDestination = Screen.LoginScreen.route)
     {
         composable(route = Screen.HomeScreen.route){
             HomeScreen(navController =navController)

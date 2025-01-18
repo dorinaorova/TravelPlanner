@@ -14,18 +14,5 @@ private const val BASE_URL = "http://localhost:8080/auth/"
 interface AuthService {
     @Headers("Accept: application/json")
     @POST("login")
-    abstract fun login(@Body user: LoginRequest) : Call<LoginResponse>?
-
-    companion object {
-        var apiService: AuthService? = null
-        fun getInstance(): AuthService {
-            if (apiService == null) {
-                apiService = Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build().create(AuthService::class.java)
-            }
-            return apiService!!
-        }
-    }
+    fun login(@Body user: LoginRequest) : Call<LoginResponse>?
 }
