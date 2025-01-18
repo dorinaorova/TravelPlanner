@@ -12,7 +12,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-private const val BASE_URL = "http://localhost:8080/auth/"
+private const val BASE_URL = "https://60df-2001-4c4e-1e18-a600-7ca0-3353-d7a0-69cc.ngrok-free.app/auth/"
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCaseModule {

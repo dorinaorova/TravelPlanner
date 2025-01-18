@@ -6,6 +6,6 @@ data class LoginResponse(
 )
 
 data class LoginRequest(
-    val username: String,
+    val userName: String,
     val password: String
 )
