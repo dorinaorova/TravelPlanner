@@ -1,10 +1,13 @@
 package com.androidlab.travelplannerapp.domain.module.auth
 
+import android.content.Context
+import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.auth.AuthService
 import com.androidlab.travelplannerapp.domain.usecases.auth.SignInUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -12,15 +15,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-private const val BASE_URL = "https://60df-2001-4c4e-1e18-a600-7ca0-3353-d7a0-69cc.ngrok-free.app/auth/"
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCaseModule {
 
-
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
+    fun provideRetrofit(@ApplicationContext context: Context): Retrofit {
+        val BASE_URL = context.getString(R.string.BASE_URL)
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY // Logs request and response bodies
 
@@ -29,7 +31,7 @@ object UseCaseModule {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL+"auth/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
