@@ -24,6 +24,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -49,19 +50,20 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.androidlab.travelplannerapp.feature.utils.InputField
+import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
 fun LoginScreen(navController: NavController, vm : LoginViewModel = hiltViewModel()){
             Box(modifier = Modifier
                 .fillMaxSize(), contentAlignment = Alignment.Center
             ) {
-                    LoginForm()
+                    LoginForm(navController)
             }
 }
 
 @Composable
-fun LoginForm(vm: LoginViewModel = hiltViewModel()){
-    val focusManager = LocalFocusManager.current
+private fun LoginForm(navController: NavController, vm : LoginViewModel = hiltViewModel()){
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     Box(Modifier
@@ -75,96 +77,11 @@ fun LoginForm(vm: LoginViewModel = hiltViewModel()){
                 modifier =Modifier.padding(15.dp).align(Alignment.CenterHorizontally))
             Spacer(Modifier.height(20.dp))
 
-            BasicTextField(
-                value = username.value,
-                onValueChange = { username.value = it },
-                maxLines = 1,
-                textStyle = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = colorResource(id = R.color.secondary_text)
-                ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
-                ),
-                decorationBox = { innerTextField ->
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 30.dp, vertical = 10.dp)
-                            .fillMaxWidth(0.8f)
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(size = 16.dp)
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = colorResource(id = R.color.primary),
-                                shape = RoundedCornerShape(size = 16.dp)
-                            )
-                            .padding(all = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.AccountCircle,
-                            contentDescription = null,
-                            tint = colorResource(id = R.color.primary)
-                        )
-                        Spacer(modifier = Modifier.width(width = 8.dp))
-                        innerTextField()
-                    }
-                }
-            )
+            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), null, "Username", Icons.Rounded.AccountCircle)
 
             Spacer(Modifier.height(20.dp))
 
-            BasicTextField(
-                value = password.value,
-                onValueChange = { password.value = it },
-                maxLines = 1,
-                textStyle = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = colorResource(id = R.color.primary)
-                ),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                    }
-                ),
-                decorationBox = { innerTextField ->
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 30.dp, vertical = 10.dp)
-                            .fillMaxWidth(0.8f)
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(size = 16.dp)
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = colorResource(id = R.color.primary),
-                                shape = RoundedCornerShape(size = 16.dp)
-                            )
-                            .padding(all = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Lock,
-                            contentDescription = null,
-                            tint = colorResource(id = R.color.primary))
-                        Spacer(modifier = Modifier.width(width = 8.dp))
-                        innerTextField()
-                    }
-                }
-            )
+            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", icon = Icons.Rounded.Lock)
 
             Spacer(Modifier.height(10.dp))
             Button(onClick={
@@ -181,7 +98,7 @@ fun LoginForm(vm: LoginViewModel = hiltViewModel()){
                     .padding(bottom = 3.dp)
                     .align(Alignment.CenterHorizontally),
                 onClick = {
-                /* navController.navigate(route = Screen.SignUpScreen.route) */},
+                navController.navigate(route = Screen.RegistrationScreen.route) },
                 style = TextStyle(
                     fontSize = 14.sp,
                     textDecoration = TextDecoration.Underline,
@@ -190,61 +107,6 @@ fun LoginForm(vm: LoginViewModel = hiltViewModel()){
             )
         }
     }
-}
-
-@Composable
-private fun InputField(_value: String, keyboardOptions: KeyboardOptions, label:String, icon: ImageVector){
-    val focusManager = LocalFocusManager.current
-    var value=_value
-    Text(
-        label,
-        fontSize = 15.sp,
-        fontWeight = FontWeight.Medium,
-        color = colorResource(id = R.color.primary_background),
-        modifier = Modifier.padding(start = 15.dp)
-    )
-    Spacer(Modifier.height(5.dp))
-    BasicTextField(
-        value = value,
-        onValueChange = { value = it },
-        maxLines = 1,
-        textStyle = TextStyle(
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Medium,
-            color = colorResource(id = R.color.primary)
-        ),
-        keyboardOptions = keyboardOptions,
-        keyboardActions = KeyboardActions(
-            onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            }
-        ),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .background(
-                        color = colorResource(R.color.primary_background),
-                        shape = RoundedCornerShape(size = 10.dp)
-                    )
-                    .border(
-                        width = 2.dp,
-                        color = colorResource(id = R.color.primary),
-                        shape = RoundedCornerShape(size = 10.dp)
-
-                    ) .padding(10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.primary)
-                )
-                Spacer(modifier = Modifier.width(width = 8.dp))
-                innerTextField()
-            }
-        }
-    )
 }
 
 @Composable

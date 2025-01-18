@@ -2,6 +2,8 @@ package com.androidlab.travelplannerapp.data.auth
 
 import com.androidlab.travelplannerapp.data.model.LoginRequest
 import com.androidlab.travelplannerapp.data.model.LoginResponse
+import com.androidlab.travelplannerapp.data.model.SignUpRequest
+import com.androidlab.travelplannerapp.data.model.UserInfo
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,6 +13,10 @@ import retrofit2.http.POST
 
 interface AuthService {
     @Headers("Accept: application/json")
-    @POST("login")
+    @POST("auth/login")
     fun login(@Body user: LoginRequest) : Call<LoginResponse>?
+
+    @Headers("Accept: application/json")
+    @POST("auth/register")
+    fun singUp(@Body user: SignUpRequest) : Call<UserInfo>?
 }

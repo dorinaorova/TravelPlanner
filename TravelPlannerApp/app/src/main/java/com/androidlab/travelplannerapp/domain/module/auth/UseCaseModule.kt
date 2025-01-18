@@ -3,7 +3,6 @@ package com.androidlab.travelplannerapp.domain.module.auth
 import android.content.Context
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.auth.AuthService
-import com.androidlab.travelplannerapp.domain.usecases.auth.SignInUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +30,7 @@ object UseCaseModule {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL+"auth/")
+            .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

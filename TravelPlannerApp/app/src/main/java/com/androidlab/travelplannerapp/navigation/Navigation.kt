@@ -11,6 +11,7 @@ import com.androidlab.travelplannerapp.feature.ProfileScreen
 import com.androidlab.travelplannerapp.feature.SearchScreen
 import com.androidlab.travelplannerapp.feature.TravelProfileScreen
 import com.androidlab.travelplannerapp.feature.VacationScreen
+import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
 import com.androidlab.travelplannerapp.feature.ticket.TicketsScreen
 
 @Composable
@@ -41,6 +42,9 @@ fun Navigation(navController: NavHostController){
         }
         composable(route =Screen.LoginScreen.route){
             LoginScreen(navController=navController)
+        }
+        composable(route=Screen.RegistrationScreen.route){
+            RegistrationScreen(navController = navController)
         }
     }
 }
