@@ -27,7 +27,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         )
     }
 
-    fun register(registration: RegisterRequest, password: String): User{
+    fun register(registration: RegisterRequest, password: String): UserInfoDTO{
         val newUser = User(
             null,
             registration.userName,
@@ -41,7 +41,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
             emptyList(),
             emptyList()
         )
-        return userRepository.save(newUser)
+        return mapper.userToUserInfoDTO(userRepository.save(newUser))
     }
 
     fun login(loginRequest: LoginRequest, token: String): LoginDTO{
