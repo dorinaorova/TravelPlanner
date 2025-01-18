@@ -7,10 +7,12 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
 
 
 @Configuration
@@ -26,6 +28,19 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter){
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
+            .cors { cors ->
+                cors.configurationSource { request ->
+                    CorsConfiguration().apply {
+                        allowedOrigins = listOf("*") // Replace "*" with specific origins for production
+                        allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        allowedHeaders = listOf("*")
+                        allowCredentials = false // Set to true only if credentials (cookies) are needed
+                    }
+                }
+            }
+            .sessionManagement { session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Set session as stateless
+            }
             .authorizeHttpRequests {
                 it
                     .requestMatchers(
@@ -35,7 +50,8 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter){
                         "/webjars/**"
                     ).permitAll()
                     .requestMatchers("/auth/**").permitAll()
-                    .anyRequest().authenticated()
+                    //.anyRequest().authenticated()
+                    .anyRequest().permitAll()
             }
             .anonymous { it.disable() }
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
