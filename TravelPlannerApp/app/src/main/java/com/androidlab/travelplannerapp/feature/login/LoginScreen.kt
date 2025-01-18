@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -66,6 +67,7 @@ fun LoginScreen(navController: NavController, vm : LoginViewModel = hiltViewMode
 private fun LoginForm(navController: NavController, vm : LoginViewModel = hiltViewModel()){
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+    val context = LocalContext.current
     Box(Modifier
         .padding(bottom = 100.dp)
         .background(color=colorResource(R.color.secondary), shape = RoundedCornerShape(size = 10.dp))){
@@ -85,7 +87,7 @@ private fun LoginForm(navController: NavController, vm : LoginViewModel = hiltVi
 
             Spacer(Modifier.height(10.dp))
             Button(onClick={
-                vm.login(username.value,password.value)
+                vm.login(username.value,password.value, context, navController)
             },
                 Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary_background))){

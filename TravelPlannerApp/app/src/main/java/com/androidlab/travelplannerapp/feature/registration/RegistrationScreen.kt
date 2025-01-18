@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -42,16 +43,17 @@ fun RegistrationScreen(navController: NavController, vm : RegistrationViewModel 
     Box(modifier = Modifier
         .fillMaxSize(), contentAlignment = Alignment.Center
     ) {
-        RegistrationForm()
+        RegistrationForm(navController)
     }
 }
 
 @Composable
-private fun RegistrationForm(vm: RegistrationViewModel = hiltViewModel()){
+private fun RegistrationForm(navController: NavController, vm: RegistrationViewModel = hiltViewModel()){
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
+    val context = LocalContext.current
     Box(Modifier
         .padding(bottom = 100.dp)
         .background(color= colorResource(R.color.secondary), shape = RoundedCornerShape(size = 10.dp))){
@@ -71,7 +73,7 @@ private fun RegistrationForm(vm: RegistrationViewModel = hiltViewModel()){
             InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password")
             Spacer(Modifier.height(20.dp))
             Button(onClick={
-                vm.signUp(username.value,password.value, name.value, email.value)
+                vm.signUp(username.value,password.value, name.value, email.value, context, navController)
             },
                 Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary_background))){

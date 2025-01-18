@@ -1,9 +1,12 @@
 package com.androidlab.travelplannerapp.feature.registration
 
-import android.util.Log
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.domain.usecases.auth.SingUpUseCase
+import com.androidlab.travelplannerapp.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
@@ -14,20 +17,16 @@ class RegistrationViewModel @Inject constructor(
     private  val signUpUseCase: SingUpUseCase
 ): ViewModel() {
 
-    fun signUp(username: String, password: String,name: String, email: String){
+    fun signUp(username: String, password: String, name: String, email: String, context: Context, navController: NavController){
         viewModelScope.launch {
-            try{
                 val call = signUpUseCase(username, password, email, name)
                 val response = call?.awaitResponse()
                 if(response?.isSuccessful == true){
-                    Log.d("LoginViewModel", "Login result: ${response.body()}")
+                    Toast.makeText(context, "Account created!", Toast.LENGTH_SHORT).show()
+                    navController.navigate(route = Screen.LoginScreen.route)
                 }else{
-                    Log.e("LoginViewModel", "Login failed: ${response?.code()} - ${response?.message()}")
-                    throw error(message = "Login failed")
+                    Toast.makeText(context, "Failed!\n${response?.code()} - ${response?.message()}", Toast.LENGTH_SHORT).show()
                 }
-            }catch (e: Exception){
-                //TODO
-            }
         }
 
     }
