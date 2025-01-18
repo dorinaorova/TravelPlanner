@@ -3,6 +3,7 @@ package com.dipterv.dipterv.controller
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.LoginDTO
 import com.dipterv.dipterv.model.dto.UserDTO
+import com.dipterv.dipterv.model.dto.UserInfoDTO
 import com.dipterv.dipterv.model.requestModel.LoginRequest
 import com.dipterv.dipterv.model.requestModel.RegisterRequest
 import com.dipterv.dipterv.repository.UserRepository
@@ -34,7 +35,7 @@ class AuthController(
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody registerRequest: RegisterRequest): User {
+    fun register(@RequestBody registerRequest: RegisterRequest): UserInfoDTO {
         val encodedPassword = passwordEncoder.encode(registerRequest.password)
         return userService.register(registerRequest, encodedPassword)
     }
