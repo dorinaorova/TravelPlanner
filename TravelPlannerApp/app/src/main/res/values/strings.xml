@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TravelPlannerApp</string>
+    <string name="BASE_URL">https://60df-2001-4c4e-1e18-a600-7ca0-3353-d7a0-69cc.ngrok-free.app/</string>
 </resources>
