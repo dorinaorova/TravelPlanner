@@ -1,13 +1,10 @@
 package com.androidlab.travelplannerapp.data.interceptor
 
 import android.content.Context
-import android.util.Log
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.RefreshTokenRequest
 import com.google.gson.Gson
-import okhttp3.FormBody
 import okhttp3.Interceptor
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -17,7 +14,7 @@ import org.json.JSONObject
 
 class TokenInterceptor(private val context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        if(chain.request().url.encodedPath.contains("login") || chain.request().url.encodedPath.contains("register")){
+        if(chain.request().url.encodedPath.contains("auth")){
             return chain.proceed(chain.request())
         }else{
             val sharedPreferences = context.applicationContext.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
@@ -25,12 +22,17 @@ class TokenInterceptor(private val context: Context) : Interceptor {
             val request: Request = chain.request()
             val response = chain.proceed(request)
             if(response.code == 401){
-
-
                 if (refreshToken != null){
                     val token = refreshApiCall(refreshToken)
-                    saveAccessToken(token!!)
+                    response.close()
+                    if(token != null){
+                        val newRequest = request.newBuilder()
+                            .header("Authorization", "Bearer $token")
+                            .build()
+                        return chain.proceed(newRequest)
+                    }
                 }
+
             }
             return response
         }
@@ -39,6 +41,11 @@ class TokenInterceptor(private val context: Context) : Interceptor {
     fun saveAccessToken(accessToken: String) {
         val sharedPreferences = context.applicationContext.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
         sharedPreferences.edit().putString("jwt_token", accessToken).apply()
+    }
+
+    fun saveRefreshToken(accessToken: String) {
+        val sharedPreferences = context.applicationContext.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("refresh_token", accessToken).apply()
     }
 
     fun refreshApiCall(refreshToken: String): String? {
@@ -62,14 +69,15 @@ class TokenInterceptor(private val context: Context) : Interceptor {
         client.newCall(request).execute().use { response ->
             if (response.isSuccessful) {
                 val jsonResponse = JSONObject(response.body!!.string())
-                val newAccessToken = jsonResponse.getString("accessToken")
+                val newAccessToken = jsonResponse.getString("jwt")
+                val newRefreshToken = jsonResponse.getString("refreshToken")
                 saveAccessToken(newAccessToken)
+                saveRefreshToken(newRefreshToken)
                 return newAccessToken
             }
         }
         return null
     }
 }
-
 
 

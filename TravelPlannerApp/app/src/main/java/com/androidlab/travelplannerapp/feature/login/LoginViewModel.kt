@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.androidlab.travelplannerapp.domain.usecases.auth.CheckRefreshTokenUseCase
 import com.androidlab.travelplannerapp.domain.usecases.auth.SignInUseCase
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.sharedUtils.getRefreshToken
@@ -19,13 +20,18 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
+    private val checkRefreshTokenUseCase: CheckRefreshTokenUseCase
 ): ViewModel() {
 
     fun checkRefreshToken(context: Context, navController: NavController){
         viewModelScope.launch {
             val refreshToken = getRefreshToken(context)
            if(refreshToken != null){
-               navController.navigate(route = Screen.HomeScreen.route)
+               val call = checkRefreshTokenUseCase(refreshToken)
+               val isRefreshTokenExpired = call?.awaitResponse()!!.body() as Boolean
+               if(isRefreshTokenExpired){
+                    navController.navigate(route = Screen.HomeScreen.route)
+               }
            }
         }
     }
