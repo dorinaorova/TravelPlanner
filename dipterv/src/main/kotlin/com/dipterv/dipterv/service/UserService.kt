@@ -44,11 +44,6 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         return mapper.userToUserInfoDTO(userRepository.save(newUser))
     }
 
-    fun login(loginRequest: LoginRequest, token: String): LoginDTO{
-        val user = findByUsername(loginRequest.userName)
-        return LoginDTO(user._id!!,token )
-    }
-
     fun getAll(): List<UserInfoDTO>{
         return userRepository.findAll().map{
             user-> mapper.userToUserInfoDTO(user)
@@ -71,8 +66,8 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         }
     }
 
-    private fun findByUsername(username: String) : User{
-        return userRepository.findByUsername(username)!!
+    fun findByUsername(username: String) : User?{
+        return userRepository.findByUsername(username)
     }
 
     fun nameFilter(name: String, users: List<UserInfoDTO>) : List<UserInfoDTO>{

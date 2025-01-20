@@ -11,25 +11,30 @@ import kotlin.collections.HashMap
 @Component
 class JwtUtil {
     private val SECRET_KEY = Base64.getEncoder().encodeToString("dGhlc2VjcmV0c3RyZW5ndGhlbGVzdGluaXQ==".toByteArray())
-    private val EXPIRATION_TIME: Long = 1000 * 60 * 60 * 10
+    private val EXPIRATION_TIME: Long = 1000 * 60 * 10  //10 min
+    private val REFRESH_EXPIRATION_TIME :Long =  7 * 24 * 60 * 60 * 1000 // 7 days
 
     fun generateToken(username: String): String {
         val claims = HashMap<String, Any>()
-        return createToken(claims, username)
+        return createToken(claims, username, EXPIRATION_TIME)
     }
 
-    private fun createToken(claims: Map<String, Any>, subject: String): String {
-        val now = Date(System.currentTimeMillis())
-        val expiryDate = Date(now.time + EXPIRATION_TIME)
+    fun generateRefreshToken(username: String): String {
+        return createToken(emptyMap(), username, REFRESH_EXPIRATION_TIME)
+    }
 
-        val key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY)) // Consistently use the secret key for signing
+    private fun createToken(claims: Map<String, Any>, subject: String, expirationTime: Long): String {
+        val now = Date(System.currentTimeMillis())
+        val expiryDate = Date(now.time + expirationTime)
+
+        val key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY))
 
         return Jwts.builder()
             .setClaims(claims)
             .setSubject(subject)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
-            .signWith(key, SignatureAlgorithm.HS256) // Make sure to use the key here
+            .signWith(key, SignatureAlgorithm.HS256)
             .compact()
     }
 
@@ -44,7 +49,7 @@ class JwtUtil {
 
     fun extractAllClaims(token: String): Claims {
         try {
-            val key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY)) // Use the same key for verification
+            val key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY))
             return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

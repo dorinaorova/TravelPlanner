@@ -27,6 +27,12 @@ class JwtRequestFilter(
 
         var username: String? = null
         var jwt: String? = null
+        val uri = request.requestURI
+
+        if (uri.startsWith("/auth/")) {
+            filterChain.doFilter(request, response)
+            return
+        }
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7)

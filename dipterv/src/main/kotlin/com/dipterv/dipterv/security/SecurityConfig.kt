@@ -31,15 +31,15 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter){
             .cors { cors ->
                 cors.configurationSource { request ->
                     CorsConfiguration().apply {
-                        allowedOrigins = listOf("*") // Replace "*" with specific origins for production
+                        allowedOrigins = listOf("*")
                         allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         allowedHeaders = listOf("*")
-                        allowCredentials = false // Set to true only if credentials (cookies) are needed
+                        allowCredentials = false
                     }
                 }
             }
             .sessionManagement { session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Set session as stateless
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authorizeHttpRequests {
                 it
@@ -51,7 +51,6 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter){
                     ).permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .anyRequest().authenticated()
-                    //.anyRequest().permitAll()
             }
             .anonymous { it.disable() }
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
