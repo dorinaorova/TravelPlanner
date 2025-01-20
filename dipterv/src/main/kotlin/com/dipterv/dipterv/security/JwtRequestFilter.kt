@@ -1,6 +1,7 @@
 package com.dipterv.dipterv.security
 
 import com.dipterv.dipterv.service.UserService
+import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -23,6 +24,8 @@ class JwtRequestFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        try{
+
         val authorizationHeader = request.getHeader("Authorization")
 
         var username: String? = null
@@ -34,20 +37,33 @@ class JwtRequestFilter(
             return
         }
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7)
-            username = jwtUtil.extractUsername(jwt)
-        }
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                jwt = authorizationHeader.substring(7)
+                try {
+                    username = jwtUtil.extractUsername(jwt)
+                } catch (e: ExpiredJwtException) {
+                    response.status = HttpServletResponse.SC_UNAUTHORIZED
+                    response.writer.write("Token is expired")
+                    return
+                }
+            }
 
-        if (username != null && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails: UserDetails = userDetailsService.loadUserByUsername(username)
+            if (username != null && SecurityContextHolder.getContext().authentication == null) {
+                val userDetails: UserDetails = userDetailsService.loadUserByUsername(username)
+                if (!jwtUtil.validateToken(jwt!!, userDetails.username)) {
+                    response.status = HttpServletResponse.SC_UNAUTHORIZED
+                    response.writer.write("Invalid token")
+                    return
+                }
 
-            if (jwtUtil.validateToken(jwt!!, userDetails.username)) {
                 val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
                 SecurityContextHolder.getContext().authentication = authentication
             }
-        }
 
         filterChain.doFilter(request, response)
+        }catch(e: Exception){
+            response.status = HttpServletResponse.SC_FORBIDDEN
+            response.writer.write(e.message ?: "Invalid token")
+        }
     }
 }
