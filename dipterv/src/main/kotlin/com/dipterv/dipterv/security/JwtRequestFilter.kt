@@ -61,7 +61,11 @@ class JwtRequestFilter(
             }
 
         filterChain.doFilter(request, response)
-        }catch(e: Exception){
+        }catch (e: ExpiredJwtException){
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            response.writer.write("Token is expired")
+        }
+        catch(e: Exception){
             response.status = HttpServletResponse.SC_FORBIDDEN
             response.writer.write(e.message ?: "Invalid token")
         }

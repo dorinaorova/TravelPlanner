@@ -48,12 +48,13 @@ class AuthController(
     fun refreshToken(@RequestBody request: RefreshTokenRequest): ResponseEntity<Any> {
         val refreshToken = request.refreshToken
         val username = jwtUtil.extractUsername(refreshToken)
+        println(jwtUtil.validateToken(refreshToken, username))
         if (username != null && jwtUtil.validateToken(refreshToken, username)) {
             val userDetails = userService.loadUserByUsername(username)
             val newAccessToken = jwtUtil.generateToken(userDetails.username)
             return ResponseEntity.ok(mapOf("accessToken" to newAccessToken))
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid refresh token")
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token")
     }
 
     @PostMapping("/register")
