@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature
+package com.androidlab.travelplannerapp.feature.search
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -29,6 +29,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
@@ -54,7 +56,10 @@ import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 
 @Composable
-fun SearchScreen(navController: NavController){
+fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewModel()){
+    LaunchedEffect(Unit, block ={
+        vm.getAllTravel()
+    })
 
     Scaffold(
         content={paddingValues ->

@@ -24,6 +24,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,10 @@ import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
 fun LoginScreen(navController: NavController, vm : LoginViewModel = hiltViewModel()){
+    val context = LocalContext.current
+    LaunchedEffect(Unit, block ={
+        vm.checkRefreshToken(context, navController)
+    })
             Box(modifier = Modifier
                 .fillMaxSize(), contentAlignment = Alignment.Center
             ) {

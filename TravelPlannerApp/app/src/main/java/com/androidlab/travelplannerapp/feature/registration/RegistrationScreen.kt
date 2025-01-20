@@ -34,7 +34,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.feature.login.LoginScreen
 import com.androidlab.travelplannerapp.feature.utils.InputField
 
 

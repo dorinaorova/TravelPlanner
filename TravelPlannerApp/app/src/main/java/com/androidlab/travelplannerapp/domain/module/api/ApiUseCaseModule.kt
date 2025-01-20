@@ -1,8 +1,11 @@
-package com.androidlab.travelplannerapp.domain.module.auth
+package com.androidlab.travelplannerapp.domain.module.api
 
 import android.content.Context
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.auth.AuthService
+import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
+import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
+import com.androidlab.travelplannerapp.data.travel.TravelService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,17 +19,20 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object UseCaseModule {
-
+class ApiUseCaseModule {
     @Provides
     @Singleton
     fun provideRetrofit(@ApplicationContext context: Context): Retrofit {
         val BASE_URL = context.getString(R.string.BASE_URL)
         val logging = HttpLoggingInterceptor()
         logging.level = HttpLoggingInterceptor.Level.BODY // Logs request and response bodies
+        val authInterceptor = AuthInterceptor(context)
+        val tokenInterceptor = TokenInterceptor(context)
 
         val client = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .addInterceptor(authInterceptor)
+            .addInterceptor(tokenInterceptor)
             .build()
 
         val retrofit = Retrofit.Builder()
@@ -41,5 +47,11 @@ object UseCaseModule {
     @Singleton
     fun provideAuthService(retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTravelService(retrofit: Retrofit): TravelService {
+        return retrofit.create(TravelService::class.java)
     }
 }
