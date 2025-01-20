@@ -1,0 +1,232 @@
+package com.androidlab.travelplannerapp.feature
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.navigation.Screen
+import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.utils.SmallHeader
+
+@Composable
+fun VacationScreen(navController: NavController){
+    Scaffold(
+        content = { paddingValues ->
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)) {
+                Details(navController)
+            }
+        },
+        bottomBar ={
+            NavBar(navController)
+        }
+    )
+}
+
+@Composable
+private fun Details(navController: NavController){
+    Box(Modifier.fillMaxSize()){
+        val scroll = rememberScrollState(0)
+        Header(navController)
+        Body(scroll, navController)
+    }
+}
+
+@Composable
+private fun Header(navController: NavController){
+    Box(modifier = Modifier
+        .fillMaxSize()) {
+        Image(
+            painterResource(id = R.drawable.image),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .blur(5.dp),
+        )
+        Column(Modifier.padding(top = 75.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
+            Text(
+                "Krakow",
+                color = colorResource(id = R.color.primary_text),
+                fontSize = 36.sp,
+                modifier = Modifier.padding(start = 25.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun Body(scroll: ScrollState, navController: NavController){
+    Column{
+        Spacer(
+            Modifier
+                .height(160.dp)
+                .fillMaxWidth())
+        Column(
+            Modifier
+                .verticalScroll(scroll)
+                .fillMaxWidth()
+                .background(
+                    colorResource(id = R.color.primary_background),
+                    shape = RoundedCornerShape(size = 30.dp)
+                )){
+            TravelBuddies(navController)
+            Payments(navController)
+            Plan()
+            Tickets(navController )
+        }}
+}
+
+@Composable
+private fun TravelBuddies(navController: NavController){
+    val items= arrayOf("Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips")
+    SmallHeader("Your travel buddies")
+    LazyRow(
+        Modifier
+            .fillMaxWidth()
+            .padding(end = 25.dp, start = 30.dp)){
+        items(items) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                        .clickable { navController.navigate(Screen.ProfileScreen.route) }) {
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = null,
+                    modifier= Modifier
+                        .clip(CircleShape)
+                        .height(40.dp)
+                        .padding(bottom = 3.dp)
+                )
+                Text(it)
+            }
+        }
+    }
+    TextButton(onClick = { /*TODO*/ }) {
+        Text("Add new member",
+            color= colorResource(id = R.color.secondary_text),
+            modifier=Modifier.padding(end=25.dp, start=25.dp))
+    }
+}
+
+@Composable
+private fun Payments(navController: NavController){
+    Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route)  }){
+        SmallHeader("Payments")
+        Row(verticalAlignment = Alignment.Top,
+            modifier=Modifier.padding(horizontal=30.dp)){
+            Column(horizontalAlignment = Alignment.CenterHorizontally){
+                Text("Emma",
+                    fontSize=14.sp)
+                Text("15$",
+                    color= colorResource(id = R.color.primary),
+                    fontWeight= FontWeight.Bold)
+            }
+            Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_forward),
+                contentDescription = null,
+                tint= colorResource(id = R.color.primary),
+                modifier= Modifier
+                    .height(30.dp)
+                    .width(30.dp))
+            Text("You",
+                fontSize=14.sp)
+        }
+        Row(Modifier.padding(horizontal=30.dp)){
+            Text("You are in: ")
+            Text("+15$",
+                color= colorResource(id = R.color.primary))
+        }
+    }
+}
+
+@Composable
+private fun Plan(){
+    Column{
+        SmallHeader("What's the plan?")
+        Box(
+            Modifier
+                .padding(start = 25.dp, end = 25.dp, bottom = 25.dp, top = 10.dp)
+                .fillMaxWidth()
+                .height(200.dp)
+                .background(
+                    colorResource(id = R.color.primary),
+                    shape = RoundedCornerShape(size = 30.dp)
+                ))
+    }
+}
+
+@Composable
+private fun Tickets(navController: NavController){
+    Box(Modifier.clickable { navController.navigate(Screen.TicketsScreen.route) }) {
+        SmallHeader("Tickets")
+    }
+    LazyRow(
+        Modifier
+            .fillMaxWidth()
+            .padding(end = 25.dp, start = 30.dp, bottom = 30.dp)){
+        items(6) {
+            Box(modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .size(80.dp, 60.dp)
+                .background(
+                    colorResource(id = R.color.secondary),
+                    shape = RoundedCornerShape(15.dp)
+                )) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxSize()){
+                    Text("Museum",
+                        fontSize=14.sp)
+                    Text("Emma",
+                        fontSize=10.sp)
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+@Preview(showBackground =  true)
+fun VacationScreenPreview(){
+    VacationScreen(navController = rememberNavController())
+}

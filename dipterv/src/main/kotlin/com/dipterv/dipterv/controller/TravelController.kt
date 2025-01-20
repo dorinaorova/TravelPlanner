@@ -1,22 +1,19 @@
 package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
+import com.dipterv.dipterv.model.documentModel.Ticket
 import com.dipterv.dipterv.model.dto.TravelDTO
 import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.service.FileService
+import com.dipterv.dipterv.service.TicketService
 import com.dipterv.dipterv.service.TravelService
-import com.dipterv.dipterv.service.UserService
 import org.springframework.core.io.Resource
-import org.springframework.core.io.UrlResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 
 
@@ -24,8 +21,8 @@ import java.nio.file.Paths
 @RequestMapping("/travel")
 class TravelController(
     private val travelService: TravelService,
-    private val userService: UserService,
-    private val fileService: FileService
+    private val fileService: FileService,
+    private val ticketService: TicketService
 ) {
 
     @GetMapping("/all")
@@ -40,25 +37,25 @@ class TravelController(
     ) : ResponseEntity<List<TravelInfoDTO>> {
         var travels = travelService.getAllTravels()
         maxPrice?.let {
-            travels= travelService.maxCostFiler(maxPrice, travels)
+            travels= travelService.maxCostFiler(it, travels)
         }
         minPrice?.let {
-            travels = travelService.minCostFilter(minPrice, travels)
+            travels = travelService.minCostFilter(it, travels)
         }
         tags?.let {
-            travels = travelService.tagFilter(tags, travels)
+            travels = travelService.tagFilter(it, travels)
         }
         minDays?.let {
-            travels = travelService.minDaysFilter(minDays, travels)
+            travels = travelService.minDaysFilter(it, travels)
         }
         maxDays?.let{
-            travels = travelService.maxDaysFilter(maxDays, travels)
+            travels = travelService.maxDaysFilter(it, travels)
         }
         name?.let {
-            travels= travelService.nameFilter(name, travels)
+            travels= travelService.nameFilter(it, travels)
         }
         location?.let{
-            travels = travelService.locationFilter(location, travels)
+            travels = travelService.locationFilter(it, travels)
         }
         return ResponseEntity.ok(travels)
     }
@@ -66,7 +63,7 @@ class TravelController(
     @GetMapping("/user/{id}")
     fun getMyTravels(@PathVariable("id") id: String) : ResponseEntity<*>{
         try{
-            val travels = userService.findMyTravels(id)
+            val travels = travelService.findMyTravels(id)
             return ResponseEntity(travels, HttpStatus.OK)
         }catch (e: NotFoundException){
             return ResponseEntity(e, HttpStatus.NOT_FOUND)
@@ -125,4 +122,23 @@ class TravelController(
         headers.contentType = MediaType.IMAGE_JPEG
         return ResponseEntity.ok().headers(headers).body(image)
     }
+
+    @PostMapping("/ticket/upload/{id}")
+    fun uploadTicket(@RequestPart("file") file: MultipartFile, @RequestBody ticket: Ticket, @PathVariable("id") id: String): ResponseEntity<*>{
+        val newTicket = ticketService.saveTicket(ticket, file, id)
+        return ResponseEntity(newTicket, HttpStatus.CREATED)
+    }
+
+    @GetMapping("/ticket/{id}")
+    fun getTicketById(@PathVariable("id") id: String) : ResponseEntity<*> {
+        val file = ticketService.findTicketById(id)
+        return ResponseEntity(file, HttpStatus.OK)
+    }
+
+    @GetMapping("/ticket/travel/{id}")
+    fun getTicketByTravelId(@PathVariable("id") id: String) : ResponseEntity<*> {
+        val tickets = ticketService.ticketsForTravel(id)
+        return ResponseEntity(tickets, HttpStatus.OK)
+    }
+
 }

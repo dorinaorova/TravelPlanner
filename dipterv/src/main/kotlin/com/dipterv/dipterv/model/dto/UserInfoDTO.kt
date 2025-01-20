@@ -9,5 +9,5 @@ data class UserInfoDTO(
     val email: String,
     val description: String?,
     val profilePictureFilePath: String?,
-    val travels: List<Travel>?
+    val travelIds: List<String>?
     )
