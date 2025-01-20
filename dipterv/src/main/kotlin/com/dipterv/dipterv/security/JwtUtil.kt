@@ -11,7 +11,7 @@ import kotlin.collections.HashMap
 @Component
 class JwtUtil {
     private val SECRET_KEY = Base64.getEncoder().encodeToString("dGhlc2VjcmV0c3RyZW5ndGhlbGVzdGluaXQ==".toByteArray())
-    private val EXPIRATION_TIME: Long = 1000 * 60 * 10  //10 min
+    private val EXPIRATION_TIME: Long = 1000 * 60 * 1  //10 min
     private val REFRESH_EXPIRATION_TIME :Long =  7 * 24 * 60 * 60 * 1000 // 7 days
 
     fun generateToken(username: String): String {
@@ -48,16 +48,12 @@ class JwtUtil {
     }
 
     fun extractAllClaims(token: String): Claims {
-        try {
             val key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY))
             return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .body
-        } catch (e: Exception) {
-            throw RuntimeException("Error decoding JWT: ${e.message}")
-        }
     }
 
     private fun isTokenExpired(token: String): Boolean {
