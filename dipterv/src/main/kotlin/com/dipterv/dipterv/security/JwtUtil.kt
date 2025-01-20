@@ -11,8 +11,8 @@ import kotlin.collections.HashMap
 @Component
 class JwtUtil {
     private val SECRET_KEY = Base64.getEncoder().encodeToString("dGhlc2VjcmV0c3RyZW5ndGhlbGVzdGluaXQ==".toByteArray())
-    private val EXPIRATION_TIME: Long = 1000 * 60 * 1  //10 min
-    private val REFRESH_EXPIRATION_TIME :Long =  7 * 24 * 60 * 60 * 1000 // 7 days
+    private val EXPIRATION_TIME: Long = 1000 * 60 *10  //10 min
+    private val REFRESH_EXPIRATION_TIME :Long = 7 * 24 * 60 * 60 * 1000 // 7 days
 
     fun generateToken(username: String): String {
         val claims = HashMap<String, Any>()
@@ -56,7 +56,7 @@ class JwtUtil {
                 .body
     }
 
-    private fun isTokenExpired(token: String): Boolean {
+    fun isTokenExpired(token: String): Boolean {
         return extractAllClaims(token).expiration.before(Date())
     }
 }
