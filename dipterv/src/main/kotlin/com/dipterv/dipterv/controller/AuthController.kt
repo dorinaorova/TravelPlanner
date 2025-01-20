@@ -52,7 +52,8 @@ class AuthController(
         if (username != null && jwtUtil.validateToken(refreshToken, username)) {
             val userDetails = userService.loadUserByUsername(username)
             val newAccessToken = jwtUtil.generateToken(userDetails.username)
-            return ResponseEntity.ok(mapOf("accessToken" to newAccessToken))
+            val newRefreshToken = jwtUtil.generateRefreshToken(userDetails.username)
+            return ResponseEntity.ok(LoginDTO("", newAccessToken, newRefreshToken))
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token")
     }
@@ -61,5 +62,18 @@ class AuthController(
     fun register(@RequestBody registerRequest: RegisterRequest): UserInfoDTO {
         val encodedPassword = passwordEncoder.encode(registerRequest.password)
         return userService.register(registerRequest, encodedPassword)
+    }
+
+    @PostMapping("/refresh-token/check")
+    fun checkRefreshToken(@RequestBody request: RefreshTokenRequest) : Boolean{
+        try{
+
+        val token = request.refreshToken
+        val isRefreshTokenExpired = jwtUtil.validateToken(token, jwtUtil.extractUsername(token))
+        return  isRefreshTokenExpired
+        }catch(e:Exception){
+            return false
+        }
+
     }
 }
