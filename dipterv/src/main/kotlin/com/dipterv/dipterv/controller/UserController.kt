@@ -5,6 +5,7 @@ import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.FollowDTO
 import com.dipterv.dipterv.model.dto.UserDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
+import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
 import com.dipterv.dipterv.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -41,7 +42,7 @@ class UserController
     }
 
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable("id") id: String, @RequestBody user: User) : ResponseEntity<UserInfoDTO>{
+    fun updateUser(@PathVariable("id") id: String, @RequestBody user: UserUpdateRequest) : ResponseEntity<UserInfoDTO>{
         try{
             val updatedUser = userService.updateUser(id, user)
             return ResponseEntity(updatedUser, HttpStatus.OK)

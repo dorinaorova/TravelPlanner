@@ -10,6 +10,8 @@ data class User(
         val password: String,
         var name: String,
         var email: String,
+        var city: String?,
+        var country: String?,
         var description: String?,
         val profilePictureFilePath: String?,
         val travelIds: List<String>,
