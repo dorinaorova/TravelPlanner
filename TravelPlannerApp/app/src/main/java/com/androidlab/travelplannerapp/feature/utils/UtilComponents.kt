@@ -2,6 +2,7 @@ package com.androidlab.travelplannerapp.feature.utils
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,27 +71,28 @@ fun TopBar(label: String, navController: NavController, route: String){
 }
 
 @Composable
-fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false){
+fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = colorResource(id = R.color.primary_background), lines: Int = 1){
     val focusManager = LocalFocusManager.current
-    val value=_value
+    Column{
     androidx.compose.material3.Text(
         label,
         fontSize = 15.sp,
         fontWeight = FontWeight.Medium,
-        color = if(isError){Color.Red}else{colorResource(id = R.color.primary_background)},
+        color = if(isError){Color.Red}else{labelColor},
         modifier = Modifier.padding(start = 15.dp)
     )
     Spacer(Modifier.height(5.dp))
     BasicTextField(
-        value = value.value,
-        onValueChange = { value.value = it },
-        maxLines = 1,
+        value = _value.value,
+        onValueChange = { _value.value = it },
+        maxLines = lines,
+        minLines = lines,
         textStyle = TextStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium,
             color = colorResource(id = R.color.primary)
         ),
-        visualTransformation = visualTransformation?: VisualTransformation.None,
+        visualTransformation = visualTransformation ?: VisualTransformation.None,
         keyboardOptions = keyboardOptions,
         keyboardActions = KeyboardActions(
             onNext = {
@@ -107,17 +109,17 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
                     )
                     .border(
                         width = 2.dp,
-                        color = if(isError){
-                            Color.Red}
-                        else{
+                        color = if (isError) {
+                            Color.Red
+                        } else {
                             colorResource(id = R.color.primary)
                         },
                         shape = RoundedCornerShape(size = 10.dp)
 
-                    ) .padding(10.dp),
+                    ).padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if(icon!=null){
+                if (icon != null) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
@@ -129,4 +131,5 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
             }
         }
     )
+    }
 }

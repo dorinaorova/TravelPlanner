@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature
+package com.androidlab.travelplannerapp.feature.userProfile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -24,14 +24,22 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -39,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
@@ -90,7 +99,7 @@ private fun Header(){
 }
 
 @Composable
-private fun Body(scroll: ScrollState, navController: NavController){
+private fun Body(scroll: ScrollState, navController: NavController, vm: UserProfileViewModel = hiltViewModel()){
     val headerSize=100.dp
     val imageSize= 150.dp
     val padding=headerSize-imageSize/2
@@ -110,12 +119,46 @@ private fun Body(scroll: ScrollState, navController: NavController){
             ) {
                 Row(Modifier.fillMaxWidth().padding(end=10.dp, top=10.dp, bottom=25.dp),
                     horizontalArrangement = Arrangement.End){
-                    IconButton(onClick = { /*TODO*/ }) {
+                    val menuExpanded = remember { mutableStateOf(false) }
+                    val context = LocalContext.current
+                    Box{
+                    IconButton(onClick = { menuExpanded.value= true }) {
                         Icon(
-                            imageVector= ImageVector.vectorResource(id = R.drawable.baseline_edit_24),
+                            imageVector= Icons.Rounded.MoreVert,
                             contentDescription = null,
                             tint= colorResource(id = R.color.primary)
                         )
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded.value,
+                        onDismissRequest = { menuExpanded.value = false },
+                        modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                    ){
+                        DropdownMenuItem(
+                            text = { Text("Edit") },
+                            onClick = {
+                                menuExpanded.value = false
+                                navController.navigate(Screen.UserUpdateScreen.route)
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
+                                    contentDescription = null
+                                )},
+                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Log out") },
+                            onClick = {
+                                menuExpanded.value = false
+                                vm.logout(context, navController)
+                            },
+                            leadingIcon = {
+                                Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
+                            },
+                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                        )
+                    }
                     }
                 }
                 Column(Modifier.fillMaxSize(),
