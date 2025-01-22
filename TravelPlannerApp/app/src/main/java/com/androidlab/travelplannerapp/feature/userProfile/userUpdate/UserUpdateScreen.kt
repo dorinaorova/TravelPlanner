@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.userProfile.userUpdate
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +39,7 @@ import com.androidlab.travelplannerapp.feature.utils.InputField
 import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
-fun UserUpdateScreen(navController: NavController, vm: UserUpdateViewModel = hiltViewModel()){
+fun UserUpdateScreen(navController: NavController){
     Scaffold(
         content = { paddingValues ->
             Box(modifier = Modifier
@@ -87,7 +89,7 @@ private fun Form(){
     val city = remember { mutableStateOf("") }
     val country = remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
             InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = colorResource(R.color.primary))

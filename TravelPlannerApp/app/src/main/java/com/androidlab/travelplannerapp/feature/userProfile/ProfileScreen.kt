@@ -25,12 +25,13 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MailOutline
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -56,7 +57,11 @@ import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 
 @Composable
-fun ProfileScreen(navController: NavController){
+fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileViewModel = hiltViewModel()){
+    val context = LocalContext.current
+    LaunchedEffect(Unit){
+        vm.loadUserData(id, context)
+    }
     Scaffold(
         content = { paddingValues ->
             Box(modifier = Modifier
@@ -163,16 +168,32 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: UserProf
                 }
                 Column(Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally){
-                    Text("Emma Philips",
+                    Text(vm.user.name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp
                     )
-                    Text("Los Angeles, CA",
+                    Text(vm.user.username,
                         fontSize = 12.sp,
                         color = colorResource(id = R.color.secondary_text)
                     )
-                    Text("Cat ipsum dolor sit amet, why must they do that or eat a rug and furry furry hairs everywhere oh no human coming lie on counter don't get off counter sit on the laptop",
-                        modifier = Modifier.padding(start=25.dp, end=25.dp, top = 15.dp))
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
+                        Row(verticalAlignment = Alignment.CenterVertically){
+                            Icon(imageVector = Icons.Rounded.MailOutline, contentDescription = null,tint= colorResource(id = R.color.primary))
+                            Text(vm.user.email,
+                                modifier = Modifier.padding(start=5.dp))
+                        }
+                        if(vm.user.city != null || vm.user.country != null)
+                        Row(verticalAlignment = Alignment.CenterVertically){
+                            Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_public_24), contentDescription = null,tint= colorResource(id = R.color.primary))
+                            Text("${vm.user.city}, ${vm.user.country}",
+                                modifier = Modifier.padding(start=5.dp))
+                        }
+
+                    }
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
+                        Text("About me", fontWeight = FontWeight.Thin, color = colorResource(id = R.color.primary))
+                        Text(vm.user.description?:"...")
+                    }
                     CustomDivider()
                     Row(modifier = Modifier
                         .padding(horizontal = 25.dp)
@@ -265,7 +286,7 @@ private fun TravelItem(navController: NavController){
 @Composable
 @Preview(showBackground =  true)
 fun ProfileScreenPreview(){
-    ProfileScreen(navController = rememberNavController())
+    ProfileScreen(navController = rememberNavController(), null)
 }
 
 private data class Item(val value: Int, val label: String)

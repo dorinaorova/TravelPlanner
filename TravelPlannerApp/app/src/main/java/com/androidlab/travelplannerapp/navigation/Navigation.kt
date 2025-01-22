@@ -35,8 +35,9 @@ fun Navigation(navController: NavHostController){
         composable(route = Screen.PaymentsScreen.route){
             PaymentsScreen(navController = navController)
         }
-        composable(route = Screen.ProfileScreen.route){
-            ProfileScreen(navController = navController)
+        composable(route = Screen.ProfileScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            ProfileScreen(navController = navController, id = id)
         }
         composable(route= Screen.TicketsScreen.route){
             TicketsScreen(navController = navController)
