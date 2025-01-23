@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
@@ -88,18 +89,31 @@ private fun Details(navController: NavController){
 }
 
 @Composable
-private fun Header(){
+private fun Header(vm: UserProfileViewModel = hiltViewModel()){
     Box(modifier = Modifier
         .fillMaxSize()) {
-        Image(
-            painterResource(id = R.drawable.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .blur(5.dp),
-        )
+        if(vm.user.backgroundPictureFilePath != ""){
+            val context = LocalContext.current
+            AsyncImage(
+                model = vm.backgroundPicturePath(context),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .blur(5.dp),
+            )
+        }else{
+            Image(
+                painterResource(id = R.drawable.image),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .blur(5.dp),
+            )
+        }
     }
 }
 
@@ -241,13 +255,24 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: UserProf
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Image(
-                    painterResource(id = R.drawable.profile),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(imageSize)
-                        .clip(CircleShape)
-                )
+                if(vm.user.profilePictureFilePath != ""){
+                    val context = LocalContext.current
+                    AsyncImage(
+                        model=vm.profilePictureFilePath(context),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(imageSize)
+                            .clip(CircleShape).clickable { }
+                    )
+                }else {
+                    Image(
+                        painterResource(id = R.drawable.blank_profile),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(imageSize)
+                            .clip(CircleShape).clickable { }
+                    )
+                }
             }
         }
     }

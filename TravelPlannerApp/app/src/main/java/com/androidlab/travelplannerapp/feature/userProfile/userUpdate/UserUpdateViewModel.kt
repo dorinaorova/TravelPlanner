@@ -21,7 +21,7 @@ class UserUpdateViewModel @Inject constructor(
     private val updateUserUseCase: UpdateUserUseCase,
     private val getUserDataUseCase: GetUserDataUseCase
 ) : ViewModel(){
-    private var _user = mutableStateOf(UserInfo("","","","","","", emptyList(), "", ""))
+    private var _user = mutableStateOf(UserInfo("","","","","","", "",emptyList(), "", ""))
     private var _id = mutableStateOf("")
 
     val user: UserInfo
@@ -43,7 +43,7 @@ class UserUpdateViewModel @Inject constructor(
     fun updateUser(name: String, email: String, description: String?, city: String?, country: String?, navController: NavController){
         viewModelScope.launch {
             val updateUser =
-                UserInfo("", "", name, email, description, "", emptyList(), city, country)
+                UserInfo("", "", name, email, description, "", "",emptyList(), city, country)
             val call = updateUserUseCase(_id.value, updateUser)
             val response = call?.awaitResponse()
             if(response?.isSuccessful == true){

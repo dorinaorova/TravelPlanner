@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import com.androidlab.travelplannerapp.navigation.Screen
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class UserProfileViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase
 ) : ViewModel() {
-    private var _user = mutableStateOf(UserInfo("","","","","","", emptyList(), "", ""))
+    private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", ""))
 
     val user: UserInfo
         get() = _user.value
@@ -45,5 +46,16 @@ class UserProfileViewModel @Inject constructor(
                 _user.value=response.body()!!
             }
         }
+    }
+
+    fun backgroundPicturePath(context: Context): String{
+        val BASE_URL = context.getString(R.string.BASE_URL)
+        return BASE_URL+"user/image/background/"+user.backgroundPictureFilePath
+    }
+
+    fun profilePictureFilePath(context: Context): String{
+        val BASE_URL = context.getString(R.string.BASE_URL)
+        return BASE_URL+"user/image/profile/"+user.profilePictureFilePath
+
     }
 }
