@@ -6,15 +6,21 @@ import com.dipterv.dipterv.model.dto.FollowDTO
 import com.dipterv.dipterv.model.dto.UserDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
 import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
+import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.UserService
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import java.nio.file.Paths
 
 @RestController
 @RequestMapping("/user")
 class UserController
-(val userService: UserService)
+(val userService: UserService, private val fileService: FileService,)
 {
 
     @GetMapping("/all")
@@ -81,5 +87,33 @@ class UserController
     fun addUser(@RequestBody user: UserInfoDTO) : ResponseEntity<User>{
         val newUser = userService.add(user)
         return ResponseEntity(newUser,HttpStatus.CREATED)
+    }
+    @PostMapping("/image/upload/{id}/profile")
+    fun uploadProfilePicture(@RequestPart("file") file: MultipartFile, @PathVariable("id") id: String) : ResponseEntity<*> {
+        val fileName = fileService.uploadFile(file, Paths.get("user/profile"), id)
+        val updatedUser = userService.uploadProfilePicture(id, fileName)
+        return ResponseEntity.ok(updatedUser)
+    }
+    @PostMapping("/image/upload/{id}/background")
+    fun uploadBackgroundPicture(@RequestPart("file") file: MultipartFile, @PathVariable("id") id: String) : ResponseEntity<*> {
+        val fileName = fileService.uploadFile(file, Paths.get("user/background"), id)
+        val updatedUser = userService.uploadBackgroundPicture(id, fileName)
+        return ResponseEntity.ok(updatedUser)
+    }
+
+    @GetMapping("image/background/{name}")
+    fun loadBackgroundPicture(@PathVariable("name") name: String) : ResponseEntity<Resource> {
+        val image = fileService.downloadFile( Paths.get("user/background"), name)
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.IMAGE_JPEG
+        return ResponseEntity.ok().headers(headers).body(image)
+    }
+
+    @GetMapping("image/profile/{name}")
+    fun loadProfilePicture(@PathVariable("name") name: String) : ResponseEntity<Resource> {
+        val image = fileService.downloadFile( Paths.get("user/profile"), name)
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.IMAGE_JPEG
+        return ResponseEntity.ok().headers(headers).body(image)
     }
 }

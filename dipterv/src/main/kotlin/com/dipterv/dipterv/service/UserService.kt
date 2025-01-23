@@ -5,16 +5,12 @@ import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.*
-import com.dipterv.dipterv.model.requestModel.LoginRequest
 import com.dipterv.dipterv.model.requestModel.RegisterRequest
 import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
-import com.dipterv.dipterv.repository.TravelRepository
 import com.dipterv.dipterv.repository.UserRepository
-import org.springframework.boot.autoconfigure.security.oauth2.server.servlet.OAuth2AuthorizationServerProperties.Registration
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import kotlin.math.log
 
 @Service
 class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : UserDetailsService {
@@ -35,6 +31,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
             password,
             registration.name,
             registration.email,
+            "",
             "",
             "",
             "",
@@ -146,5 +143,27 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         val updatedTravelList = user.travelIds.toMutableList().apply { add(travel._id!!) }
         user = user.copy(travelIds = updatedTravelList)
         userRepository.save(user)
+    }
+
+    fun uploadProfilePicture(id: String, profilePictureFilePath: String) : UserInfoDTO{
+        try {
+            val findUser = findById(id)
+            findUser.profilePictureFilePath = profilePictureFilePath
+            val savedUser = userRepository.save(findUser)
+            return mapper.userToUserInfoDTO(savedUser)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
+    }
+
+    fun uploadBackgroundPicture(id: String, backgroundPictureFilePath: String) : UserInfoDTO{
+        try {
+            val findUser = findById(id)
+            findUser.backgroundPictureFilePath = backgroundPictureFilePath
+            val savedUser = userRepository.save(findUser)
+            return mapper.userToUserInfoDTO(savedUser)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
     }
 }
