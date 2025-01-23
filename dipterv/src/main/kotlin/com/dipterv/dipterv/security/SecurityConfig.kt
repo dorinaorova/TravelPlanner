@@ -51,6 +51,7 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter){
                     ).permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .anyRequest().authenticated()
+//                    .anyRequest().permitAll()
             }
             .anonymous { it.disable() }
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
