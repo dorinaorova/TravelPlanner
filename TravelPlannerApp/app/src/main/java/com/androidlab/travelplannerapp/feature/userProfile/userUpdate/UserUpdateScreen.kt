@@ -22,11 +22,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,14 +41,18 @@ import com.androidlab.travelplannerapp.feature.utils.InputField
 import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
-fun UserUpdateScreen(navController: NavController){
+fun UserUpdateScreen(navController: NavController, vm: UserUpdateViewModel = hiltViewModel()){
+    val context = LocalContext.current
+    LaunchedEffect(Unit){
+        vm.fetchData(context)
+    }
     Scaffold(
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)) {
                 Column{
-                    Form()
+                    Form(navController= navController)
                 }
             }
         },
@@ -83,16 +89,19 @@ private fun TopBar(navController: NavController){
 
 
 @Composable
-private fun Form(){
-    val name = remember { mutableStateOf("") }
-    val description = remember { mutableStateOf("") }
-    val city = remember { mutableStateOf("") }
-    val country = remember { mutableStateOf("") }
+private fun Form(vm: UserUpdateViewModel = hiltViewModel(), navController: NavController){
+    val name = remember(vm.user.name) { mutableStateOf(vm.user.name) }
+    val description = remember(vm.user.description?: "") { mutableStateOf(vm.user.description?: "") }
+    val email = remember(vm.user.email) { mutableStateOf(vm.user.email) }
+    val city = remember(vm.user.city?: "") { mutableStateOf(vm.user.city?: "") }
+    val country = remember(vm.user.country?: "") { mutableStateOf(vm.user.country?: "") }
 
     Box(modifier = Modifier.fillMaxSize().background(Color.White)){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
             InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = colorResource(R.color.primary))
+            Spacer(Modifier.height(20.dp))
+            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), null, "Email", labelColor = colorResource(R.color.primary))
             Spacer(Modifier.height(20.dp))
             InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = colorResource(R.color.primary), lines = 4)
             Spacer(Modifier.height(20.dp))
@@ -100,7 +109,7 @@ private fun Form(){
             Spacer(Modifier.height(20.dp))
             InputField(country, KeyboardOptions(imeAction = ImeAction.Done), null, "Country",labelColor = colorResource(R.color.primary))
             Spacer(Modifier.height(20.dp))
-            Button(onClick = { /*TODO*/ },
+            Button(onClick = { vm.updateUser(name.value, email.value, description.value, city.value, country.value, navController) },
                 Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.primary),
