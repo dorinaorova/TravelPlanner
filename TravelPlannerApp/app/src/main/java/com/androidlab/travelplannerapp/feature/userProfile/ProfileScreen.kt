@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.feature.userProfile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -255,23 +257,34 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: UserProf
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
+                Box(
+                    Modifier
+                        .width(150.dp)
+                        .height(150.dp)
+                        .clip(CircleShape)
+                        .border(5.dp, Color.White, CircleShape)
+                ){
+
                 if(vm.user.profilePictureFilePath != ""){
                     val context = LocalContext.current
                     AsyncImage(
                         model=vm.profilePictureFilePath(context),
                         contentDescription = null,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .height(imageSize)
-                            .clip(CircleShape).clickable { }
+                            .fillMaxSize()
+                            .clickable { }
                     )
                 }else {
                     Image(
                         painterResource(id = R.drawable.blank_profile),
                         contentDescription = null,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .height(imageSize)
-                            .clip(CircleShape).clickable { }
+                            .fillMaxSize()
+                            .clickable { }
                     )
+                }
                 }
             }
         }

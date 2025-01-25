@@ -56,6 +56,5 @@ class UserProfileViewModel @Inject constructor(
     fun profilePictureFilePath(context: Context): String{
         val BASE_URL = context.getString(R.string.BASE_URL)
         return BASE_URL+"user/image/profile/"+user.profilePictureFilePath
-
     }
 }
