@@ -53,7 +53,10 @@ class DTOMapper {
             user.email,
             user.description,
             user.profilePictureFilePath,
-            user.travelIds
+            user.backgroundPictureFilePath,
+            user.travelIds,
+            user.country,
+            user.city
         )
     }
 

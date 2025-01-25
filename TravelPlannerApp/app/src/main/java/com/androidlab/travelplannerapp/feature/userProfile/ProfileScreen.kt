@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature
+package com.androidlab.travelplannerapp.feature.userProfile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -24,14 +24,23 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MailOutline
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -39,15 +48,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 
 @Composable
-fun ProfileScreen(navController: NavController){
+fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileViewModel = hiltViewModel()){
+    val context = LocalContext.current
+    LaunchedEffect(Unit){
+        vm.loadUserData(id, context)
+    }
     Scaffold(
         content = { paddingValues ->
             Box(modifier = Modifier
@@ -74,23 +89,36 @@ private fun Details(navController: NavController){
 }
 
 @Composable
-private fun Header(){
+private fun Header(vm: UserProfileViewModel = hiltViewModel()){
     Box(modifier = Modifier
         .fillMaxSize()) {
-        Image(
-            painterResource(id = R.drawable.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .blur(5.dp),
-        )
+        if(vm.user.backgroundPictureFilePath != ""){
+            val context = LocalContext.current
+            AsyncImage(
+                model = vm.backgroundPicturePath(context),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .blur(5.dp),
+            )
+        }else{
+            Image(
+                painterResource(id = R.drawable.image),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .blur(5.dp),
+            )
+        }
     }
 }
 
 @Composable
-private fun Body(scroll: ScrollState, navController: NavController){
+private fun Body(scroll: ScrollState, navController: NavController, vm: UserProfileViewModel = hiltViewModel()){
     val headerSize=100.dp
     val imageSize= 150.dp
     val padding=headerSize-imageSize/2
@@ -110,26 +138,76 @@ private fun Body(scroll: ScrollState, navController: NavController){
             ) {
                 Row(Modifier.fillMaxWidth().padding(end=10.dp, top=10.dp, bottom=25.dp),
                     horizontalArrangement = Arrangement.End){
-                    IconButton(onClick = { /*TODO*/ }) {
+                    val menuExpanded = remember { mutableStateOf(false) }
+                    val context = LocalContext.current
+                    Box{
+                    IconButton(onClick = { menuExpanded.value= true }) {
                         Icon(
-                            imageVector= ImageVector.vectorResource(id = R.drawable.baseline_edit_24),
+                            imageVector= Icons.Rounded.MoreVert,
                             contentDescription = null,
                             tint= colorResource(id = R.color.primary)
                         )
                     }
+                    DropdownMenu(
+                        expanded = menuExpanded.value,
+                        onDismissRequest = { menuExpanded.value = false },
+                        modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                    ){
+                        DropdownMenuItem(
+                            text = { Text("Edit") },
+                            onClick = {
+                                menuExpanded.value = false
+                                navController.navigate(Screen.UserUpdateScreen.route)
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
+                                    contentDescription = null
+                                )},
+                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Log out") },
+                            onClick = {
+                                menuExpanded.value = false
+                                vm.logout(context, navController)
+                            },
+                            leadingIcon = {
+                                Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
+                            },
+                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                        )
+                    }
+                    }
                 }
                 Column(Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally){
-                    Text("Emma Philips",
+                    Text(vm.user.name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp
                     )
-                    Text("Los Angeles, CA",
+                    Text(vm.user.username,
                         fontSize = 12.sp,
                         color = colorResource(id = R.color.secondary_text)
                     )
-                    Text("Cat ipsum dolor sit amet, why must they do that or eat a rug and furry furry hairs everywhere oh no human coming lie on counter don't get off counter sit on the laptop",
-                        modifier = Modifier.padding(start=25.dp, end=25.dp, top = 15.dp))
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
+                        Row(verticalAlignment = Alignment.CenterVertically){
+                            Icon(imageVector = Icons.Rounded.MailOutline, contentDescription = null,tint= colorResource(id = R.color.primary))
+                            Text(vm.user.email,
+                                modifier = Modifier.padding(start=5.dp))
+                        }
+                        if(vm.user.city != null || vm.user.country != null)
+                        Row(verticalAlignment = Alignment.CenterVertically){
+                            Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_public_24), contentDescription = null,tint= colorResource(id = R.color.primary))
+                            Text("${vm.user.city}, ${vm.user.country}",
+                                modifier = Modifier.padding(start=5.dp))
+                        }
+
+                    }
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
+                        Text("About me", fontWeight = FontWeight.Thin, color = colorResource(id = R.color.primary))
+                        Text(vm.user.description?:"...")
+                    }
                     CustomDivider()
                     Row(modifier = Modifier
                         .padding(horizontal = 25.dp)
@@ -177,13 +255,24 @@ private fun Body(scroll: ScrollState, navController: NavController){
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Image(
-                    painterResource(id = R.drawable.profile),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(imageSize)
-                        .clip(CircleShape)
-                )
+                if(vm.user.profilePictureFilePath != ""){
+                    val context = LocalContext.current
+                    AsyncImage(
+                        model=vm.profilePictureFilePath(context),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(imageSize)
+                            .clip(CircleShape).clickable { }
+                    )
+                }else {
+                    Image(
+                        painterResource(id = R.drawable.blank_profile),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(imageSize)
+                            .clip(CircleShape).clickable { }
+                    )
+                }
             }
         }
     }
@@ -222,7 +311,7 @@ private fun TravelItem(navController: NavController){
 @Composable
 @Preview(showBackground =  true)
 fun ProfileScreenPreview(){
-    ProfileScreen(navController = rememberNavController())
+    ProfileScreen(navController = rememberNavController(), null)
 }
 
 private data class Item(val value: Int, val label: String)

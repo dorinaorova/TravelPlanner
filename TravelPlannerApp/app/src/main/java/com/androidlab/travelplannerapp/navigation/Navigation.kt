@@ -7,12 +7,13 @@ import androidx.navigation.compose.composable
 import com.androidlab.travelplannerapp.feature.HomeScreen
 import com.androidlab.travelplannerapp.feature.login.LoginScreen
 import com.androidlab.travelplannerapp.feature.PaymentsScreen
-import com.androidlab.travelplannerapp.feature.ProfileScreen
+import com.androidlab.travelplannerapp.feature.userProfile.ProfileScreen
 import com.androidlab.travelplannerapp.feature.search.SearchScreen
 import com.androidlab.travelplannerapp.feature.TravelProfileScreen
 import com.androidlab.travelplannerapp.feature.VacationScreen
 import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
 import com.androidlab.travelplannerapp.feature.ticket.TicketsScreen
+import com.androidlab.travelplannerapp.feature.userProfile.userUpdate.UserUpdateScreen
 
 @Composable
 fun Navigation(navController: NavHostController){
@@ -34,8 +35,9 @@ fun Navigation(navController: NavHostController){
         composable(route = Screen.PaymentsScreen.route){
             PaymentsScreen(navController = navController)
         }
-        composable(route = Screen.ProfileScreen.route){
-            ProfileScreen(navController = navController)
+        composable(route = Screen.ProfileScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            ProfileScreen(navController = navController, id = id)
         }
         composable(route= Screen.TicketsScreen.route){
             TicketsScreen(navController = navController)
@@ -45,6 +47,9 @@ fun Navigation(navController: NavHostController){
         }
         composable(route=Screen.RegistrationScreen.route){
             RegistrationScreen(navController = navController)
+        }
+        composable(route=Screen.UserUpdateScreen.route){
+            UserUpdateScreen(navController = navController)
         }
     }
 }

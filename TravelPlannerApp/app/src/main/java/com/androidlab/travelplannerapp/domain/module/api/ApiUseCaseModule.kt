@@ -6,6 +6,7 @@ import com.androidlab.travelplannerapp.data.auth.AuthService
 import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
 import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
 import com.androidlab.travelplannerapp.data.travel.TravelService
+import com.androidlab.travelplannerapp.data.user.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -54,4 +55,10 @@ class ApiUseCaseModule {
     fun provideTravelService(retrofit: Retrofit): TravelService {
         return retrofit.create(TravelService::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
+    }
+
 }

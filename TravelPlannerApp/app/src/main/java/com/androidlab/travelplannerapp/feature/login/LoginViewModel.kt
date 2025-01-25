@@ -3,7 +3,6 @@ package com.androidlab.travelplannerapp.feature.login
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,11 +24,12 @@ class LoginViewModel @Inject constructor(
 
     fun checkRefreshToken(context: Context, navController: NavController){
         viewModelScope.launch {
+
             val refreshToken = getRefreshToken(context)
            if(refreshToken != null){
                val call = checkRefreshTokenUseCase(refreshToken)
-               val isRefreshTokenExpired = call?.awaitResponse()!!.body() as Boolean
-               if(isRefreshTokenExpired){
+               val isRefreshTokenValid = call?.awaitResponse()!!.body() as Boolean
+               if(isRefreshTokenValid){
                     navController.navigate(route = Screen.HomeScreen.route)
                }
            }
@@ -43,10 +43,12 @@ class LoginViewModel @Inject constructor(
                 if(response?.isSuccessful == true){
                     val token = response.body()!!.jwt
                     val refreshToken = response.body()!!.refreshToken
-                    var sharedPref : SharedPreferences = context.applicationContext.getSharedPreferences("AUTH_PREF",MODE_PRIVATE)
-                    var editor : SharedPreferences.Editor = sharedPref.edit()
+                    val id = response.body()!!.id
+                    val sharedPref : SharedPreferences = context.applicationContext.getSharedPreferences("AUTH_PREF",MODE_PRIVATE)
+                    val editor : SharedPreferences.Editor = sharedPref.edit()
                     editor.putString("jwt_token", token).apply()
                     editor.putString("refresh_token", refreshToken).apply()
+                    editor.putString("id", id).apply()
                     navController.navigate(route = Screen.HomeScreen.route)
                 }else{
                     Toast.makeText(context, "Login failed\n" +
