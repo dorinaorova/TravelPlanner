@@ -50,6 +50,7 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter){
                         "/webjars/**"
                     ).permitAll()
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/user/image/**").permitAll()
                     .anyRequest().authenticated()
 //                    .anyRequest().permitAll()
             }
