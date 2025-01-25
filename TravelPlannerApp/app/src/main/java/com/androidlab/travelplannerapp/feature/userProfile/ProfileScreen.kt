@@ -33,6 +33,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -61,9 +62,11 @@ import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 
 @Composable
 fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileViewModel = hiltViewModel()){
+    val ownProfile = remember { mutableStateOf(false) }
     val context = LocalContext.current
     LaunchedEffect(Unit){
         vm.loadUserData(id, context)
+        ownProfile.value = vm.ownProfile(id, context)
     }
     Scaffold(
         content = { paddingValues ->
@@ -71,7 +74,7 @@ fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileView
                 .fillMaxSize()
                 .padding(paddingValues)) {
                 Column{
-                    Details(navController)
+                    Details(navController, ownProfile)
                 }
             }
         },
@@ -82,11 +85,11 @@ fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileView
 }
 
 @Composable
-private fun Details(navController: NavController){
+private fun Details(navController: NavController, ownProfile: MutableState<Boolean>){
     Box(Modifier.fillMaxSize()){
         val scroll = rememberScrollState(0)
         Header()
-        Body(scroll, navController)
+        Body(scroll, navController, ownProfile)
     }
 }
 
@@ -120,7 +123,7 @@ private fun Header(vm: UserProfileViewModel = hiltViewModel()){
 }
 
 @Composable
-private fun Body(scroll: ScrollState, navController: NavController, vm: UserProfileViewModel = hiltViewModel()){
+private fun Body(scroll: ScrollState, navController: NavController, ownProfile: MutableState<Boolean>, vm: UserProfileViewModel = hiltViewModel()){
     val headerSize=100.dp
     val imageSize= 150.dp
     val padding=headerSize-imageSize/2
@@ -138,50 +141,73 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: UserProf
                         shape = RoundedCornerShape(size = 30.dp)
                     )
             ) {
+
                 Row(Modifier.fillMaxWidth().padding(end=10.dp, top=10.dp, bottom=25.dp),
                     horizontalArrangement = Arrangement.End){
                     val menuExpanded = remember { mutableStateOf(false) }
                     val context = LocalContext.current
+                    if(ownProfile.value){
                     Box{
-                    IconButton(onClick = { menuExpanded.value= true }) {
-                        Icon(
-                            imageVector= Icons.Rounded.MoreVert,
-                            contentDescription = null,
-                            tint= colorResource(id = R.color.primary)
-                        )
+                        IconButton(onClick = { menuExpanded.value= true }) {
+                            Icon(
+                                imageVector= Icons.Rounded.MoreVert,
+                                contentDescription = null,
+                                tint= colorResource(id = R.color.primary)
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded.value,
+                            onDismissRequest = { menuExpanded.value = false },
+                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                        ){
+                            DropdownMenuItem(
+                                text = { Text("Edit") },
+                                onClick = {
+                                    menuExpanded.value = false
+                                    navController.navigate(Screen.UserUpdateScreen.route)
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
+                                        contentDescription = null
+                                    )},
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Log out") },
+                                onClick = {
+                                    menuExpanded.value = false
+                                    vm.logout(context, navController)
+                                },
+                                leadingIcon = {
+                                    Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
+                                },
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            )
+                        }
                     }
-                    DropdownMenu(
-                        expanded = menuExpanded.value,
-                        onDismissRequest = { menuExpanded.value = false },
-                        modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                    ){
-                        DropdownMenuItem(
-                            text = { Text("Edit") },
-                            onClick = {
-                                menuExpanded.value = false
-                                navController.navigate(Screen.UserUpdateScreen.route)
-                            },
-                            leadingIcon = {
+                        }
+                    else{
+                        Box {
+                            val liked  = if (true) {
+                                ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+                            }else {
+                                ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                            }
+                            IconButton(onClick = { /*TODO*/ }, Modifier.padding(end=20.dp)) {
                                 Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
-                                    contentDescription = null
-                                )},
-                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Log out") },
-                            onClick = {
-                                menuExpanded.value = false
-                                vm.logout(context, navController)
-                            },
-                            leadingIcon = {
-                                Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
-                            },
-                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                        )
-                    }
+                                    imageVector = liked,
+                                    contentDescription = "like",
+                                    tint = colorResource(id = R.color.primary),
+                                    modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                )
+                            }
+                        }
                     }
                 }
+
                 Column(Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally){
                     Text(vm.user.name,

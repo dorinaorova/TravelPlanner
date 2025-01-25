@@ -61,8 +61,8 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.UserInfo
-import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
 fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewModel()){
@@ -248,7 +248,9 @@ private fun UserListItem(navController: NavController, user: UserInfo, vm: Searc
         Modifier
             .padding(16.dp)
             .fillMaxWidth()
-        .clickable { navController.navigate(Screen.ProfileScreen.route) },
+        .clickable {
+            navController.navigate(Screen.ProfileScreen.route+"?id=${user._id}")
+                   },
         horizontalArrangement = Arrangement.SpaceBetween){
         Row {
             Box(

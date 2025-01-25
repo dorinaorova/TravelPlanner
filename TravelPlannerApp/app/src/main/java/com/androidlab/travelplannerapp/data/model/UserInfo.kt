@@ -1,7 +1,7 @@
 package com.androidlab.travelplannerapp.data.model
 
 data class UserInfo(
-    val get_id: String?,
+    val _id: String?,
     val username: String,
     val name: String,
     val email: String,
