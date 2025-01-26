@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.feature.search
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -30,15 +33,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -51,16 +58,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.navigation.Screen
+import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
 fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewModel()){
-    LaunchedEffect(Unit, block ={
-        vm.getAllTravel()
-    })
-
+    val travelPicked = remember { mutableStateOf(false) }
     Scaffold(
         content={paddingValues ->
             Box(modifier = Modifier
@@ -68,9 +74,13 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
                 .padding(paddingValues)
                 .background(colorResource(id = R.color.primary_background))) {
                 Column{
-                    SearchBar()
-                    FilterBtn()
-                    SearchResultList(navController)
+                    SearchBar(travelPicked)
+                    if(travelPicked.value){
+                        FilterBtn()
+                        TravelSearchResultList(navController)
+                    }else{
+                        UserSearchResultList(navController)
+                    }
                 }
             }
         },
@@ -81,11 +91,12 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
 }
 
 @Composable
-fun SearchBar(){
+fun SearchBar(travelPicked: MutableState<Boolean>, vm: SearchViewModel = hiltViewModel()){
     Box(Modifier.background(colorResource(id = R.color.secondary))){
         Column{
             Row (Modifier.padding(top=10.dp, end=15.dp, start=15.dp)){
                 var value by remember { mutableStateOf("") }
+                val keyboardController = LocalSoftwareKeyboardController.current
                 BasicTextField(
                     value = value,
                     onValueChange = { value = it },
@@ -97,7 +108,10 @@ fun SearchBar(){
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
-                        onSearch = {}
+                        onSearch = {
+                            vm.searchUser(value)
+                            keyboardController?.hide()
+                        }
                     ),
                     decorationBox = { innerTextField ->
                         Row(
@@ -121,17 +135,16 @@ fun SearchBar(){
                     }
                 )
             }
-            TravelOrUserPicker()
+            TravelOrUserPicker(travelPicked)
         }
     }
 }
 
 @Composable
-fun TravelOrUserPicker(){
-    var travelPicked = true
+fun TravelOrUserPicker(travelPicked: MutableState<Boolean>){
     val travelBtnColor: Color
     val userBtnColor : Color
-    if(travelPicked){
+    if(travelPicked.value){
         travelBtnColor= colorResource(id = R.color.primary_background)
         userBtnColor= colorResource(id = R.color.primary_text)
     }
@@ -142,11 +155,11 @@ fun TravelOrUserPicker(){
 
     Row(Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly){
-        TextButton(onClick = { travelPicked=true }) {
+        TextButton(onClick = { travelPicked.value=true }) {
             Text(text = "Travel",
                 color = travelBtnColor)
         }
-        TextButton(onClick = { travelPicked=false }) {
+        TextButton(onClick = { travelPicked.value=false }) {
             Text(text = "User",
                 color = userBtnColor)
         }
@@ -174,7 +187,7 @@ private fun FilterBtn(){
 }
 
 @Composable
-fun TravelListItem(navController: NavController) {
+private fun TravelListItem(navController: NavController) {
     Row(
         Modifier
             .padding(16.dp)
@@ -230,10 +243,87 @@ fun TravelListItem(navController: NavController) {
 }
 
 @Composable
-fun SearchResultList(navController: NavController){
+private fun UserListItem(navController: NavController, user: UserInfo, vm: SearchViewModel = hiltViewModel()){
+    Row(
+        Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+        .clickable {
+            navController.navigate(Screen.ProfileScreen.route+"?id=${user._id}")
+                   },
+        horizontalArrangement = Arrangement.SpaceBetween){
+        Row {
+            Box(
+                Modifier
+                    .width(60.dp)
+                    .height(60.dp)
+                    .clip(CircleShape)
+                    .border(3.dp, Color.White, CircleShape)
+            ) {
+                if(user.profilePictureFilePath != ""){
+                    AsyncImage(
+                        model = vm.profilePictureFilePath(context = LocalContext.current, user.profilePictureFilePath!!),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }else{
+                    Image(
+                        painterResource(id = R.drawable.blank_profile),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+            Column {
+                Text(user.username,
+                    fontSize = 18.sp)
+                Text(user.name,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start=8.dp))
+            }
+        }
+        Box {
+            val liked  = if (true) {
+                ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+            }else {
+                ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+            }
+            IconButton(onClick = { /*TODO*/ }, Modifier.padding(end=20.dp)) {
+                Icon(
+                    imageVector = liked,
+                    contentDescription = "like",
+                    tint = colorResource(id = R.color.primary),
+                    modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TravelSearchResultList(navController: NavController, vm: SearchViewModel = hiltViewModel()){
+    LaunchedEffect(Unit, block ={
+        vm.getAllTravel()
+    })
     LazyColumn {
         items(1) { item ->
             TravelListItem(navController)
+        }
+    }
+}
+
+@Composable
+private fun UserSearchResultList(navController: NavController, vm: SearchViewModel = hiltViewModel()){
+    LaunchedEffect(Unit, block ={
+        vm.getAllUsers()
+    })
+    LazyColumn {
+        items(vm.users) { item ->
+            UserListItem(navController, item)
         }
     }
 }

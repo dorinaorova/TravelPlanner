@@ -56,6 +56,12 @@ class UserProfileViewModel @Inject constructor(
     fun profilePictureFilePath(context: Context): String{
         val BASE_URL = context.getString(R.string.BASE_URL)
         return BASE_URL+"user/image/profile/"+user.profilePictureFilePath
+    }
 
+    fun ownProfile(id: String?, context: Context): Boolean{
+        val sharedPreferences =
+            context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
+        val savedId = sharedPreferences.getString("id", null)
+        return id == null || id == savedId
     }
 }
