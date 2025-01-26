@@ -13,6 +13,8 @@ import com.androidlab.travelplannerapp.feature.TravelProfileScreen
 import com.androidlab.travelplannerapp.feature.VacationScreen
 import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
 import com.androidlab.travelplannerapp.feature.ticket.TicketsScreen
+import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageScreen
+import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.userProfile.userUpdate.UserUpdateScreen
 
 @Composable
@@ -50,6 +52,11 @@ fun Navigation(navController: NavHostController){
         }
         composable(route=Screen.UserUpdateScreen.route){
             UserUpdateScreen(navController = navController)
+        }
+        composable(route = Screen.UploadImageScreen.route+"?id={id}&uploadImageType={uploadImageType}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            val uploadImageType = backStackEntry.arguments?.getString("uploadImageType")
+            UploadImageScreen(navController = navController, id = id, uploadImageTypeString = uploadImageType!!)
         }
     }
 }

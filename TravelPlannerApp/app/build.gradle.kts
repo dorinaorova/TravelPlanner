@@ -87,4 +87,5 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.0.0-rc01")
 
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 }

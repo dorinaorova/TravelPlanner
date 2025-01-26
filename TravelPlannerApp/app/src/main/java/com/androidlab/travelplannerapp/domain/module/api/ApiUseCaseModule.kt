@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.domain.module.api
 import android.content.Context
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.auth.AuthService
+import com.androidlab.travelplannerapp.data.image.ImageService
 import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
 import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
 import com.androidlab.travelplannerapp.data.travel.TravelService
@@ -16,6 +17,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -40,6 +42,7 @@ class ApiUseCaseModule {
             .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(ScalarsConverterFactory.create())
             .build()
         return retrofit
     }
@@ -59,6 +62,12 @@ class ApiUseCaseModule {
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageService(retrofit: Retrofit): ImageService {
+        return retrofit.create(ImageService::class.java)
     }
 
 }

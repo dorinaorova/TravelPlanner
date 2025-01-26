@@ -71,7 +71,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
     }
 
     fun nameFilter(name: String, users: List<UserInfoDTO>) : List<UserInfoDTO>{
-        return users.filter{it.name.contains(name, true) }
+        return users.filter{it.username.contains(name, true) }
     }
 
     fun updateUser(id:String, user : UserUpdateRequest) : UserInfoDTO{
@@ -89,54 +89,38 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         }
     }
 
-    fun followUser(follow: FollowDTO) : UserDTO{
+    fun followUser(follow: FollowDTO) : UserInfoDTO{
+        if(follow.followedId != follow.followerId ){
             var followerUser = findById(follow.followerId)
             var followedUser = findById(follow.followedId)
             val updatedFollowingList = followerUser.followingIds.toMutableList().apply { add(followedUser._id!!) }
-            followerUser = followedUser.copy(followingIds = updatedFollowingList)
+            followerUser = followerUser.copy(followingIds = updatedFollowingList)
 
             val updatedFollowersList = followedUser.followerIds.toMutableList().apply { add(followerUser._id!!) }
             followedUser = followedUser.copy(followerIds = updatedFollowersList)
 
-            val updated = userRepository.save(followerUser)
-            userRepository.save(followedUser)
+            userRepository.save(followerUser)
+            val updated = userRepository.save(followedUser)
 
-            return mapper.userToUserDTO(updated)
+            return mapper.userToUserInfoDTO(updated)
+        }else{
+            throw  Exception("The follow and follower ids can not be the same!")
+        }
     }
 
-    fun unfollowUser(follow: FollowDTO) : UserDTO{
+    fun unfollowUser(follow: FollowDTO) : UserInfoDTO{
         var followerUser = findById(follow.followerId)
         var unfollowedUser = findById(follow.followedId)
-        val updateFollowingList = followerUser.followingIds.toMutableList().apply { remove(followerUser._id!!) }
+        val updateFollowingList = followerUser.followingIds.toMutableList().apply { remove(unfollowedUser._id!!) }
         followerUser = followerUser.copy(followingIds = updateFollowingList)
 
         val updatedFollowersList = unfollowedUser.followerIds.toMutableList().apply { remove(followerUser._id!!) }
         unfollowedUser = unfollowedUser.copy(followerIds = updatedFollowersList)
-        val updated = userRepository.save(followerUser)
-        userRepository.save(unfollowedUser)
-        return UserDTO(
-            updated._id,
-            mapper.userToUserInfoDTO(updated),
-            updated.followingIds,
-            updated.followerIds)
+        userRepository.save(followerUser)
+        val updated = userRepository.save(unfollowedUser)
+        return mapper.userToUserInfoDTO(updated)
     }
 
-    fun add(user: UserInfoDTO): User? {
-        return null
-//        val newUser = User(
-//            null,
-//            user.username,
-//            user.name,
-//            user.email,
-//            user.description,
-//            user.profilePictureFilePath,
-//            emptyList(),
-//            emptyList(),
-//            emptyList(),
-//            emptyList()
-//        )
-//        return userRepository.save(newUser)
-    }
 
     fun addTravel(id: String, travel: Travel){
         var user = findById(id)
