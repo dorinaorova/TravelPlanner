@@ -175,6 +175,19 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                                 modifier = Modifier.background(colorResource(id = R.color.primary_text))
                             )
                             DropdownMenuItem(
+                                text={ Text("Upload background image") },
+                                onClick = {
+                                    menuExpanded.value = false
+                                    navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.BACKGROUND}")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
+                                        contentDescription = null
+                                    )},
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            )
+                            DropdownMenuItem(
                                 text = { Text("Log out") },
                                 onClick = {
                                     menuExpanded.value = false

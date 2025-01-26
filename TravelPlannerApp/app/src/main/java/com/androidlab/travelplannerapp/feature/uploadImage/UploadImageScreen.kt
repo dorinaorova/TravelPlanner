@@ -1,15 +1,19 @@
 package com.androidlab.travelplannerapp.feature.uploadImage
 
-import android.content.Intent.parseUri
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,10 +29,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
@@ -49,9 +55,10 @@ fun UploadImageScreen(navController: NavController, id: String?, uploadImageType
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)) {
+                .padding(paddingValues)
+                .background(colorResource(id = R.color.primary_background))) {
                 Column{
-                    Body(navController)
+                    Body(uploadImageType)
                 }
             }
         },
@@ -59,22 +66,22 @@ fun UploadImageScreen(navController: NavController, id: String?, uploadImageType
             TopBar(navController, uploadImageType)
         },
         bottomBar ={
-            BottomBar(navController)
+            BottomBar(uploadImageType, navController)
         }
     )
 }
 
 @Composable
-private fun Body(navController: NavController, vm: UploadImageViewModel = hiltViewModel()){
+private fun Body(uploadImageType:UploadImageType ,vm: UploadImageViewModel = hiltViewModel()){
     val pickImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         vm.imageUri = uri
     }
 
-    Row {
+    Column(Modifier.fillMaxWidth()){
         Button(onClick = {
             pickImageLauncher.launch("image/*")
         },
-            modifier=Modifier.padding(20.dp),
+            modifier=Modifier.padding(20.dp).align(Alignment.CenterHorizontally),
             shape = RoundedCornerShape(16.dp),
             colors= ButtonDefaults.buttonColors(containerColor = colorResource(R.color.secondary))
         ) {
@@ -88,20 +95,26 @@ private fun Body(navController: NavController, vm: UploadImageViewModel = hiltVi
     }
 
     vm.imageUri?.let{
-        AsyncImage(
-            model = vm.imageUri,
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(16.dp),
-        )
+        Row( modifier= Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center){
+            val modifierForProfilePicture = Modifier.width(300.dp).height(300.dp).clip(CircleShape).border(5.dp, Color.White, CircleShape)
+            Box(modifier = if(uploadImageType == UploadImageType.PROFILE) modifierForProfilePicture else Modifier.fillMaxWidth(0.9f)){
+                AsyncImage(
+                    model = vm.imageUri,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+            )
+            }
+        }
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navController: NavController, uploadImageType: UploadImageType ,vm: UploadImageViewModel = hiltViewModel()){
+private fun TopBar(navController: NavController, uploadImageType: UploadImageType){
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(onClick = {
@@ -131,22 +144,25 @@ private fun TopBar(navController: NavController, uploadImageType: UploadImageTyp
 }
 
 @Composable
-private fun BottomBar(navController: NavController, vm: UploadImageViewModel = hiltViewModel()){
+private fun BottomBar(uploadImageType: UploadImageType, navController: NavController, vm: UploadImageViewModel = hiltViewModel()){
     val context = LocalContext.current
     BottomAppBar(
         containerColor = colorResource(id = R.color.primary),
-        contentColor = colorResource(id = R.color.primary_text),
         content = {
+            Column(Modifier.fillMaxWidth()) {
+
             Button(
                 onClick = {
-                    vm.uploadImage(context)
+                    vm.uploadImage(context, uploadImageType, navController)
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.primary),
+                    containerColor = colorResource(id = R.color.secondary),
                     contentColor = colorResource(id = R.color.primary_text)
-                )
+                ),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text("Upload")
+            }
             }
         }
 
