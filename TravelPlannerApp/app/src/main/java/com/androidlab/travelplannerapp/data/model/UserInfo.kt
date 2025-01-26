@@ -10,8 +10,8 @@ data class UserInfo(
     val backgroundPictureFilePath: String?,
     val travelIds: List<String>?,
     val city: String?,
-    val country: String?
+    val country: String?,
 //    val participatedTravelIds: List<String>?,
-//    val followingIds: List<String>?,
-//    val followerIds: List<String>?
+    val followingIds: List<String>?,
+    val followerIds: List<String>?
 )

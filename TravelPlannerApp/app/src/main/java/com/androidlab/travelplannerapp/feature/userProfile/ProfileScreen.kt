@@ -58,6 +58,7 @@ import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 
 @Composable
@@ -242,9 +243,9 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         .fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly){
                         val items=arrayOf(
-                            Item(200, "follower"),
-                            Item(115, "following"),
-                            Item(15, "travel")
+                            Item(vm.user.followerIds?.size ?:0, "follower"),
+                            Item(vm.user.followingIds?.size ?: 0, "following"),
+                            Item(vm.user.travelIds?.size ?: 0, "travel")
                         )
 
                         items.forEach {
@@ -289,6 +290,9 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         .height(150.dp)
                         .clip(CircleShape)
                         .border(5.dp, Color.White, CircleShape)
+                        .clickable {
+                            navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.PROFILE}")
+                        }
                 ){
 
                 if(vm.user.profilePictureFilePath != ""){
@@ -299,7 +303,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
-                            .clickable { }
+
                     )
                 }else {
                     Image(
@@ -308,7 +312,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxSize()
-                            .clickable { }
+
                     )
                 }
                 }
