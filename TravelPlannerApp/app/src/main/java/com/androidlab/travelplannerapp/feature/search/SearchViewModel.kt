@@ -5,11 +5,17 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.FollowRequest
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchTravelUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchUserUseCase
+import com.androidlab.travelplannerapp.domain.usecases.user.IsFollowerUseCase
+import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
+import com.androidlab.travelplannerapp.feature.utils.isFollower
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import retrofit2.Call
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
@@ -39,7 +45,6 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
 
             }
         }
-
     }
 
     fun searchUser(name: String){
@@ -53,8 +58,4 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
         }
     }
 
-    fun profilePictureFilePath(context: Context, filePath: String): String{
-        val BASE_URL = context.getString(R.string.BASE_URL)
-        return BASE_URL+"user/image/profile/"+filePath
-    }
 }

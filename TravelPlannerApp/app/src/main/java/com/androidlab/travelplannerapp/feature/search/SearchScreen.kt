@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
@@ -62,6 +63,10 @@ import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.utils.CustomDivider
+import com.androidlab.travelplannerapp.feature.utils.isFollower
+import com.androidlab.travelplannerapp.feature.utils.ownProfile
+import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
 import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
@@ -262,7 +267,7 @@ private fun UserListItem(navController: NavController, user: UserInfo, vm: Searc
             ) {
                 if(user.profilePictureFilePath != ""){
                     AsyncImage(
-                        model = vm.profilePictureFilePath(context = LocalContext.current, user.profilePictureFilePath!!),
+                        model = profilePictureFilePath(context = LocalContext.current, user.profilePictureFilePath!!),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
@@ -276,7 +281,7 @@ private fun UserListItem(navController: NavController, user: UserInfo, vm: Searc
                     )
                 }
             }
-            Column {
+            Column(Modifier.align(Alignment.CenterVertically).padding(start=10.dp)) {
                 Text(user.username,
                     fontSize = 18.sp)
                 Text(user.name,
@@ -284,21 +289,26 @@ private fun UserListItem(navController: NavController, user: UserInfo, vm: Searc
                     modifier = Modifier.padding(start=8.dp))
             }
         }
-        Box {
-            val liked  = if (true) {
-                ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-            }else {
-                ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-            }
-            IconButton(onClick = { /*TODO*/ }, Modifier.padding(end=20.dp)) {
-                Icon(
-                    imageVector = liked,
-                    contentDescription = "like",
-                    tint = colorResource(id = R.color.primary),
-                    modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                )
+        Box(Modifier.align(Alignment.CenterVertically).padding(end=20.dp)) {
+            val context = LocalContext.current
+            if(!ownProfile(user._id, context)){
+                Box {
+                    val isFollower = isFollower(user.followerIds, context)
+                    val liked  = if (!isFollower) {
+                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+                    }else {
+                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                    }
+                        Icon(
+                            imageVector = liked,
+                            contentDescription = "like",
+                            tint = colorResource(id = R.color.primary),
+                            modifier = Modifier
+                                .width(30.dp)
+                                .height(30.dp)
+                        )
+
+                }
             }
         }
     }
@@ -312,8 +322,18 @@ private fun TravelSearchResultList(navController: NavController, vm: SearchViewM
     LazyColumn {
         items(1) { item ->
             TravelListItem(navController)
+            ListItemDivider()
         }
     }
+}
+
+@Composable
+private fun ListItemDivider(){
+    Divider(
+        thickness = 1.dp,
+        color = colorResource(id = R.color.primary),
+        modifier = Modifier.padding(horizontal = 25.dp)
+    )
 }
 
 @Composable
@@ -324,6 +344,7 @@ private fun UserSearchResultList(navController: NavController, vm: SearchViewMod
     LazyColumn {
         items(vm.users) { item ->
             UserListItem(navController, item)
+            ListItemDivider()
         }
     }
 }

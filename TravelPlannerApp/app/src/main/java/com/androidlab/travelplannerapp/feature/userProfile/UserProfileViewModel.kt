@@ -1,23 +1,30 @@
 package com.androidlab.travelplannerapp.feature.userProfile
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.FollowRequest
 import com.androidlab.travelplannerapp.data.model.UserInfo
+import com.androidlab.travelplannerapp.domain.usecases.user.FollowUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
+import com.androidlab.travelplannerapp.domain.usecases.user.UnfollowUseCase
+import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
+import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import retrofit2.Call
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
 @HiltViewModel
 class UserProfileViewModel @Inject constructor(
-    private val getUserDataUseCase: GetUserDataUseCase
+    private val getUserDataUseCase: GetUserDataUseCase,
+    private val followUseCase: FollowUseCase,
+    private val unfollowUseCase: UnfollowUseCase
 ) : ViewModel() {
     private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", "", emptyList(), emptyList()))
 
@@ -53,15 +60,20 @@ class UserProfileViewModel @Inject constructor(
         return BASE_URL+"user/image/background/"+user.backgroundPictureFilePath
     }
 
-    fun profilePictureFilePath(context: Context): String{
-        val BASE_URL = context.getString(R.string.BASE_URL)
-        return BASE_URL+"user/image/profile/"+user.profilePictureFilePath
+    fun followAction(context: Context){
+        viewModelScope.launch {
+            var call: Call<UserInfo>? = null
+            val followRequest = FollowRequest(followerId = getOwnUserId(context)!!, followedId = user._id!!)
+            if (isFollower(user.followerIds, context)) {
+                call = unfollowUseCase(followRequest)
+            } else {
+                call = followUseCase(followRequest)
+            }
+            val response = call?.awaitResponse()
+            if(response?.isSuccessful == true){
+                _user.value=response.body()!!
+            }
+        }
     }
 
-    fun ownProfile(id: String?, context: Context): Boolean{
-        val sharedPreferences =
-            context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
-        val savedId = sharedPreferences.getString("id", null)
-        return id == null || id == savedId
-    }
 }

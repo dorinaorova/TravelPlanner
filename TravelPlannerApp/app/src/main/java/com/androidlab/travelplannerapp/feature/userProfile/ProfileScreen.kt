@@ -60,6 +60,9 @@ import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
+import com.androidlab.travelplannerapp.feature.utils.isFollower
+import com.androidlab.travelplannerapp.feature.utils.ownProfile
+import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
 
 @Composable
 fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileViewModel = hiltViewModel()){
@@ -67,7 +70,7 @@ fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileView
     val context = LocalContext.current
     LaunchedEffect(Unit){
         vm.loadUserData(id, context)
-        ownProfile.value = vm.ownProfile(id, context)
+        ownProfile.value = ownProfile(id, context)
     }
     Scaffold(
         content = { paddingValues ->
@@ -203,12 +206,13 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         }
                     else{
                         Box {
-                            val liked  = if (true) {
+                            val isFollower = isFollower(vm.user.followerIds, context)
+                            val liked  = if (!isFollower) {
                                 ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
                             }else {
                                 ImageVector.vectorResource(R.drawable.baseline_favorite_24)
                             }
-                            IconButton(onClick = { /*TODO*/ }, Modifier.padding(end=20.dp)) {
+                            IconButton(onClick = { vm.followAction(context) }, Modifier.padding(end=20.dp)) {
                                 Icon(
                                     imageVector = liked,
                                     contentDescription = "like",
@@ -224,7 +228,8 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
 
                 Column(Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally){
-                    Text(vm.user.name,
+                    val name = if(vm.user.name==""){"-"} else{vm.user.name}
+                    Text(name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp
                     )
@@ -233,15 +238,16 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         color = colorResource(id = R.color.secondary_text)
                     )
                     Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
+                        val email = if(vm.user.email==""){"-"} else{vm.user.email}
                         Row(verticalAlignment = Alignment.CenterVertically){
                             Icon(imageVector = Icons.Rounded.MailOutline, contentDescription = null,tint= colorResource(id = R.color.primary))
-                            Text(vm.user.email,
+                            Text(email,
                                 modifier = Modifier.padding(start=5.dp))
                         }
-                        if(vm.user.city != null || vm.user.country != null)
+                        val livingLabel = (vm.user.city?: "-")+", "+(vm.user.country?: "-")
                         Row(verticalAlignment = Alignment.CenterVertically){
                             Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_public_24), contentDescription = null,tint= colorResource(id = R.color.primary))
-                            Text("${vm.user.city}, ${vm.user.country}",
+                            Text(livingLabel,
                                 modifier = Modifier.padding(start=5.dp))
                         }
 
@@ -311,7 +317,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                 if(vm.user.profilePictureFilePath != ""){
                     val context = LocalContext.current
                     AsyncImage(
-                        model=vm.profilePictureFilePath(context),
+                        model=profilePictureFilePath(context, vm.user.profilePictureFilePath!!),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

@@ -21,3 +21,11 @@ class FollowUseCase @Inject constructor(
         return userService.follow(followRequest)
     }
 }
+
+class IsFollowerUseCase @Inject constructor(
+    private val userService: UserService
+){
+    operator fun invoke(followRequest: FollowRequest): Call<Boolean>? {
+        return userService.isFollower(followRequest)
+    }
+}

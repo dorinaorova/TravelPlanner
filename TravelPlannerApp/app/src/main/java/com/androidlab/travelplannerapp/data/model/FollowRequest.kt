@@ -2,6 +2,6 @@ package com.androidlab.travelplannerapp.data.model
 
 data class FollowRequest(
     val followerId: String,
-    val followingId: String
+    val followedId: String
 
 )

@@ -24,11 +24,15 @@ interface UserService {
     fun searchUser(@Query("name") name: String? = null) : Call<List<UserInfo>>?
 
     @Headers("Accept: application/json")
-    @GET("user/follow")
+    @PUT("user/follow")
     fun follow(@Body followInfo: FollowRequest) : Call<UserInfo>?
 
     @Headers("Accept: application/json")
-    @GET("user/unfollow")
+    @PUT("user/unfollow")
     fun unfollow(@Body followInfo: FollowRequest) : Call<UserInfo>?
+
+    @Headers("Accept: application/json")
+    @PUT("user/is-follower")
+    fun isFollower(@Body followInfo: FollowRequest) : Call<Boolean>?
 
 }
