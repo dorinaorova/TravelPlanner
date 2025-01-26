@@ -82,11 +82,6 @@ class UserController
             return ResponseEntity.internalServerError().build()
         }
     }
-    @PutMapping("/is-follower")
-    fun isFollower(@RequestBody follow: FollowDTO): ResponseEntity<*>{
-        val isFollower = userService.isFollower(follow)
-        return ResponseEntity.ok(isFollower)
-    }
 
     @PostMapping("/image/upload/{id}/profile")
     fun uploadProfilePicture(@RequestPart("file") file: MultipartFile, @PathVariable("id") id: String) : ResponseEntity<*> {

@@ -55,8 +55,8 @@ class DTOMapper {
             user.travelIds,
             user.country,
             user.city,
-            user.followerIds,
-            user.followingIds
+            user.followingIds,
+            user.followerIds
         )
     }
 

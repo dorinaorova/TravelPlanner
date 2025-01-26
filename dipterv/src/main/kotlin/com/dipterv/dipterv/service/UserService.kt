@@ -91,17 +91,16 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
 
     fun followUser(follow: FollowDTO) : UserInfoDTO{
         if(follow.followedId != follow.followerId ){
-
             var followerUser = findById(follow.followerId)
             var followedUser = findById(follow.followedId)
             val updatedFollowingList = followerUser.followingIds.toMutableList().apply { add(followedUser._id!!) }
-            followerUser = followedUser.copy(followingIds = updatedFollowingList)
+            followerUser = followerUser.copy(followingIds = updatedFollowingList)
 
             val updatedFollowersList = followedUser.followerIds.toMutableList().apply { add(followerUser._id!!) }
             followedUser = followedUser.copy(followerIds = updatedFollowersList)
 
-            val updated = userRepository.save(followerUser)
-            userRepository.save(followedUser)
+            userRepository.save(followerUser)
+            val updated = userRepository.save(followedUser)
 
             return mapper.userToUserInfoDTO(updated)
         }else{
@@ -112,18 +111,14 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
     fun unfollowUser(follow: FollowDTO) : UserInfoDTO{
         var followerUser = findById(follow.followerId)
         var unfollowedUser = findById(follow.followedId)
-        val updateFollowingList = followerUser.followingIds.toMutableList().apply { remove(followerUser._id!!) }
+        val updateFollowingList = followerUser.followingIds.toMutableList().apply { remove(unfollowedUser._id!!) }
         followerUser = followerUser.copy(followingIds = updateFollowingList)
 
         val updatedFollowersList = unfollowedUser.followerIds.toMutableList().apply { remove(followerUser._id!!) }
         unfollowedUser = unfollowedUser.copy(followerIds = updatedFollowersList)
-        val updated = userRepository.save(followerUser)
-        userRepository.save(unfollowedUser)
+        userRepository.save(followerUser)
+        val updated = userRepository.save(unfollowedUser)
         return mapper.userToUserInfoDTO(updated)
-    }
-
-    fun isFollower(follow: FollowDTO): Boolean{
-        return findUserDTOById(follow.followerId).userInfo.followingIds?.find{f -> follow.followedId == f} != null
     }
 
 
