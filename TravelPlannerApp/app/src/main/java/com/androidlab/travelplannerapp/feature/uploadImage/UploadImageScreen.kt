@@ -49,7 +49,7 @@ import com.androidlab.travelplannerapp.navigation.Screen
 fun UploadImageScreen(navController: NavController, id: String?, uploadImageTypeString: String, vm: UploadImageViewModel = hiltViewModel()){
     val uploadImageType = enumValueOf<UploadImageType>(uploadImageTypeString)
     LaunchedEffect(Unit){
-        vm.id=id
+        vm.userId=id
     }
     Scaffold(
         content = { paddingValues ->

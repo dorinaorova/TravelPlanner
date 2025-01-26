@@ -1,6 +1,8 @@
 package com.androidlab.travelplannerapp.feature.uploadImage
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +21,7 @@ import okhttp3.RequestBody
 import retrofit2.awaitResponse
 import java.io.File
 import javax.inject.Inject
+import java.io.FileOutputStream
 
 @HiltViewModel
 class UploadImageViewModel@Inject constructor(
@@ -32,7 +35,7 @@ class UploadImageViewModel@Inject constructor(
 
     val imagePath: String
         get() = _imagePath.value
-    var id: String?
+    var userId: String?
         set(value:String?){
             _id.value = value
         }
@@ -62,15 +65,18 @@ class UploadImageViewModel@Inject constructor(
                 try {
                     val inputStream = contentResolver.openInputStream(uri)
                     if (inputStream != null) {
+                        val currentTimeInMillis: Long = System.currentTimeMillis()
                         val tempFile = File(context.cacheDir, "temp_upload_image.jpg")
+
                         tempFile.outputStream().use { outputStream ->
                             inputStream.copyTo(outputStream)
                         }
+                        val resizedFile = resizeImage(tempFile, File(context.cacheDir, "${currentTimeInMillis}.jpg"), 1080, 1080)
 
                         val requestFile =
-                            RequestBody.create("image/jpeg".toMediaTypeOrNull(), tempFile)
+                            RequestBody.create("image/jpeg".toMediaTypeOrNull(), resizedFile)
                         val body =
-                            MultipartBody.Part.createFormData("file", tempFile.name, requestFile)
+                            MultipartBody.Part.createFormData("file", resizedFile.name, requestFile)
 
                         val call = when (uploadImageType) {
                             UploadImageType.PROFILE -> uploadProfileUseCase(body, userId!!)
@@ -80,6 +86,7 @@ class UploadImageViewModel@Inject constructor(
                         val response = call?.awaitResponse()
                         if (response?.isSuccessful == true) {
                             tempFile.delete()
+                            resizedFile.delete()
                             navController.navigate(Screen.ProfileScreen.route)
                         }
                     }
@@ -92,6 +99,35 @@ class UploadImageViewModel@Inject constructor(
             }
 
         }
+    }
+
+    private fun resizeImage(imageFile: File, outputFile: File, maxWidth: Int, maxHeight: Int): File {
+        // Decode the file to a Bitmap
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+        BitmapFactory.decodeFile(imageFile.absolutePath, options)
+
+        // Calculate the scaling factor
+        val scaleFactor = Math.min(
+            options.outWidth / maxWidth,
+            options.outHeight / maxHeight
+        )
+
+        options.inJustDecodeBounds = false
+        options.inSampleSize = scaleFactor
+
+        // Decode the file with the scaling factor
+        val resizedBitmap = BitmapFactory.decodeFile(imageFile.absolutePath, options)
+
+        // Save the resized bitmap to the output file
+        val outputStream = FileOutputStream(outputFile)
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+
+        outputStream.flush()
+        outputStream.close()
+
+        return outputFile
     }
 
 }
