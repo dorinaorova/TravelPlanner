@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.domain.module.api
 import android.content.Context
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.auth.AuthService
+import com.androidlab.travelplannerapp.data.image.ImageService
 import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
 import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
 import com.androidlab.travelplannerapp.data.travel.TravelService
@@ -59,6 +60,12 @@ class ApiUseCaseModule {
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageService(retrofit: Retrofit): ImageService {
+        return retrofit.create(ImageService::class.java)
     }
 
 }

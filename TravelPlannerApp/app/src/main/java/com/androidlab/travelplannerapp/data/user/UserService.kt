@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.data.user
 
+import com.androidlab.travelplannerapp.data.model.FollowRequest
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import retrofit2.Call
 import retrofit2.http.Body
@@ -21,5 +22,13 @@ interface UserService {
     @Headers("Accept: application/json")
     @GET("user/all")
     fun searchUser(@Query("name") name: String? = null) : Call<List<UserInfo>>?
+
+    @Headers("Accept: application/json")
+    @GET("user/follow")
+    fun follow(@Body followInfo: FollowRequest) : Call<UserInfo>?
+
+    @Headers("Accept: application/json")
+    @GET("user/unfollow")
+    fun unfollow(@Body followInfo: FollowRequest) : Call<UserInfo>?
 
 }

@@ -11,4 +11,5 @@ sealed class Screen(val route: String) {
     object TicketsScreen: Screen("tickets")
     object RegistrationScreen: Screen("registration")
     object UserUpdateScreen: Screen("user_update")
+    object UploadImageScreen: Screen("upload_image")
 }

@@ -19,7 +19,7 @@ import javax.inject.Inject
 class UserProfileViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase
 ) : ViewModel() {
-    private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", ""))
+    private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", "", emptyList(), emptyList()))
 
     val user: UserInfo
         get() = _user.value
