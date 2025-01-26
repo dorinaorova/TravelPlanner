@@ -60,7 +60,7 @@ class UserController
     }
 
     @PutMapping("/follow")
-    fun follow(@RequestBody follow: FollowDTO): ResponseEntity<UserDTO>{
+    fun follow(@RequestBody follow: FollowDTO): ResponseEntity<UserInfoDTO>{
         try{
             val updatedUser = userService.followUser(follow)
             return ResponseEntity(updatedUser, HttpStatus.OK)
@@ -72,7 +72,7 @@ class UserController
     }
 
     @PutMapping("/unfollow")
-    fun unfollow(@RequestBody follow: FollowDTO): ResponseEntity<UserDTO>{
+    fun unfollow(@RequestBody follow: FollowDTO): ResponseEntity<UserInfoDTO>{
         try{
             val updatedUser = userService.unfollowUser(follow)
             return ResponseEntity(updatedUser, HttpStatus.OK)
@@ -82,12 +82,12 @@ class UserController
             return ResponseEntity.internalServerError().build()
         }
     }
-
-    @PostMapping("/add")
-    fun addUser(@RequestBody user: UserInfoDTO) : ResponseEntity<User>{
-        val newUser = userService.add(user)
-        return ResponseEntity(newUser,HttpStatus.CREATED)
+    @PutMapping("/is-follower")
+    fun isFollower(@RequestBody follow: FollowDTO): ResponseEntity<*>{
+        val isFollower = userService.isFollower(follow)
+        return ResponseEntity.ok(isFollower)
     }
+
     @PostMapping("/image/upload/{id}/profile")
     fun uploadProfilePicture(@RequestPart("file") file: MultipartFile, @PathVariable("id") id: String) : ResponseEntity<*> {
         val fileName = fileService.uploadFile(file, Paths.get("user/profile"), id)
@@ -116,4 +116,6 @@ class UserController
         headers.contentType = MediaType.IMAGE_JPEG
         return ResponseEntity.ok().headers(headers).body(image)
     }
+
+
 }

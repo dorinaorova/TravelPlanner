@@ -13,4 +13,6 @@ data class UserInfoDTO(
     val travelIds: List<String>?,
     var country: String?,
     var city: String?,
+    val followingIds: List<String>?,
+    val followerIds: List<String>?,
     )

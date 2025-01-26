@@ -40,9 +40,7 @@ class DTOMapper {
     fun userToUserDTO(user: User): UserDTO {
         return UserDTO(
             user._id,
-            userToUserInfoDTO(user),
-            user.followingIds,
-            user.followerIds)
+            userToUserInfoDTO(user))
     }
 
     fun userToUserInfoDTO(user: User): UserInfoDTO {
@@ -56,7 +54,9 @@ class DTOMapper {
             user.backgroundPictureFilePath,
             user.travelIds,
             user.country,
-            user.city
+            user.city,
+            user.followerIds,
+            user.followingIds
         )
     }
 
