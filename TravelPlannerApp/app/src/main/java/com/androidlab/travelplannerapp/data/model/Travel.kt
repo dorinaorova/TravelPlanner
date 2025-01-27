@@ -1,6 +1,5 @@
 package com.androidlab.travelplannerapp.data.model
 
-
 data class Travel(
     val _id: String?,
     val name: String,
@@ -8,7 +7,7 @@ data class Travel(
     val endDate: Long,
     val country: String,
     val city: String,
-    val price: Int,
+    val price: String,
     val description: String?,
     val tags: List<String>?,
     val pictureFileName: String?
