@@ -56,6 +56,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
@@ -283,8 +284,8 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 25.dp)){
-                            items(count=6){
-                                TravelItem(navController)
+                            items(count=1){
+                                TravelItem(navController, null)
                             }
                     }
                     Divider(thickness = 1.dp,
@@ -341,30 +342,43 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
 }
 
 @Composable
-private fun TravelItem(navController: NavController){
+private fun TravelItem(navController: NavController, travel: Travel?){
+    val route = if(travel == null){Screen.NewTravelScreen.route} else{Screen.TravelProfileScreen.route}
     Box(
         Modifier
             .height(100.dp)
             .width(120.dp)
-            .padding(horizontal = 10.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
-        Image(painter = painterResource(id = R.drawable.image), contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier= Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .blur(3.dp))
-        Column(
-            Modifier
-                .padding(horizontal = 5.dp, vertical = 10.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Bottom) {
-            Text("Krakow",
-                color= colorResource(id = R.color.primary_text),
-                fontWeight = FontWeight.Bold,
-                fontSize=18.sp
-            )
-            Text("Krakow, Poland",
-                color= colorResource(id = R.color.primary_text),
-                fontSize=10.sp)
+            .padding(horizontal = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable { navController.navigate(route) }) {
+        if(travel != null){
+            Image(painter = painterResource(id = R.drawable.image), contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier= Modifier
+                    .blur(3.dp))
+
+            Column(
+                Modifier
+                    .padding(horizontal = 5.dp, vertical = 10.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Bottom) {
+                Text("Krakow",
+                    color= colorResource(id = R.color.primary_text),
+                    fontWeight = FontWeight.Bold,
+                    fontSize=18.sp
+                )
+                Text("Krakow, Poland",
+                    color= colorResource(id = R.color.primary_text),
+                    fontSize=10.sp)
+            }
+        }else{
+            Box(Modifier.background(colorResource(id = R.color.secondary)).fillMaxSize()){
+                Image(imageVector = ImageVector.vectorResource(R.drawable.baseline_add_24),
+                    contentDescription = null,
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(colorResource(id = R.color.primary_text)),
+                    modifier = Modifier.fillMaxSize(),
+                    alignment = Alignment.Center)
+            }
         }
     }
 }
