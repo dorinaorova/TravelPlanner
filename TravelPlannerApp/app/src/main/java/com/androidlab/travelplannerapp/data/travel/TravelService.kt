@@ -15,6 +15,10 @@ interface TravelService {
     fun getAll() : Call<List<Travel>>?
 
     @Headers("Accept: application/json")
+    @GET("travel/user/{id}")
+    fun getTravelByUserId(@Path("id") id: String) : Call<List<Travel>>?
+
+    @Headers("Accept: application/json")
     @POST("travel/user/{id}")
     fun newTravel(@Path("id") id: String, @Body travel: Travel) : Call<Travel>?
 }

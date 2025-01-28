@@ -13,5 +13,5 @@ data class Travel(
     val tags: List<String>?,
     val pictureFileName: String?,
     val public: Boolean,
-    val userId: String?
+    val ownerId: String?
 )

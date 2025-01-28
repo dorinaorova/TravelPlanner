@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.userProfile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -287,6 +289,9 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                             items(count=1){
                                 TravelItem(navController, null)
                             }
+                            items(vm.travels){
+                                TravelItem(navController, it)
+                            }
                     }
                     Divider(thickness = 1.dp,
                         color = colorResource(id = R.color.primary),
@@ -362,12 +367,12 @@ private fun TravelItem(navController: NavController, travel: Travel?){
                     .padding(horizontal = 5.dp, vertical = 10.dp)
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.Bottom) {
-                Text("Krakow",
+                Text( travel.name,
                     color= colorResource(id = R.color.primary_text),
                     fontWeight = FontWeight.Bold,
                     fontSize=18.sp
                 )
-                Text("Krakow, Poland",
+                Text(travel.city+", "+travel.country,
                     color= colorResource(id = R.color.primary_text),
                     fontSize=10.sp)
             }
