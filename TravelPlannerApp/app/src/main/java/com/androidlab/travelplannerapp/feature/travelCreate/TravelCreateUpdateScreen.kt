@@ -4,7 +4,9 @@ package com.androidlab.travelplannerapp.feature.travelCreate
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,6 +30,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +42,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -42,15 +51,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.feature.utils.InputField
 import com.androidlab.travelplannerapp.navigation.Screen
 import java.text.SimpleDateFormat
@@ -88,8 +103,11 @@ private fun Form(navController: NavController, vm: TravelCreateUpdateViewModel =
     val description = remember(vm.travel.description?: "") { mutableStateOf(vm.travel.description?: "") }
     val tags = remember(vm.travel.tags) { mutableStateOf(vm.travel.tags) }
     val price = remember(vm.travel.price) { mutableStateOf(vm.travel.price) }
+    val currency = remember(vm.travel.currency) { mutableStateOf(vm.travel.currency) }
     val startDate = remember(vm.travel.startDate) { mutableStateOf(vm.travel.startDate) }
     val endDate = remember(vm.travel.endDate) { mutableStateOf(vm.travel.endDate) }
+
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState())){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
@@ -107,12 +125,27 @@ private fun Form(navController: NavController, vm: TravelCreateUpdateViewModel =
             Spacer(Modifier.height(20.dp))
             //TODO
             Spacer(Modifier.height(20.dp))
-            InputField(price, KeyboardOptions(imeAction = ImeAction.Next, keyboardType = KeyboardType.Number), null, "Country", labelColor = colorResource(R.color.primary))
+            PriceCurrencyForm(price,currency )
             Spacer(Modifier.height(20.dp))
             InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = colorResource(R.color.primary), lines = 4)
             Spacer(Modifier.height(20.dp))
             Button(onClick = {
-                //TODO
+                val travel = Travel(
+                    _id = null,
+                    name = name.value,
+                    city = city.value,
+                    country = country.value,
+                    description = description.value,
+                    tags = tags.value,
+                    price = price.value,
+                    currency = currency.value,
+                    startDate = startDate.value,
+                    endDate = endDate.value,
+                    pictureFileName = null,
+                    public = false,
+                    userId = null
+                )
+               vm.save(travel, context)
             },
                 Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(
@@ -121,6 +154,88 @@ private fun Form(navController: NavController, vm: TravelCreateUpdateViewModel =
                 )
             ) { Text("Save") }
             Spacer(Modifier.height(20.dp))
+        }
+    }
+}
+
+@Composable
+private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<String>){
+    val isError = price.value < 0
+    val expanded = remember { mutableStateOf(false) }
+    val currencyItems = listOf("HUF", "EUR", "USD")
+    Column(modifier = Modifier.fillMaxWidth()){
+        Text(
+            "Price",
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
+            color = if(isError){Color.Red}else{colorResource(id = R.color.primary)},
+            modifier = Modifier.padding(start = 50.dp)
+        )
+        Spacer(Modifier.height(5.dp))
+        Row(Modifier.fillMaxWidth(0.9f), horizontalArrangement = Arrangement.Center){
+            BasicTextField(
+                value = price.value.toString(),
+                onValueChange = { price.value = it.toIntOrNull() ?: 0 },
+                maxLines = 1,
+                textStyle = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colorResource(id = R.color.primary)
+                ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .background(
+                                color = colorResource(R.color.primary_background),
+                                shape = RoundedCornerShape(size = 10.dp)
+                            )
+                            .border(
+                                width = 2.dp,
+                                color = if (isError) {
+                                    Color.Red
+                                } else {
+                                    colorResource(id = R.color.primary)
+                                },
+                                shape = RoundedCornerShape(size = 10.dp)
+
+                            ).padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Spacer(modifier = Modifier.width(width = 8.dp))
+                        innerTextField()
+                    }
+                }
+            )
+            Spacer(modifier = Modifier.width(width = 8.dp))
+            Box{
+                Text(currency.value,
+                    color = colorResource(R.color.secondary_text),
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable(onClick = { expanded.value = true })
+                )
+                DropdownMenu(expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false },
+                    modifier = Modifier.background(colorResource(id = R.color.primary_text))) {
+                    currencyItems.forEach { i ->
+                        DropdownMenuItem(
+                            text={
+                                Text(
+                                    text = i,
+                                    color = colorResource(R.color.primary)
+                                )
+                            },
+                            onClick = {
+                                expanded.value = false
+                                currency.value = i
+                            },
+                            modifier = Modifier.fillMaxWidth().background(colorResource(id = R.color.primary_text))
+                        )
+                    }
+                }
+            }
         }
     }
 }
