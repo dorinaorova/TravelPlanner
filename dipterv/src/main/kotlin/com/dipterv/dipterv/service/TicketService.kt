@@ -35,7 +35,7 @@ class TicketService (val ticketRepository: TicketRepository, val travelService: 
     fun ticketsForTravel(travelId: String): List<Ticket> {
         val ticketIds = travelService.getById(travelId).ticketIds
         val tickets = mutableListOf<Ticket>()
-        ticketIds.forEach { id ->
+        ticketIds?.forEach { id ->
             tickets.add(findById(id) )
         }
         return tickets.toList()

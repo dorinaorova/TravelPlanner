@@ -20,6 +20,7 @@ class DTOMapper {
             travel.country,
             travel.city,
             travel.price,
+            travel.currency,
             travel.description,
             travel.tags,
             travel.pictureFileName

@@ -61,17 +61,18 @@ class TravelService (
         return travels.filter{ calculateDurationInDays(it.endDate, it.startDate) <= days}
     }
 
-    fun createNew(id: String, travelDTO: TravelDTO): TravelDTO{
+    fun createNew(id: String, travelDTO: Travel): TravelInfoDTO{
         val travel = Travel(
             null,
-            travelDTO.travelInfo.name,
-            travelDTO.travelInfo.startDate,
-            travelDTO.travelInfo.endDate,
-            travelDTO.travelInfo.country,
-            travelDTO.travelInfo.city,
-            travelDTO.travelInfo.price,
-            travelDTO.travelInfo.description,
-            travelDTO.travelInfo.tags,
+            travelDTO.name,
+            travelDTO.startDate,
+            travelDTO.endDate,
+            travelDTO.country,
+            travelDTO.city,
+            travelDTO.price,
+            travelDTO.currency,
+            travelDTO.description,
+            travelDTO.tags,
             null,
             emptyList(),
             emptyList(),
@@ -81,7 +82,7 @@ class TravelService (
         )
         val newTravel = travelRepository.save(travel)
         userService.addTravel(id, newTravel)
-        return mapper.travelToTravelDTO(travel)
+        return mapper.travelToTravelInfoDto(travel)
     }
 
     fun update(travelDTO: TravelDTO) : TravelDTO{
@@ -93,6 +94,7 @@ class TravelService (
             travel.country= travelDTO.travelInfo.country
             travel.city = travelDTO.travelInfo.city
             travel.price = travelDTO.travelInfo.price
+            travel.currency = travelDTO.travelInfo.currency
             travel.description = travelDTO.travelInfo.description
             travel.tags= travelDTO.travelInfo.tags
             val updatedTravel = travelRepository.save(travel)
@@ -148,14 +150,20 @@ class TravelService (
 
     fun addSpend(spend: Spend, id: String){
         val travel = getById(id)
-        val updatedSpendList = travel.spendIds.toMutableList().apply { add(spend._id) }
+        if(travel.spendIds == null){
+            travel.spendIds = emptyList()
+        }
+        val updatedSpendList = travel.spendIds!!.toMutableList().apply { add(spend._id) }
         travel.spendIds=updatedSpendList.toList()
         travelRepository.save(travel)
     }
 
     fun uploadTicket(id: String, ticketId: String){
         val travel = getById(id)
-        val updatedTicketIds = travel.ticketIds.toMutableList().apply { add(ticketId)}
+        if(travel.ticketIds == null){
+            travel.ticketIds = emptyList()
+        }
+        val updatedTicketIds = travel.ticketIds!!.toMutableList().apply { add(ticketId)}
         travel.ticketIds=updatedTicketIds.toList()
         travelRepository.save(travel)
     }

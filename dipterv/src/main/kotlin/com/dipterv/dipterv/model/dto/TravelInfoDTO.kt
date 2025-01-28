@@ -8,6 +8,7 @@ data class TravelInfoDTO(
     val country: String,
     val city: String?,
     val price: Int,
+    val currency: String,
     val description: String?,
     val tags: List<String>?,
     val pictureFileName: String?

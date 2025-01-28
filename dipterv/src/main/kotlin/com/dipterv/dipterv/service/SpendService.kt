@@ -31,7 +31,7 @@ class SpendService (val spendRepository: SpendRepository, val travelService:Trav
     fun findSpendsForTravel(travelId: String) : List<Spend> {
         val spendIds = travelService.getById(travelId).spendIds
         val spends = mutableListOf<Spend>()
-        spendIds.forEach { spendId -> spends.add(findById(spendId)) }
+        spendIds?.forEach { spendId -> spends.add(findById(spendId)) }
         return spends.toList()
     }
 }
