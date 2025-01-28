@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.data.image
 
+import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -19,4 +20,9 @@ interface ImageService {
     @Multipart
     @POST("user/image/upload/{id}/background")
     fun uploadBackground(@Part image: MultipartBody.Part, @Path("id") id: String) : Call<UserInfo>?
+
+    @Headers("Accept: application/json")
+    @Multipart
+    @POST("travel/image/upload/{id}")
+    fun uploadTravel(@Part image: MultipartBody.Part, @Path("id") id: String) : Call<Travel>?
 }

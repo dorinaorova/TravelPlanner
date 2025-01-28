@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
 
 @Composable
 fun HomeScreen(navController: NavController){
@@ -50,16 +51,11 @@ fun HomeScreen(navController: NavController){
 @Composable
 fun Vacation(navController: NavController){
     Box(Modifier.background(Color.White)){
-        Image(
-            painterResource(id = R.drawable.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            alpha = 0.7f,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .blur(5.dp),
-        )
+        val imageModifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .blur(5.dp)
+        BlankTravelImage(imageModifier)
         Column(modifier = Modifier.padding(start=20.dp)){
             Text("You are on vacation",
                 fontSize = 18.sp,

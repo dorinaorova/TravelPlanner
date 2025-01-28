@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.utils
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -24,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -132,4 +135,15 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
         }
     )
     }
+}
+
+
+@Composable
+fun BlankTravelImage(imageModifier: Modifier, ){
+    Image(
+        painterResource(id = R.drawable.blank_travel_image),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = imageModifier
+    )
 }

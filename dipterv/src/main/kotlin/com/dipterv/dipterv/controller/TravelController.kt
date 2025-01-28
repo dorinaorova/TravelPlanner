@@ -2,6 +2,7 @@ package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.Ticket
+import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.dto.TravelDTO
 import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.service.FileService
@@ -85,7 +86,7 @@ class TravelController(
     }
 
     @PostMapping("/user/{id}")
-    fun postNewTravel(@PathVariable("id") userId: String, @RequestBody travel: TravelDTO): ResponseEntity<*> {
+    fun postNewTravel(@PathVariable("id") userId: String, @RequestBody travel: Travel): ResponseEntity<*> {
         try {
             val newTravel = travelService.createNew(userId, travel)
             return ResponseEntity(newTravel, HttpStatus.CREATED)

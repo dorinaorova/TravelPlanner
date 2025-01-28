@@ -35,7 +35,7 @@ class UploadImageViewModel@Inject constructor(
 
     val imagePath: String
         get() = _imagePath.value
-    var userId: String?
+    var id: String?
         set(value:String?){
             _id.value = value
         }
@@ -81,7 +81,7 @@ class UploadImageViewModel@Inject constructor(
                         val call = when (uploadImageType) {
                             UploadImageType.PROFILE -> uploadProfileUseCase(body, userId!!)
                             UploadImageType.BACKGROUND -> uploadBackgroundUseCase(body, userId!!)
-                            UploadImageType.TRAVEL -> uploadTravelImageUseCase(body, userId!!)
+                            UploadImageType.TRAVEL -> uploadTravelImageUseCase(body, _id.value!!)
                         }
                         val response = call?.awaitResponse()
                         if (response?.isSuccessful == true) {

@@ -44,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 
 @Composable
@@ -75,15 +76,11 @@ private fun Details(navController: NavController){
 private fun Header(navController: NavController){
     Box(modifier = Modifier
         .fillMaxSize()) {
-        Image(
-            painterResource(id = R.drawable.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .blur(5.dp),
-        )
+        val imageModifier =  Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .blur(5.dp)
+        BlankTravelImage(imageModifier)
         Column(Modifier.padding(top = 75.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
             Text(
                 "Krakow",
@@ -130,7 +127,7 @@ private fun TravelBuddies(navController: NavController){
                     modifier = Modifier.padding(horizontal = 10.dp)
                         .clickable { navController.navigate(Screen.ProfileScreen.route) }) {
                 Image(
-                    painter = painterResource(id = R.drawable.profile),
+                    painter = painterResource(id = R.drawable.blank_profile),
                     contentDescription = null,
                     modifier= Modifier
                         .clip(CircleShape)

@@ -1,13 +1,17 @@
 package com.androidlab.travelplannerapp.feature.userProfile
 
 import android.content.Context
+import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.FollowRequest
+import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
+import com.androidlab.travelplannerapp.domain.usecases.travel.GetTravelByUserIdUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.FollowUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.UnfollowUseCase
@@ -24,12 +28,17 @@ import javax.inject.Inject
 class UserProfileViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val followUseCase: FollowUseCase,
-    private val unfollowUseCase: UnfollowUseCase
+    private val unfollowUseCase: UnfollowUseCase,
+    private val getTravelByUserIdUseCase: GetTravelByUserIdUseCase
 ) : ViewModel() {
     private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", "", emptyList(), emptyList()))
+    private var _travels = mutableStateListOf<Travel>()
 
     val user: UserInfo
         get() = _user.value
+
+    val travels: List<Travel>
+        get() = _travels
 
     fun logout(context: Context, navController: NavController){
         val sharedPreferences = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
@@ -51,6 +60,14 @@ class UserProfileViewModel @Inject constructor(
             val response = call?.awaitResponse()
             if(response?.isSuccessful == true){
                 _user.value=response.body()!!
+            }
+
+            val travelCall = getTravelByUserIdUseCase(id)
+            val travelResponse = travelCall?.awaitResponse()
+            if(travelResponse?.isSuccessful == true){
+                _travels.clear()
+                _travels.addAll(travelResponse.body()!!)
+                Log.d("travels", _travels.toString())
             }
         }
     }

@@ -9,12 +9,12 @@ import com.androidlab.travelplannerapp.feature.login.LoginScreen
 import com.androidlab.travelplannerapp.feature.PaymentsScreen
 import com.androidlab.travelplannerapp.feature.userProfile.ProfileScreen
 import com.androidlab.travelplannerapp.feature.search.SearchScreen
-import com.androidlab.travelplannerapp.feature.TravelProfileScreen
+import com.androidlab.travelplannerapp.feature.travel.TravelProfileScreen
 import com.androidlab.travelplannerapp.feature.VacationScreen
 import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
 import com.androidlab.travelplannerapp.feature.ticket.TicketsScreen
+import com.androidlab.travelplannerapp.feature.travel.travelCreate.TravelCreateUpdateScreen
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageScreen
-import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.userProfile.userUpdate.UserUpdateScreen
 
 @Composable
@@ -31,8 +31,9 @@ fun Navigation(navController: NavHostController){
         composable(route = Screen.SearchScreen.route){
             SearchScreen(navController = navController)
         }
-        composable(route = Screen.TravelProfileScreen.route){
-            TravelProfileScreen(navController = navController)
+        composable(route = Screen.TravelProfileScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            TravelProfileScreen(navController = navController, id = id!!)
         }
         composable(route = Screen.PaymentsScreen.route){
             PaymentsScreen(navController = navController)
@@ -57,6 +58,10 @@ fun Navigation(navController: NavHostController){
             val id = backStackEntry.arguments?.getString("id")
             val uploadImageType = backStackEntry.arguments?.getString("uploadImageType")
             UploadImageScreen(navController = navController, id = id, uploadImageTypeString = uploadImageType!!)
+        }
+        composable(route = Screen.NewTravelScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            TravelCreateUpdateScreen(navController = navController, id = id)
         }
     }
 }

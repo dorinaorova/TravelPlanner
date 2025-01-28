@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.userProfile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,13 +58,16 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
+import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
+import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
 
 @Composable
 fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileViewModel = hiltViewModel()){
@@ -113,15 +118,11 @@ private fun Header(vm: UserProfileViewModel = hiltViewModel()){
                     .blur(5.dp),
             )
         }else{
-            Image(
-                painterResource(id = R.drawable.image),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
+                BlankTravelImage(Modifier
                     .fillMaxWidth()
                     .height(300.dp)
-                    .blur(5.dp),
-            )
+                    .blur(5.dp))
+
         }
     }
 }
@@ -151,58 +152,58 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     val menuExpanded = remember { mutableStateOf(false) }
                     val context = LocalContext.current
                     if(ownProfile.value){
-                    Box{
-                        IconButton(onClick = { menuExpanded.value= true }) {
-                            Icon(
-                                imageVector= Icons.Rounded.MoreVert,
-                                contentDescription = null,
-                                tint= colorResource(id = R.color.primary)
-                            )
+                        Box{
+                            IconButton(onClick = { menuExpanded.value= true }) {
+                                Icon(
+                                    imageVector= Icons.Rounded.MoreVert,
+                                    contentDescription = null,
+                                    tint= colorResource(id = R.color.primary)
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = menuExpanded.value,
+                                onDismissRequest = { menuExpanded.value = false },
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            ){
+                                DropdownMenuItem(
+                                    text = { Text("Edit") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.UserUpdateScreen.route)
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
+                                            contentDescription = null
+                                        )},
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                                DropdownMenuItem(
+                                    text={ Text("Upload background image") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.BACKGROUND}")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
+                                            contentDescription = null
+                                        )},
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Log out") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        vm.logout(context, navController)
+                                    },
+                                    leadingIcon = {
+                                        Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
+                                    },
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                            }
                         }
-                        DropdownMenu(
-                            expanded = menuExpanded.value,
-                            onDismissRequest = { menuExpanded.value = false },
-                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                        ){
-                            DropdownMenuItem(
-                                text = { Text("Edit") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    navController.navigate(Screen.UserUpdateScreen.route)
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
-                                        contentDescription = null
-                                    )},
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                            DropdownMenuItem(
-                                text={ Text("Upload background image") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.BACKGROUND}")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
-                                        contentDescription = null
-                                    )},
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Log out") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    vm.logout(context, navController)
-                                },
-                                leadingIcon = {
-                                    Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
-                                },
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                        }
-                    }
                         }
                     else{
                         Box {
@@ -283,8 +284,13 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 25.dp)){
-                            items(count=6){
-                                TravelItem(navController)
+                        if(ownProfile.value){
+                            items(count=1){
+                                TravelItem(navController, null)
+                            }
+                        }
+                            items(vm.travels){
+                                TravelItem(navController, it)
                             }
                     }
                     Divider(thickness = 1.dp,
@@ -341,30 +347,50 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
 }
 
 @Composable
-private fun TravelItem(navController: NavController){
+private fun TravelItem(navController: NavController, travel: Travel?){
+    val route = if(travel == null){Screen.NewTravelScreen.route} else{Screen.TravelProfileScreen.route+"?id=${travel._id}"}
     Box(
         Modifier
             .height(100.dp)
             .width(120.dp)
-            .padding(horizontal = 10.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
-        Image(painter = painterResource(id = R.drawable.image), contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier= Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .blur(3.dp))
-        Column(
-            Modifier
-                .padding(horizontal = 5.dp, vertical = 10.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Bottom) {
-            Text("Krakow",
-                color= colorResource(id = R.color.primary_text),
-                fontWeight = FontWeight.Bold,
-                fontSize=18.sp
-            )
-            Text("Krakow, Poland",
-                color= colorResource(id = R.color.primary_text),
-                fontSize=10.sp)
+            .padding(horizontal = 10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable { navController.navigate(route) }) {
+        if(travel != null){
+            val imageModifier = Modifier.blur(3.dp)
+            if(travel.pictureFileName==null) {
+                BlankTravelImage(imageModifier)
+            }
+            else{
+                AsyncImage(
+                    model = travelPicturePath(context = LocalContext.current, travel.pictureFileName),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier= imageModifier)
+            }
+
+            Column(
+                Modifier
+                    .padding(horizontal = 5.dp, vertical = 10.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Bottom) {
+                Text( travel.name,
+                    color= colorResource(id = R.color.primary_text),
+                    fontWeight = FontWeight.Bold,
+                    fontSize=18.sp
+                )
+                Text(travel.city+", "+travel.country,
+                    color= colorResource(id = R.color.primary_text),
+                    fontSize=10.sp)
+            }
+        }else{
+            Box(Modifier.background(colorResource(id = R.color.secondary)).fillMaxSize()){
+                Image(imageVector = ImageVector.vectorResource(R.drawable.baseline_add_24),
+                    contentDescription = null,
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(colorResource(id = R.color.primary_text)),
+                    modifier = Modifier.fillMaxSize(),
+                    alignment = Alignment.Center)
+            }
         }
     }
 }

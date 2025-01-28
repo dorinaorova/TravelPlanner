@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature
+package com.androidlab.travelplannerapp.feature.travel
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -21,12 +21,20 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -37,16 +45,25 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
+import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
+import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
+import com.androidlab.travelplannerapp.feature.utils.calculateDays
+import com.androidlab.travelplannerapp.feature.utils.generateDate
+import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
-fun TravelProfileScreen(navController: NavController){
+fun TravelProfileScreen(navController: NavController, id: String, vm: TravelViewModel = hiltViewModel()){
+    LaunchedEffect(Unit){
+        vm.fetchData(id)
+    }
     Scaffold(
         content = { paddingValues ->
             Box(modifier = Modifier
@@ -71,21 +88,27 @@ private fun Details(navController: NavController){
 }
 
 @Composable
-private fun Header(){
+private fun Header(vm: TravelViewModel = hiltViewModel()){
+    val context = LocalContext.current
     Box(modifier = Modifier
         .fillMaxSize()) {
-        Image(
-            painterResource(id = R.drawable.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .blur(5.dp),
-        )
+        val imageModifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .blur(5.dp)
+        if(vm.travel.pictureFileName!=null){
+            AsyncImage(
+                model= travelPicturePath(context, vm.travel.pictureFileName!!),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = imageModifier
+            )
+        }else{
+            BlankTravelImage(imageModifier)
+        }
         Column(Modifier.padding(top = 75.dp)) {
             Text(
-                "Krakow",
+                vm.travel.name,
                 color = colorResource(id = R.color.primary_text),
                 fontSize = 36.sp,
                 modifier = Modifier.padding(start = 25.dp),
@@ -114,7 +137,8 @@ private fun TagItem(text: String){
     }
 }
 @Composable
-private fun Body(scroll: ScrollState, navController: NavController){
+private fun Body(scroll: ScrollState, navController: NavController, vm: TravelViewModel = hiltViewModel()){
+    val context = LocalContext.current
     Column{
         Spacer(
             Modifier
@@ -132,26 +156,70 @@ private fun Body(scroll: ScrollState, navController: NavController){
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 25.dp, horizontal = 15.dp),
+                    .padding(vertical = 5.dp, horizontal = 5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween){
-                Column(Modifier.padding(start=12.dp)) {
-                    DataRow("Krakow, Poland", ImageVector.vectorResource(R.drawable.baseline_map_24))
-                    DataRow("3 days (May 3 - May 6)", ImageVector.vectorResource(R.drawable.baseline_calendar_month_24))
-                    DataRow("200-300$", ImageVector.vectorResource(R.drawable.baseline_attach_money_24))
-                    DataRow("by plane", ImageVector.vectorResource(R.drawable.baseline_directions_bus_24))
+                Column(Modifier.padding(start=25.dp, top=15.dp, bottom=15.dp)) {
+                    DataRow(vm.travel.city+", "+vm.travel.country, ImageVector.vectorResource(R.drawable.baseline_map_24))
+                    DataRow(vm.travel.price.toString()+" "+vm.travel.currency, ImageVector.vectorResource(R.drawable.baseline_attach_money_24))
+                    DataRow("${calculateDays(vm.travel.startDate, vm.travel.endDate)} days (${generateDate(vm.travel.startDate)} - ${generateDate(vm.travel.endDate)})", ImageVector.vectorResource(R.drawable.baseline_calendar_month_24))
                 }
-                val liked  = if (true) {
-                    ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                }else {
-                    ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = liked,
-                        contentDescription = "like",
-                        tint = colorResource(id = R.color.primary),
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp))
+                if(!vm.ownTravel(context)){
+                    val liked  = if (true) {
+                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+                    }else {
+                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(imageVector = liked,
+                            contentDescription = "like",
+                            tint = colorResource(id = R.color.primary),
+                            modifier = Modifier
+                                .width(30.dp)
+                                .height(30.dp))
+                    }
+                }else{
+                    val menuExpanded = remember { mutableStateOf(false) }
+                    Box{
+                        IconButton(onClick = { menuExpanded.value= true }) {
+                            Icon(
+                                imageVector= Icons.Rounded.MoreVert,
+                                contentDescription = null,
+                                tint= colorResource(id = R.color.primary)
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded.value,
+                            onDismissRequest = { menuExpanded.value = false },
+                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                        ){
+                            DropdownMenuItem(
+                                text = { Text("Edit") },
+                                onClick = {
+                                    menuExpanded.value = false
+                                    navController.navigate(Screen.NewTravelScreen.route+"?id=${vm.travel._id}")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
+                                        contentDescription = null
+                                    )},
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            )
+                            DropdownMenuItem(
+                                text={ Text("Upload background image") },
+                                onClick = {
+                                    menuExpanded.value = false
+                                    navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.travel._id}&uploadImageType=${UploadImageType.TRAVEL}")
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
+                                        contentDescription = null
+                                    )},
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            )
+                        }
+                    }
                 }
             }
             Column(
@@ -162,7 +230,7 @@ private fun Body(scroll: ScrollState, navController: NavController){
                         fontSize = 8.sp,
                         color = colorResource(id = R.color.secondary_text)
                 )
-                Text("Cat ipsum dolor sit amet, trip owner up in kitchen i want food. Scratch at door to be let outside, get let out then scratch at door immmediately after to be let back in hide from vacuum cleaner eat plants, meow, and throw up because i ate plants. Thinking about you i'm joking it's food always food paw at beetle and eat it before it gets away so who's the baby, so ha ha, you're funny i'll kill you last.",
+                Text(vm.travel.description?:"...",
                     fontSize = 10.sp,
                     modifier= Modifier.padding(horizontal=5.dp))
             }
@@ -219,11 +287,4 @@ private fun PackingList(){
             modifier=Modifier.padding(start=10.dp)
         )
     }
-}
-
-
-@Composable
-@Preview(showBackground =  true)
-fun TravelProfileScreenPreview(){
-    TravelProfileScreen(navController = rememberNavController())
 }

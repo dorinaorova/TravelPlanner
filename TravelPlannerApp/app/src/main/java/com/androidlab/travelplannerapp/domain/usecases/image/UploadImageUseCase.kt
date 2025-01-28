@@ -1,6 +1,7 @@
 package com.androidlab.travelplannerapp.domain.usecases.image
 
 import com.androidlab.travelplannerapp.data.image.ImageService
+import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -25,8 +26,7 @@ class UploadBackgroundUseCase @Inject constructor(
 class UploadTravelImageUseCase @Inject constructor(
     private val imageService: ImageService
 ){
-    operator fun invoke(file: MultipartBody.Part, id: String): Call<UserInfo>? {
-        // TODO
-        return imageService.uploadBackground(file, id)
+    operator fun invoke(file: MultipartBody.Part, id: String): Call<Travel>? {
+        return imageService.uploadTravel(file, id)
     }
 }

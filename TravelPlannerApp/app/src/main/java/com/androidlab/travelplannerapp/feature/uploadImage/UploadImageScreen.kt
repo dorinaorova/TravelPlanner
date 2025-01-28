@@ -49,7 +49,7 @@ import com.androidlab.travelplannerapp.navigation.Screen
 fun UploadImageScreen(navController: NavController, id: String?, uploadImageTypeString: String, vm: UploadImageViewModel = hiltViewModel()){
     val uploadImageType = enumValueOf<UploadImageType>(uploadImageTypeString)
     LaunchedEffect(Unit){
-        vm.userId=id
+        vm.id=id
     }
     Scaffold(
         content = { paddingValues ->
@@ -144,7 +144,7 @@ private fun TopBar(navController: NavController, uploadImageType: UploadImageTyp
 }
 
 @Composable
-private fun BottomBar(uploadImageType: UploadImageType, navController: NavController, vm: UploadImageViewModel = hiltViewModel()){
+private fun BottomBar(uploadImageType: UploadImageType,  navController: NavController, vm: UploadImageViewModel = hiltViewModel()){
     val context = LocalContext.current
     BottomAppBar(
         containerColor = colorResource(id = R.color.primary),

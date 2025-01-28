@@ -2,12 +2,10 @@ package com.androidlab.travelplannerapp.feature.userProfile.userUpdate
 
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.UpdateUserUseCase
