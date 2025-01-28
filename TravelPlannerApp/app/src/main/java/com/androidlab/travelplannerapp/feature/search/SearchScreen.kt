@@ -63,6 +63,7 @@ import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
@@ -205,13 +206,8 @@ private fun TravelListItem(navController: NavController) {
                     .height(80.dp)
                     .padding(horizontal = 10.dp)
             ) {
-                Image(
-                    painterResource(id = R.drawable.image),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentScale = ContentScale.FillWidth,
-                )
+                val imageModifier = Modifier.fillMaxSize()
+                BlankTravelImage(imageModifier)
             }
             Column {
                 Text("Label",

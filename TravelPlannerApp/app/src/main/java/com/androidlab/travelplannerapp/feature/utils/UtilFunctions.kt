@@ -33,3 +33,9 @@ fun generateDate(date: Long) : String{
 fun calculateDays(startDate: Long, endDate: Long): Int{
     return ((endDate - startDate) / (1000 * 60 * 60 * 24)).toInt()
 }
+
+
+fun travelPicturePath(context: Context, fileName: String): String{
+    val BASE_URL = context.getString(R.string.BASE_URL)
+    return BASE_URL+"travel/image/download/"+fileName
+}

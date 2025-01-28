@@ -62,10 +62,12 @@ import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
+import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
+import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
 
 @Composable
 fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileViewModel = hiltViewModel()){
@@ -116,15 +118,11 @@ private fun Header(vm: UserProfileViewModel = hiltViewModel()){
                     .blur(5.dp),
             )
         }else{
-            Image(
-                painterResource(id = R.drawable.image),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
+                BlankTravelImage(Modifier
                     .fillMaxWidth()
                     .height(300.dp)
-                    .blur(5.dp),
-            )
+                    .blur(5.dp))
+
         }
     }
 }
@@ -359,10 +357,17 @@ private fun TravelItem(navController: NavController, travel: Travel?){
             .clip(RoundedCornerShape(10.dp))
             .clickable { navController.navigate(route) }) {
         if(travel != null){
-            Image(painter = painterResource(id = R.drawable.image), contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier= Modifier
-                    .blur(3.dp))
+            val imageModifier = Modifier.blur(3.dp)
+            if(travel.pictureFileName==null) {
+                BlankTravelImage(imageModifier)
+            }
+            else{
+                AsyncImage(
+                    model = travelPicturePath(context = LocalContext.current, travel.pictureFileName),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier= imageModifier)
+            }
 
             Column(
                 Modifier
