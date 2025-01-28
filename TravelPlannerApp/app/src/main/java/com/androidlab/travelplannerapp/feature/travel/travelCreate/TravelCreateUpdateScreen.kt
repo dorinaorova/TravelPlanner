@@ -1,6 +1,4 @@
-@file:Suppress("NAME_SHADOWING")
-
-package com.androidlab.travelplannerapp.feature.travelCreate
+package com.androidlab.travelplannerapp.feature.travel.travelCreate
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -64,10 +62,9 @@ import java.util.Date
 
 @Composable
 fun TravelCreateUpdateScreen(navController: NavController, id: String?,  vm: TravelCreateUpdateViewModel = hiltViewModel()){
-    val context = LocalContext.current
     LaunchedEffect(Unit){
         if(id != null){
-            //vm.fetchData(context)
+            vm.fetchData(id)
         }
     }
     Scaffold(
@@ -76,7 +73,7 @@ fun TravelCreateUpdateScreen(navController: NavController, id: String?,  vm: Tra
                 .fillMaxSize()
                 .padding(paddingValues)) {
                 Column{
-                    Form(navController= navController)
+                    Form(navController= navController, isUpdateAction = id != null)
                 }
             }
         },
@@ -87,7 +84,7 @@ fun TravelCreateUpdateScreen(navController: NavController, id: String?,  vm: Tra
 }
 
 @Composable
-private fun Form(navController: NavController, vm: TravelCreateUpdateViewModel = hiltViewModel()){
+private fun Form(navController: NavController, isUpdateAction: Boolean, vm: TravelCreateUpdateViewModel = hiltViewModel()){
     val name = remember(vm.travel.name) { mutableStateOf(vm.travel.name) }
     val city = remember(vm.travel.city) { mutableStateOf(vm.travel.city) }
     val country = remember(vm.travel.country) { mutableStateOf(vm.travel.country) }
@@ -99,19 +96,34 @@ private fun Form(navController: NavController, vm: TravelCreateUpdateViewModel =
     val endDate = remember(vm.travel.endDate) { mutableStateOf(vm.travel.endDate) }
 
     val context = LocalContext.current
+    val travel = Travel(
+        _id = vm.travel._id,
+        name = name.value,
+        city = city.value,
+        country = country.value,
+        description = description.value,
+        tags = tags.value,
+        price = price.value,
+        currency = currency.value,
+        startDate = startDate.value,
+        endDate = endDate.value,
+        pictureFileName = vm.travel.pictureFileName,
+        public = false,
+        ownerId = vm.travel.ownerId
+    )
 
     Column(modifier = Modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState())){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
-            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = colorResource(R.color.primary))
+            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name*", labelColor = colorResource(R.color.primary))
             Spacer(Modifier.height(20.dp))
-            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City", labelColor = colorResource(R.color.primary))
+            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City*", labelColor = colorResource(R.color.primary))
             Spacer(Modifier.height(20.dp))
-            InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country", labelColor = colorResource(R.color.primary))
+            InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country*", labelColor = colorResource(R.color.primary))
             Spacer(Modifier.height(20.dp))
             Row {
-                DatePickerForm("Start date", startDate)
-                DatePickerForm("End date", endDate)
+                DatePickerForm("Start date*", startDate)
+                DatePickerForm("End date*", endDate)
             }
             Spacer(Modifier.height(20.dp))
             //TODO
@@ -121,28 +133,19 @@ private fun Form(navController: NavController, vm: TravelCreateUpdateViewModel =
             InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = colorResource(R.color.primary), lines = 4)
             Spacer(Modifier.height(20.dp))
             Button(onClick = {
-                val travel = Travel(
-                    _id = null,
-                    name = name.value,
-                    city = city.value,
-                    country = country.value,
-                    description = description.value,
-                    tags = tags.value,
-                    price = price.value,
-                    currency = currency.value,
-                    startDate = startDate.value,
-                    endDate = endDate.value,
-                    pictureFileName = null,
-                    public = false,
-                    ownerId = null
-                )
-               vm.save(travel, context)
+                if(isUpdateAction){
+                    vm.update(travel, navController)
+                }else{
+                    vm.save(travel, context, navController)
+                }
+
             },
                 Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.primary),
                     contentColor = colorResource(id = R.color.primary_text)
-                )
+                ),
+                enabled = vm.verifyTravelForm(travel)
             ) { Text("Save") }
             Spacer(Modifier.height(20.dp))
         }

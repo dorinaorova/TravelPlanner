@@ -154,58 +154,58 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     val menuExpanded = remember { mutableStateOf(false) }
                     val context = LocalContext.current
                     if(ownProfile.value){
-                    Box{
-                        IconButton(onClick = { menuExpanded.value= true }) {
-                            Icon(
-                                imageVector= Icons.Rounded.MoreVert,
-                                contentDescription = null,
-                                tint= colorResource(id = R.color.primary)
-                            )
+                        Box{
+                            IconButton(onClick = { menuExpanded.value= true }) {
+                                Icon(
+                                    imageVector= Icons.Rounded.MoreVert,
+                                    contentDescription = null,
+                                    tint= colorResource(id = R.color.primary)
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = menuExpanded.value,
+                                onDismissRequest = { menuExpanded.value = false },
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            ){
+                                DropdownMenuItem(
+                                    text = { Text("Edit") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.UserUpdateScreen.route)
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
+                                            contentDescription = null
+                                        )},
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                                DropdownMenuItem(
+                                    text={ Text("Upload background image") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.BACKGROUND}")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
+                                            contentDescription = null
+                                        )},
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Log out") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        vm.logout(context, navController)
+                                    },
+                                    leadingIcon = {
+                                        Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
+                                    },
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                            }
                         }
-                        DropdownMenu(
-                            expanded = menuExpanded.value,
-                            onDismissRequest = { menuExpanded.value = false },
-                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                        ){
-                            DropdownMenuItem(
-                                text = { Text("Edit") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    navController.navigate(Screen.UserUpdateScreen.route)
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
-                                        contentDescription = null
-                                    )},
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                            DropdownMenuItem(
-                                text={ Text("Upload background image") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.BACKGROUND}")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
-                                        contentDescription = null
-                                    )},
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Log out") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    vm.logout(context, navController)
-                                },
-                                leadingIcon = {
-                                    Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
-                                },
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                        }
-                    }
                         }
                     else{
                         Box {
@@ -286,9 +286,11 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 25.dp)){
+                        if(ownProfile.value){
                             items(count=1){
                                 TravelItem(navController, null)
                             }
+                        }
                             items(vm.travels){
                                 TravelItem(navController, it)
                             }
@@ -348,7 +350,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
 
 @Composable
 private fun TravelItem(navController: NavController, travel: Travel?){
-    val route = if(travel == null){Screen.NewTravelScreen.route} else{Screen.TravelProfileScreen.route}
+    val route = if(travel == null){Screen.NewTravelScreen.route} else{Screen.TravelProfileScreen.route+"?id=${travel._id}"}
     Box(
         Modifier
             .height(100.dp)
