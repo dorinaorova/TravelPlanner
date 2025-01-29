@@ -35,7 +35,7 @@ class TravelController(
         @RequestParam(required = false) maxDays: Int?,
         @RequestParam(required = false) name: String?,
         @RequestParam(required = false) location: String?,
-    ) : ResponseEntity<List<TravelInfoDTO>> {
+    ) : ResponseEntity<List<Travel>> {
         var travels = travelService.getAllTravels()
         maxPrice?.let {
             travels= travelService.maxCostFiler(it, travels)
@@ -76,7 +76,7 @@ class TravelController(
     @GetMapping("/{id}")
     fun getTravelById(@PathVariable("id") id: String) : ResponseEntity<*> {
         try {
-            val travel = travelService.getTravelInfoById(id)
+            val travel = travelService.getById(id)
             return ResponseEntity.ok(travel)
         }catch (e: NotFoundException){
             return ResponseEntity(e, HttpStatus.NOT_FOUND)
@@ -98,7 +98,7 @@ class TravelController(
     }
 
     @PutMapping("/update")
-    fun updateTravel(@RequestBody travel: TravelDTO): ResponseEntity<*> {
+    fun updateTravel(@RequestBody travel: Travel): ResponseEntity<*> {
         try{
             val updatedTravel = travelService.update(travel)
             return ResponseEntity(updatedTravel, HttpStatus.OK)
