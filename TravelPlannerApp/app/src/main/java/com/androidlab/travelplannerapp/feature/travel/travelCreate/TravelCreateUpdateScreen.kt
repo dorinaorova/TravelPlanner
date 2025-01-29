@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
@@ -94,6 +95,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
     val currency = remember(vm.travel.currency) { mutableStateOf(vm.travel.currency) }
     val startDate = remember(vm.travel.startDate) { mutableStateOf(vm.travel.startDate) }
     val endDate = remember(vm.travel.endDate) { mutableStateOf(vm.travel.endDate) }
+    val isPublic = remember(vm.travel.public) { mutableStateOf(vm.travel.public) }
 
     val context = LocalContext.current
     val travel = Travel(
@@ -108,7 +110,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
         startDate = startDate.value,
         endDate = endDate.value,
         pictureFileName = vm.travel.pictureFileName,
-        public = false,
+        public = isPublic.value,
         ownerId = vm.travel.ownerId
     )
 
@@ -120,6 +122,8 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
             InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City*", labelColor = colorResource(R.color.primary))
             Spacer(Modifier.height(20.dp))
             InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country*", labelColor = colorResource(R.color.primary))
+            Spacer(Modifier.height(20.dp))
+            PrivateCheckBox(isPublic)
             Spacer(Modifier.height(20.dp))
             Row {
                 DatePickerForm("Start date*", startDate)
@@ -149,6 +153,26 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
             ) { Text("Save") }
             Spacer(Modifier.height(20.dp))
         }
+    }
+}
+
+@Composable
+private fun PrivateCheckBox(isPublic: MutableState<Boolean>){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            "Public: ",
+            color = colorResource(R.color.primary)
+        )
+        Checkbox(
+            checked = isPublic.value,
+            onCheckedChange = { isPublic.value = it },
+            colors = androidx.compose.material3.CheckboxDefaults.colors(
+                checkedColor = colorResource(R.color.primary),
+                uncheckedColor = colorResource(R.color.primary)
+            )
+        )
     }
 }
 
@@ -310,10 +334,11 @@ private fun convertMillisToDate(millis: Long): String {
 @Composable
 private fun TopBar(navController: NavController, id: String?){
     val title = if(id == null){"New travel"} else "Update travel"
+    val route = if(id == null){Screen.ProfileScreen.route} else {Screen.TravelProfileScreen.route+"?id=$id"}
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(onClick = {
-                navController.navigate(Screen.ProfileScreen.route)
+                navController.navigate(route)
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

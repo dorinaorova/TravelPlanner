@@ -17,6 +17,7 @@ import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.UnfollowUseCase
 import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
 import com.androidlab.travelplannerapp.feature.utils.isFollower
+import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -33,6 +34,7 @@ class UserProfileViewModel @Inject constructor(
 ) : ViewModel() {
     private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", "", emptyList(), emptyList()))
     private var _travels = mutableStateListOf<Travel>()
+    var ownProfile: Boolean = false
 
     val user: UserInfo
         get() = _user.value
@@ -55,6 +57,7 @@ class UserProfileViewModel @Inject constructor(
                 val sharedPreferences =
                     context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
                 id = sharedPreferences.getString("id", null)
+                ownProfile= true
             }
             val call = getUserDataUseCase(id!!)
             val response = call?.awaitResponse()
@@ -66,8 +69,12 @@ class UserProfileViewModel @Inject constructor(
             val travelResponse = travelCall?.awaitResponse()
             if(travelResponse?.isSuccessful == true){
                 _travels.clear()
-                _travels.addAll(travelResponse.body()!!)
-                Log.d("travels", _travels.toString())
+                val responseTravels = travelResponse.body()!!
+                if(!ownProfile){
+                    _travels.addAll(responseTravels.filter { it.public })
+                }else{
+                    _travels.addAll(responseTravels)
+                }
             }
         }
     }

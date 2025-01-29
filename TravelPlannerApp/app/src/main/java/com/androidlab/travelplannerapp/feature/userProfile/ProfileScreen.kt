@@ -347,7 +347,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
 }
 
 @Composable
-private fun TravelItem(navController: NavController, travel: Travel?){
+private fun TravelItem(navController: NavController, travel: Travel?, vm: UserProfileViewModel = hiltViewModel()){
     val route = if(travel == null){Screen.NewTravelScreen.route} else{Screen.TravelProfileScreen.route+"?id=${travel._id}"}
     Box(
         Modifier
@@ -373,7 +373,16 @@ private fun TravelItem(navController: NavController, travel: Travel?){
                 Modifier
                     .padding(horizontal = 5.dp, vertical = 10.dp)
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.Bottom) {
+                verticalArrangement = Arrangement.SpaceBetween) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                    if(travel.public && vm.ownProfile){
+                        Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_remove_red_eye_24),
+                            contentDescription = null,
+                            tint= colorResource(id = R.color.primary_text))
+                    }
+                }
+                Column{
+
                 Text( travel.name,
                     color= colorResource(id = R.color.primary_text),
                     fontWeight = FontWeight.Bold,
@@ -382,6 +391,7 @@ private fun TravelItem(navController: NavController, travel: Travel?){
                 Text(travel.city+", "+travel.country,
                     color= colorResource(id = R.color.primary_text),
                     fontSize=10.sp)
+                }
             }
         }else{
             Box(Modifier.background(colorResource(id = R.color.secondary)).fillMaxSize()){
