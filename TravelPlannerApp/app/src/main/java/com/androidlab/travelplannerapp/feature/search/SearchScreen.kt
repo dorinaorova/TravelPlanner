@@ -61,13 +61,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
-import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
+import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
 import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
@@ -193,13 +194,13 @@ private fun FilterBtn(){
 }
 
 @Composable
-private fun TravelListItem(navController: NavController) {
+private fun TravelListItem(navController: NavController, travel: Travel, vm: SearchViewModel = hiltViewModel()) {
     Row(
         Modifier
             .padding(16.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween){
-        Row(Modifier.clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
+        Row(Modifier.clickable { navController.navigate(Screen.TravelProfileScreen.route+"?id=${travel._id}") }) {
             Box(
                 Modifier
                     .width(90.dp)
@@ -207,15 +208,22 @@ private fun TravelListItem(navController: NavController) {
                     .padding(horizontal = 10.dp)
             ) {
                 val imageModifier = Modifier.fillMaxSize()
-                BlankTravelImage(imageModifier)
+                if(travel.pictureFileName != null){
+                    AsyncImage(
+                        model = travelPicturePath(context = LocalContext.current, travel.pictureFileName!!),
+                        contentDescription = null,
+                        modifier = imageModifier)
+                }else{
+                    BlankTravelImage(imageModifier)
+                }
             }
             Column {
-                Text("Label",
+                Text(travel.name,
                         fontSize = 18.sp)
-                Text("Country, City",
+                Text("${travel.city}, ${travel.country}",
                         fontSize = 12.sp,
                         modifier = Modifier.padding(start=8.dp))
-                Text("200-300$",
+                Text("${travel.price} ${travel.currency}",
                         fontSize = 12.sp,
                         modifier = Modifier.padding(start=8.dp))
                 Text("tag1, tag2",
@@ -316,8 +324,8 @@ private fun TravelSearchResultList(navController: NavController, vm: SearchViewM
         vm.getAllTravel()
     })
     LazyColumn {
-        items(1) { item ->
-            TravelListItem(navController)
+        items(vm.travel) { item ->
+            TravelListItem(navController, item)
             ListItemDivider()
         }
     }
