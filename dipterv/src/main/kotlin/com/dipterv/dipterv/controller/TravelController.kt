@@ -63,6 +63,11 @@ class TravelController(
         return ResponseEntity.ok(travels)
     }
 
+    @GetMapping("/filterValues")
+    fun getFilterValues(): ResponseEntity<*>{
+        return ResponseEntity.ok(travelService.getFilterValues())
+    }
+
     @GetMapping("/user/{id}")
     fun getMyTravels(@PathVariable("id") id: String) : ResponseEntity<*>{
         try{
