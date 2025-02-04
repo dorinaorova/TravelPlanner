@@ -115,8 +115,7 @@ private fun Header(vm: TravelViewModel = hiltViewModel()){
                 fontFamily = FontFamily(Font(R.font.itim))
             )
             Row(Modifier.padding(horizontal = 25.dp, vertical = 10.dp)) {
-                val list = arrayOf("Poland", "Shoprt trip")
-                list.forEach {
+                vm.travel.tags?.forEach {
                     TagItem(it)
                     Spacer(Modifier.width(10.dp))
                 }

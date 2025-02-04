@@ -256,7 +256,7 @@ private fun TravelListItem(navController: NavController, travel: Travel, vm: Sea
                 Text("${travel.price} ${travel.currency}",
                         fontSize = 12.sp,
                         modifier = Modifier.padding(start=8.dp))
-                Text("tag1, tag2",
+                Text(travel.tags?.joinToString(separator = ", ")?: "",
                         fontSize = 8.sp,
                         modifier = Modifier.padding(start=10.dp, top= 10.dp))
             }
@@ -383,7 +383,6 @@ private fun UserSearchResultList(navController: NavController, vm: SearchViewMod
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hiltViewModel()){
     var tag by remember {mutableStateOf("")}
@@ -539,6 +538,7 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                             onClick = {vm.tagList.add(tag)
                                       tag = ""},
                             colors = androidx.compose.material3.ButtonDefaults.buttonColors(colorResource(id = R.color.primary)),
+                            enabled = tag != ""
                             ) {
                             Text("Add", color = colorResource(id = R.color.primary_text))
                         }

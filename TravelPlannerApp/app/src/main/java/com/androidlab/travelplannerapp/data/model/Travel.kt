@@ -10,7 +10,7 @@ data class Travel(
     val price: Int =0,
     val currency: String = "EUR",
     val description: String?= null,
-    val tags: List<String>?= null,
+    var tags: List<String>?= null,
     val pictureFileName: String?= null,
     val public: Boolean = false,
     val ownerId: String?= null
