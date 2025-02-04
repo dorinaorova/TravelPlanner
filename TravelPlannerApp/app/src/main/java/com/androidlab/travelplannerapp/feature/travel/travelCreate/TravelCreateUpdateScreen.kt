@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -20,9 +23,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
@@ -30,6 +35,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -38,8 +45,10 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -94,6 +103,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
     val currency = remember(vm.travel.currency) { mutableStateOf(vm.travel.currency) }
     val startDate = remember(vm.travel.startDate) { mutableStateOf(vm.travel.startDate) }
     val endDate = remember(vm.travel.endDate) { mutableStateOf(vm.travel.endDate) }
+    val isPublic = remember(vm.travel.public) { mutableStateOf(vm.travel.public) }
 
     val context = LocalContext.current
     val travel = Travel(
@@ -108,7 +118,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
         startDate = startDate.value,
         endDate = endDate.value,
         pictureFileName = vm.travel.pictureFileName,
-        public = false,
+        public = isPublic.value,
         ownerId = vm.travel.ownerId
     )
 
@@ -121,12 +131,14 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
             Spacer(Modifier.height(20.dp))
             InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country*", labelColor = colorResource(R.color.primary))
             Spacer(Modifier.height(20.dp))
+            PrivateCheckBox(isPublic)
+            Spacer(Modifier.height(20.dp))
             Row {
                 DatePickerForm("Start date*", startDate)
                 DatePickerForm("End date*", endDate)
             }
             Spacer(Modifier.height(20.dp))
-            //TODO
+            TagList()
             Spacer(Modifier.height(20.dp))
             PriceCurrencyForm(price,currency )
             Spacer(Modifier.height(20.dp))
@@ -153,6 +165,103 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
 }
 
 @Composable
+private fun PrivateCheckBox(isPublic: MutableState<Boolean>){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            "Public: ",
+            color = colorResource(R.color.primary)
+        )
+        Checkbox(
+            checked = isPublic.value,
+            onCheckedChange = { isPublic.value = it },
+            colors = androidx.compose.material3.CheckboxDefaults.colors(
+                checkedColor = colorResource(R.color.primary),
+                uncheckedColor = colorResource(R.color.primary)
+            )
+        )
+    }
+}
+
+@Composable
+private fun TagList(vm: TravelCreateUpdateViewModel = hiltViewModel()){
+    var tag by remember {mutableStateOf("")}
+    Column (Modifier.fillMaxWidth().padding(horizontal = 40.dp), horizontalAlignment = Alignment.Start){
+        Text(
+            "Tags",
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
+            color =colorResource(id = R.color.primary),
+            modifier = Modifier.padding(start = 10.dp)
+        )
+        Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
+            BasicTextField(
+                value = tag,
+                onValueChange = { tag = it },
+                textStyle = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colorResource(id = R.color.primary)
+                ),
+                maxLines = 1,
+                decorationBox = { innerTextField ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .background(
+                                color = colorResource(R.color.primary_background),
+                                shape = RoundedCornerShape(size = 10.dp)
+                            )
+                            .border(
+                                width = 2.dp,
+                                color = colorResource(id = R.color.primary),
+                                shape = RoundedCornerShape(size = 10.dp)
+
+                            ).padding(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        innerTextField()
+                    }
+                }
+            )
+
+            Button(
+                onClick = {vm.tagList.add(tag)
+                    tag = ""},
+                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary)),
+                enabled = tag != ""
+            ) {
+                androidx.compose.material.Text("Add", color = colorResource(id = R.color.primary_text))
+            }
+        }
+        LazyRow{
+            items(vm.tagList) {item->
+                InputChip(
+                    onClick = {
+                        vm.tagList.remove(item)
+                    },
+                    colors = InputChipDefaults.inputChipColors(
+                        containerColor = colorResource(id = R.color.primary)
+                    ),
+                    label = { androidx.compose.material.Text(item, modifier = Modifier.padding(2.dp), color = colorResource(id = R.color.primary_text)) },
+                    selected = false,
+                    trailingIcon = {
+                        androidx.compose.material.Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Localized description",
+                            Modifier.size(InputChipDefaults.AvatarSize),
+                            tint = colorResource(id = R.color.primary_text)
+                        )
+                    },
+                    modifier = Modifier.padding(end = 10.dp))
+
+            }
+        }
+    }
+}
+
+@Composable
 private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<String>){
     val isError = price.value < 0
     val expanded = remember { mutableStateOf(false) }
@@ -166,7 +275,7 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
             modifier = Modifier.padding(start = 50.dp)
         )
         Spacer(Modifier.height(5.dp))
-        Row(Modifier.fillMaxWidth(0.9f), horizontalArrangement = Arrangement.Center){
+        Row(Modifier.fillMaxWidth().padding(start = 40.dp), horizontalArrangement = Arrangement.Start){
             BasicTextField(
                 value = price.value.toString(),
                 onValueChange = { price.value = it.toIntOrNull() ?: 0 },
@@ -310,10 +419,11 @@ private fun convertMillisToDate(millis: Long): String {
 @Composable
 private fun TopBar(navController: NavController, id: String?){
     val title = if(id == null){"New travel"} else "Update travel"
+    val route = if(id == null){Screen.ProfileScreen.route} else {Screen.TravelProfileScreen.route+"?id=$id"}
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(onClick = {
-                navController.navigate(Screen.ProfileScreen.route)
+                navController.navigate(route)
             }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,

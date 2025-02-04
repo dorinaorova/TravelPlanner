@@ -2,6 +2,7 @@ package com.androidlab.travelplannerapp.feature.travel.travelCreate
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,6 +24,7 @@ class TravelCreateUpdateViewModel @Inject constructor(
     private val getTravelByIdUseCase: GetTravelByIdUseCase,
     private val updateTravelUseCase: UpdateTravelUseCase
 ): ViewModel(){
+    var tagList =  mutableStateListOf<String>()
     private var _travel = mutableStateOf(Travel())
 
     val travel: Travel
@@ -31,9 +33,9 @@ class TravelCreateUpdateViewModel @Inject constructor(
     fun save(travel: Travel, context: Context, navController: NavController){
         viewModelScope.launch {
             val userId = getOwnUserId(context)!!
+            travel.tags = tagList
             val call = newTravelUseCase(userId, travel)
             val response = call?.awaitResponse()
-            Log.d("RESPONSE", response.toString())
             if(response?.isSuccessful == true){
                 navController.navigate(Screen.ProfileScreen.route)
             }
@@ -43,6 +45,7 @@ class TravelCreateUpdateViewModel @Inject constructor(
     fun update(travel: Travel, navController: NavController){
         viewModelScope.launch {
             val call = updateTravelUseCase(travel)
+            travel.tags = tagList
             val response = call?.awaitResponse()
             if(response?.isSuccessful == true){
                 navController.navigate(Screen.TravelProfileScreen.route+"?id=${travel._id}")
@@ -62,10 +65,12 @@ class TravelCreateUpdateViewModel @Inject constructor(
 
     fun fetchData(id: String){
         viewModelScope.launch {
+            tagList.clear()
             val call = getTravelByIdUseCase(id)
             val response = call?.awaitResponse()
             if (response?.isSuccessful == true) {
                 _travel.value = response.body()!!
+                if(_travel.value.tags != null) tagList.addAll(_travel.value.tags!!)
             }
         }
     }
