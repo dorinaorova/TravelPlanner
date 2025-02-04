@@ -3,8 +3,6 @@ package com.dipterv.dipterv.controller
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.Ticket
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.dto.TravelDTO
-import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TicketService
 import com.dipterv.dipterv.service.TravelService

@@ -1,29 +1,33 @@
 package com.androidlab.travelplannerapp.feature.search
 
-import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.data.model.FollowRequest
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
+import com.androidlab.travelplannerapp.domain.usecases.search.GetFilterValuesUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchTravelUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchUserUseCase
-import com.androidlab.travelplannerapp.domain.usecases.user.IsFollowerUseCase
-import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
-import com.androidlab.travelplannerapp.feature.utils.isFollower
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import retrofit2.Call
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor( private val searchTravelUseCase: SearchTravelUseCase,
-    private val searchUserUseCase: SearchUserUseCase
+    private val searchUserUseCase: SearchUserUseCase,
+    private val filetValuesUseCase: GetFilterValuesUseCase
 )  : ViewModel() {
+    private val baseFilterValues = mutableStateListOf<Int>()
+    var country = mutableStateOf("")
+    var city = mutableStateOf("")
+    var priceSliderPosition = mutableStateOf(0f..100f)
+    var daysSliderPosition = mutableStateOf(0f..100f)
+    var tagList =  mutableStateListOf<String>()
+
+    var searchName = mutableStateOf("")
+
     private var _travels = mutableStateListOf<Travel>()
     val travel: List<Travel>
         get() = _travels
@@ -31,6 +35,16 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
     private var _users = mutableStateListOf<UserInfo>()
     val users : List<UserInfo>
         get() = _users
+
+    fun getFilterValues(){
+        viewModelScope.launch {
+            val call = filetValuesUseCase()
+            val response = call?.awaitResponse()
+            if(response?.isSuccessful == true){
+                baseFilterValues.addAll(response.body()!!)
+            }
+        }
+    }
 
     fun getAllTravel(){
         viewModelScope.launch{
@@ -57,10 +71,10 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
         }
     }
 
-    fun searchUser(name: String){
+    fun searchUser(){
         viewModelScope.launch {
             _users.clear()
-            val call = searchUserUseCase(name)
+            val call = searchUserUseCase(searchName.value)
             val response = call?.awaitResponse()
             if (response?.isSuccessful == true) {
                 _users.addAll(response.body()!!)
@@ -68,4 +82,60 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
         }
     }
 
+    fun searchTravel(){
+        viewModelScope.launch {
+            _travels.clear()
+            val call = searchTravelUseCase(name = searchName.value)
+            val response = call?.awaitResponse()
+            if(response?.isSuccessful == true){
+                _travels.addAll(response.body()!!)
+            }
+        }
+    }
+
+    fun filterTravel(){
+        viewModelScope.launch {
+            val call = searchTravelUseCase(name = searchName.value, city = city.value, country = country.value, tags = tagList,
+                minDays = calculateMinDays(), maxDays = calculateMaxDays(), minPrice = calculateMinPrice(), maxPrice = calculateMaxPrice())
+            val response = call?.awaitResponse()
+            if(response?.isSuccessful == true){
+                _travels.clear()
+                _travels.addAll(response.body()!!)
+            }
+        }
+    }
+
+
+    fun priceFilterValue(): String{
+        return "${calculateMinPrice()} - ${calculateMaxPrice()}"
+    }
+
+    fun daysFilterValue(): String{
+        return "${calculateMinDays()} - ${calculateMaxDays()}"
+    }
+
+    fun calculateSteps(days: Boolean) : Int{
+        return if(days){
+            baseFilterValues[1]-1
+        }else{
+            baseFilterValues[3]-1
+        }
+    }
+
+    private fun calculateMinDays() : Int{
+        return (baseFilterValues[1] * (daysSliderPosition.value.start)/100).toInt()
+    }
+
+    private fun calculateMaxDays() : Int{
+        return (baseFilterValues[1] *daysSliderPosition.value.endInclusive/100).toInt()
+    }
+
+    private fun calculateMinPrice() : Int{
+        return (baseFilterValues[3] *priceSliderPosition.value.start/100).toInt()
+    }
+
+    private fun calculateMaxPrice() : Int{
+        return (baseFilterValues[3] *priceSliderPosition.value.endInclusive/100).toInt()
+
+    }
 }
