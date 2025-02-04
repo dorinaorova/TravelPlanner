@@ -14,7 +14,14 @@ interface TravelService {
 
     @Headers("Accept: application/json")
     @GET("travel/all")
-    fun getAll(@Query("name") name: String? = null, @Query("city") city: String? = null, @Query("country") country: String? = null, @Query("tags") tags: List<String>? = null) : Call<List<Travel>>?
+    fun getAll(@Query("name") name: String? = null,
+               @Query("city") city: String? = null,
+               @Query("country") country: String? = null,
+               @Query("tags") tags: List<String>? = null,
+               @Query("minDays") minDays:Int? = null,
+               @Query("maxDays") maxDays: Int? =null,
+               @Query("minPrice") minPrice:Int? = null,
+               @Query("maxPrice") maxPrice: Int? = null) : Call<List<Travel>>?
 
     @Headers("Accept: application/json")
     @GET("travel/{id}")
@@ -31,4 +38,8 @@ interface TravelService {
     @Headers("Accept: application/json")
     @PUT("travel/update")
     fun updateTravel(@Body travel: Travel) : Call<Travel>?
+
+    @Headers("Accept: application/json")
+    @GET("travel/filterValues")
+    fun getFilterValues() : Call<List<Int>>?
 }

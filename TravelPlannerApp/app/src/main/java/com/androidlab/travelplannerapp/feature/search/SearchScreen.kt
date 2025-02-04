@@ -32,7 +32,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.RangeSlider
+import androidx.compose.material3.RangeSlider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -42,12 +42,10 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
-import androidx.compose.material3.SelectableChipColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -83,6 +81,7 @@ import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
 import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
 import com.androidlab.travelplannerapp.navigation.Screen
+import com.example.compose.primaryContainerLight
 
 
 val openFilterDialog =mutableStateOf(false)
@@ -98,6 +97,9 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
             )
         }
     }
+    LaunchedEffect(Unit, block ={
+        vm.getFilterValues()
+    })
     Scaffold(
         content={paddingValues ->
             Box(modifier = Modifier
@@ -126,11 +128,10 @@ fun SearchBar(travelPicked: MutableState<Boolean>, vm: SearchViewModel = hiltVie
     Box(Modifier.background(colorResource(id = R.color.secondary))){
         Column{
             Row (Modifier.padding(top=10.dp, end=15.dp, start=15.dp)){
-                var value by remember { mutableStateOf("") }
                 val keyboardController = LocalSoftwareKeyboardController.current
                 BasicTextField(
-                    value = value,
-                    onValueChange = { value = it },
+                    value = vm.searchName.value,
+                    onValueChange = { vm.searchName.value = it },
                     textStyle = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
@@ -140,7 +141,11 @@ fun SearchBar(travelPicked: MutableState<Boolean>, vm: SearchViewModel = hiltVie
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            vm.searchUser(value)
+                            if(travelPicked.value){
+                                vm.searchTravel()
+                            }else{
+                                vm.searchUser()
+                            }
                             keyboardController?.hide()
                         }
                     ),
@@ -381,12 +386,7 @@ private fun UserSearchResultList(navController: NavController, vm: SearchViewMod
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hiltViewModel()){
-    var country by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var tag by remember { mutableStateOf("") }
-    var priceSliderPosition by remember { mutableStateOf(0f..100f) }
-    var daysSliderPosition by remember { mutableStateOf(0f..100f) }
-    var tagList = remember { mutableStateListOf<String>() }
+    var tag by remember {mutableStateOf("")}
     Dialog(onDismissRequest = onDismissRequest) {
         Card(modifier = Modifier.wrapContentSize().padding(10.dp),
             shape = RoundedCornerShape(16.dp),
@@ -396,14 +396,16 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
                     Text("Cancel", modifier = Modifier.clickable { onDismissRequest() }, color = colorResource(id = R.color.secondary))
                     Text("Clear", modifier = Modifier.clickable {
-                        country = ""
-                        city = ""
+                        vm.country.value = ""
+                        vm.city.value = ""
                         tag = ""
-                        priceSliderPosition = 0f..100f
-                        daysSliderPosition = 0f..100f
-                        tagList.clear()
-                        priceSliderPosition = 0f..100f
-                        daysSliderPosition= 0f..100f
+                        vm.priceSliderPosition.value = 0f..100f
+                        vm.daysSliderPosition.value = 0f..100f
+                        vm.tagList.clear()
+                        vm.priceSliderPosition.value = 0f..100f
+                        vm.daysSliderPosition.value= 0f..100f
+                        onDismissRequest()
+                        vm.filterTravel()
                     }, color = colorResource(id = R.color.secondary))
                 }
                 Spacer(modifier = Modifier.height(15.dp))
@@ -411,8 +413,8 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                     Column{
                         Text("Country", modifier = Modifier.padding(start=5.dp), color = colorResource(id = R.color.primary))
                         BasicTextField(
-                            value = country,
-                            onValueChange = { country = it },
+                            value = vm.country.value,
+                            onValueChange = { vm.country.value = it },
                             textStyle = TextStyle(
                                 color = colorResource(id = R.color.secondary)
                             ),
@@ -440,8 +442,8 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                     Column{
                         Text("City",  modifier = Modifier.padding(start=5.dp), color = colorResource(id = R.color.primary))
                         BasicTextField(
-                            value = city,
-                            onValueChange = { city = it },
+                            value = vm.city.value,
+                            onValueChange = { vm.city.value = it },
                             textStyle = TextStyle(
                                 color = colorResource(id = R.color.secondary)
                             ),
@@ -467,30 +469,41 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                         )
                     }
                 }
+
                 Text("Price", color = colorResource(id = R.color.primary))
                 RangeSlider(
-                    value = priceSliderPosition,
-                    onValueChange = { priceSliderPosition = it },
+                    value = vm.priceSliderPosition.value,
+                    onValueChange = { vm.priceSliderPosition.value = it },
                     valueRange = 0f..100f,
-                    steps = 1,
-                    colors = androidx.compose.material.SliderDefaults.colors(
+                    steps = vm.calculateSteps(false),
+                    colors = androidx.compose.material3.SliderDefaults.colors(
                         thumbColor = colorResource(id = R.color.primary),
-                        activeTrackColor = colorResource(id = R.color.primary)
+                        activeTrackColor = colorResource(id = R.color.primary),
+                        activeTickColor = colorResource(id = R.color.primary),
+                        inactiveTrackColor = primaryContainerLight,
+                        inactiveTickColor = primaryContainerLight
                     ),
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                 )
+                Text(text=vm.priceFilterValue())
+                Spacer(modifier = Modifier.height(15.dp))
                 Text("Days", color = colorResource(id = R.color.primary))
                 RangeSlider(
-                    value = daysSliderPosition,
-                    onValueChange = { daysSliderPosition = it },
+                    value = vm.daysSliderPosition.value,
+                    onValueChange = { vm.daysSliderPosition.value = it },
                     valueRange = 0f..100f,
-                    steps = 1,
-                    colors = androidx.compose.material.SliderDefaults.colors(
+                    steps = vm.calculateSteps(true),
+                    colors = androidx.compose.material3.SliderDefaults.colors(
                         thumbColor = colorResource(id = R.color.primary),
-                        activeTrackColor = colorResource(id = R.color.primary)
+                        activeTrackColor = colorResource(id = R.color.primary),
+                        activeTickColor = colorResource(id = R.color.primary),
+                        inactiveTrackColor = primaryContainerLight,
+                        inactiveTickColor = primaryContainerLight
                     ),
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                 )
+                Text(text=vm.daysFilterValue())
+                Spacer(modifier = Modifier.height(15.dp))
                 Text("Tags", color = colorResource(id = R.color.primary))
                 Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
                     BasicTextField(
@@ -523,7 +536,7 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                     )
 
                         Button(
-                            onClick = {tagList.add(tag)
+                            onClick = {vm.tagList.add(tag)
                                       tag = ""},
                             colors = androidx.compose.material3.ButtonDefaults.buttonColors(colorResource(id = R.color.primary)),
                             ) {
@@ -531,10 +544,10 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                         }
                     }
                 LazyRow{
-                    items(tagList) {item->
+                    items(vm.tagList) {item->
                         InputChip(
                             onClick = {
-                                tagList.remove(item)
+                                vm.tagList.remove(item)
                             },
                             colors = InputChipDefaults.inputChipColors(
                                 containerColor = colorResource(id = R.color.primary)
@@ -557,7 +570,7 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                 Spacer(Modifier.height(20.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Button(onClick = {
-                        vm.filterTravel(country, city, priceSliderPosition, daysSliderPosition, tagList)
+                        vm.filterTravel()
                         onDismissRequest()
                     },
                         colors = androidx.compose.material3.ButtonDefaults.buttonColors(colorResource(id = R.color.secondary)),) {
