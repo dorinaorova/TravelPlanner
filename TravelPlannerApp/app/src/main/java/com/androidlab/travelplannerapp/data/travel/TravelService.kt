@@ -8,12 +8,13 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface TravelService {
 
     @Headers("Accept: application/json")
     @GET("travel/all")
-    fun getAll() : Call<List<Travel>>?
+    fun getAll(@Query("name") name: String? = null, @Query("city") city: String? = null, @Query("country") country: String? = null, @Query("tags") tags: List<String>? = null) : Call<List<Travel>>?
 
     @Headers("Accept: application/json")
     @GET("travel/{id}")

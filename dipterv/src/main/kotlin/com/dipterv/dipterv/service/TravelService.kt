@@ -32,8 +32,12 @@ class TravelService (
         return mapper.travelToTravelInfoDto(getById(id))
     }
 
-    fun locationFilter(location: String, travels: List<Travel>) : List<Travel>{
-        return travels.filter { it.country.contains(location, true) || it.city!!.contains(location, true) }
+    fun cityFilter(city: String, travels: List<Travel>) : List<Travel>{
+        return travels.filter { it.city!!.contains(city, true) }
+    }
+
+    fun countryFilter(country: String, travels: List<Travel>) : List<Travel>{
+        return travels.filter { it.country.contains(country, true)}
     }
 
     fun nameFilter(name: String, travels: List<Travel>): List<Travel>{

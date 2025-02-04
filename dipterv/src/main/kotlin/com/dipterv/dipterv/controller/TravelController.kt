@@ -3,8 +3,6 @@ package com.dipterv.dipterv.controller
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.Ticket
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.dto.TravelDTO
-import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TicketService
 import com.dipterv.dipterv.service.TravelService
@@ -34,7 +32,8 @@ class TravelController(
         @RequestParam(required = false) minDays: Int?,
         @RequestParam(required = false) maxDays: Int?,
         @RequestParam(required = false) name: String?,
-        @RequestParam(required = false) location: String?,
+        @RequestParam(required = false) city: String?,
+        @RequestParam(required = false) country: String?,
     ) : ResponseEntity<List<Travel>> {
         var travels = travelService.getAllTravels()
         maxPrice?.let {
@@ -55,8 +54,11 @@ class TravelController(
         name?.let {
             travels= travelService.nameFilter(it, travels)
         }
-        location?.let{
-            travels = travelService.locationFilter(it, travels)
+        city?.let{
+            travels = travelService.cityFilter(it, travels)
+        }
+        country?.let{
+            travels = travelService.countryFilter(it, travels)
         }
         return ResponseEntity.ok(travels)
     }

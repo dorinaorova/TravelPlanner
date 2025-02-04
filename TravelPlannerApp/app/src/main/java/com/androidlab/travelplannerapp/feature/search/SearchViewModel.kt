@@ -1,22 +1,15 @@
 package com.androidlab.travelplannerapp.feature.search
 
-import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.data.model.FollowRequest
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchTravelUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchUserUseCase
-import com.androidlab.travelplannerapp.domain.usecases.user.IsFollowerUseCase
-import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
-import com.androidlab.travelplannerapp.feature.utils.isFollower
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import retrofit2.Call
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
@@ -64,6 +57,20 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
             val response = call?.awaitResponse()
             if (response?.isSuccessful == true) {
                 _users.addAll(response.body()!!)
+            }
+        }
+    }
+
+    fun filterTravel(country: String, city: String,  priceSliderPosition:
+    ClosedFloatingPointRange<Float>, daysSliderPosition:
+    ClosedFloatingPointRange<Float>, tagList: List<String>){
+        viewModelScope.launch {
+            Log.d("TAG", "filterTravel: $country $city $priceSliderPosition $daysSliderPosition $tagList")
+            val call = searchTravelUseCase(name = null, city = city, country = country, tags = tagList)
+            val response = call?.awaitResponse()
+            if(response?.isSuccessful == true){
+                _travels.clear()
+                _travels.addAll(response.body()!!)
             }
         }
     }

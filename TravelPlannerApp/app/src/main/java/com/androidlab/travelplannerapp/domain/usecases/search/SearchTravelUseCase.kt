@@ -6,7 +6,7 @@ import retrofit2.Call
 import javax.inject.Inject
 
 class SearchTravelUseCase @Inject constructor(private val travelService: TravelService) {
-    operator fun invoke(): Call<List<Travel>>? {
-        return travelService.getAll()
+    operator fun invoke(name: String? = null, city: String? = null, country: String? = null, tags: List<String>? = null): Call<List<Travel>>? {
+        return travelService.getAll(name, city, country, tags)
     }
 }
