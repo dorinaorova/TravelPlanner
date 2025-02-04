@@ -32,8 +32,12 @@ class TravelService (
         return mapper.travelToTravelInfoDto(getById(id))
     }
 
-    fun locationFilter(location: String, travels: List<Travel>) : List<Travel>{
-        return travels.filter { it.country.contains(location, true) || it.city!!.contains(location, true) }
+    fun cityFilter(city: String, travels: List<Travel>) : List<Travel>{
+        return travels.filter { it.city!!.contains(city, true) }
+    }
+
+    fun countryFilter(country: String, travels: List<Travel>) : List<Travel>{
+        return travels.filter { it.country.contains(country, true) }
     }
 
     fun nameFilter(name: String, travels: List<Travel>): List<Travel>{
@@ -58,6 +62,17 @@ class TravelService (
 
     fun maxDaysFilter(days: Int, travels: List<Travel>) : List<Travel>{
         return travels.filter{ calculateDurationInDays(it.endDate, it.startDate) <= days}
+    }
+
+    fun getFilterValues() : List<Int>{
+        val travels = getAllTravels()
+        val minDaysTravel = travels.minWithOrNull(compareBy {it.endDate - it.startDate})
+        val minDays =if(minDaysTravel!= null){calculateDurationInDays(minDaysTravel.endDate, minDaysTravel.startDate)}else{null}
+        val maxDaysTravel = travels.maxWithOrNull(compareBy {it.endDate - it.startDate})
+        val maxDays =if(maxDaysTravel!= null){calculateDurationInDays(maxDaysTravel.endDate, maxDaysTravel.startDate)}else{null}
+        val minPrice = travels.minByOrNull { it.price }?.price
+        val maxPrice = travels.maxByOrNull {it.price}?.price
+        return listOf(minDays?.toInt()?: 0, maxDays?.toInt()?: 0, minPrice?: 0, maxPrice?:0)
     }
 
     fun createNew(id: String, travelDTO: Travel): Travel{
