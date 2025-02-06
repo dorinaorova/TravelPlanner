@@ -192,6 +192,14 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                             modifier = Modifier.background(colorResource(id = R.color.primary_text))
                         ){
                             DropdownMenuItem(
+                                text={ Text("View vacation profile") },
+                                onClick = {
+                                    menuExpanded.value = false
+                                    navController.navigate(Screen.VacationScreen.route+"?id=${vm.travel._id}")
+                                },
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            )
+                            DropdownMenuItem(
                                 text = { Text("Edit") },
                                 onClick = {
                                     menuExpanded.value = false
