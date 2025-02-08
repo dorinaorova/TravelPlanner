@@ -76,6 +76,7 @@ import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
+import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
@@ -361,14 +362,6 @@ private fun TravelSearchResultList(navController: NavController, vm: SearchViewM
     }
 }
 
-@Composable
-private fun ListItemDivider(){
-    Divider(
-        thickness = 1.dp,
-        color = colorResource(id = R.color.primary),
-        modifier = Modifier.padding(horizontal = 25.dp)
-    )
-}
 
 @Composable
 private fun UserSearchResultList(navController: NavController, vm: SearchViewModel = hiltViewModel()){

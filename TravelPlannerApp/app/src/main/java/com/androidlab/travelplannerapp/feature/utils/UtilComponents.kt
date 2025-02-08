@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -36,6 +37,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 
 @Composable
@@ -146,4 +148,39 @@ fun BlankTravelImage(imageModifier: Modifier, ){
         contentScale = ContentScale.Crop,
         modifier = imageModifier
     )
+}
+
+@Composable
+fun ListItemDivider(){
+    Divider(
+        thickness = 1.dp,
+        color = colorResource(id = R.color.primary),
+        modifier = Modifier.padding(horizontal = 25.dp)
+    )
+}
+
+@Composable
+fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSourceSelector = ImageSourceSelector.TRAVEL){
+    if(!filePath.isNullOrEmpty()){
+        val fullPicturePath = when(imageSource){
+            ImageSourceSelector.PROFILE -> profilePictureFilePath(LocalContext.current ,filePath)
+            ImageSourceSelector.BACKGROUND -> backgroundPicturePath(LocalContext.current, filePath)
+            else -> travelPicturePath(LocalContext.current, filePath)
+        }
+        AsyncImage(
+            model = fullPicturePath,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = imageModifier
+        )
+    }else{
+        BlankTravelImage(imageModifier)
+    }
+}
+
+
+enum class ImageSourceSelector {
+    TRAVEL,
+    PROFILE,
+    BACKGROUND
 }

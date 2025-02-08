@@ -17,4 +17,5 @@ data class Travel(
     var participantIds: List<String>?= null,
     var spendIds: List<String>? = null,
     var ticketIds: List<String>? = null,
+    var isCurrent: Boolean = false,
 )

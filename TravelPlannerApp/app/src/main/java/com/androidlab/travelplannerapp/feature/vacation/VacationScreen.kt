@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -48,6 +49,8 @@ import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
+import com.androidlab.travelplannerapp.feature.utils.CustomImage
+import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
 import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
@@ -88,15 +91,7 @@ private fun Header(navController: NavController, vm: VacationViewModel = hiltVie
             .fillMaxWidth()
             .height(300.dp)
             .blur(5.dp)
-        if(!vm.travel.pictureFileName.isNullOrEmpty()){
-            AsyncImage(
-                model = travelPicturePath(LocalContext.current ,vm.travel.pictureFileName!!),
-                contentDescription = null,
-                modifier = imageModifier
-            )
-        }else{
-            BlankTravelImage(imageModifier)
-        }
+        CustomImage(imageModifier, vm.travel.pictureFileName, ImageSourceSelector.TRAVEL)
         Column(Modifier.padding(top = 75.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
             Text(
                 vm.travel.name,
