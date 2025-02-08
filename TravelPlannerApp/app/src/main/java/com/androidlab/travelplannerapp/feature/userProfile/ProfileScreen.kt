@@ -1,6 +1,5 @@
 package com.androidlab.travelplannerapp.feature.userProfile
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -44,10 +43,8 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,18 +53,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Travel
-import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
-import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
+import com.androidlab.travelplannerapp.feature.utils.CustomImage
+import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
-import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
-import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
+import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
 fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileViewModel = hiltViewModel()){
@@ -106,24 +101,11 @@ private fun Details(navController: NavController, ownProfile: MutableState<Boole
 private fun Header(vm: UserProfileViewModel = hiltViewModel()){
     Box(modifier = Modifier
         .fillMaxSize()) {
-        if(vm.user.backgroundPictureFilePath != ""){
-            val context = LocalContext.current
-            AsyncImage(
-                model = vm.backgroundPicturePath(context),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .blur(5.dp),
-            )
-        }else{
-                BlankTravelImage(Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .blur(5.dp))
-
-        }
+        val imageModifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .blur(5.dp)
+        CustomImage(imageModifier, vm.user.backgroundPictureFilePath, ImageSourceSelector.BACKGROUND)
     }
 }
 
@@ -319,27 +301,8 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                             navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.PROFILE}")
                         }
                 ){
-
-                if(vm.user.profilePictureFilePath != ""){
-                    val context = LocalContext.current
-                    AsyncImage(
-                        model=profilePictureFilePath(context, vm.user.profilePictureFilePath!!),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-
-                    )
-                }else {
-                    Image(
-                        painterResource(id = R.drawable.blank_profile),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxSize()
-
-                    )
-                }
+                    val imageModifier= Modifier.fillMaxSize()
+                    CustomImage(imageModifier, vm.user.profilePictureFilePath, ImageSourceSelector.PROFILE)
                 }
             }
         }
@@ -357,17 +320,8 @@ private fun TravelItem(navController: NavController, travel: Travel?, vm: UserPr
             .clip(RoundedCornerShape(10.dp))
             .clickable { navController.navigate(route) }) {
         if(travel != null){
-            val imageModifier = Modifier.blur(3.dp)
-            if(travel.pictureFileName==null) {
-                BlankTravelImage(imageModifier)
-            }
-            else{
-                AsyncImage(
-                    model = travelPicturePath(context = LocalContext.current, travel.pictureFileName),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier= imageModifier)
-            }
+            val imageModifier = Modifier.blur(3.dp).fillMaxSize()
+            CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL)
 
             Column(
                 Modifier

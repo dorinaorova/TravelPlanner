@@ -1,7 +1,6 @@
 package com.androidlab.travelplannerapp.feature.search
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,12 +26,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material3.RangeSlider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -42,6 +38,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
+import androidx.compose.material3.RangeSlider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -54,11 +51,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -70,17 +65,15 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
-import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
+import com.androidlab.travelplannerapp.feature.utils.CustomImage
+import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
-import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
-import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryContainerLight
 
@@ -239,14 +232,7 @@ private fun TravelListItem(navController: NavController, travel: Travel, vm: Sea
                     .padding(horizontal = 10.dp)
             ) {
                 val imageModifier = Modifier.fillMaxSize()
-                if(travel.pictureFileName != null){
-                    AsyncImage(
-                        model = travelPicturePath(context = LocalContext.current, travel.pictureFileName!!),
-                        contentDescription = null,
-                        modifier = imageModifier)
-                }else{
-                    BlankTravelImage(imageModifier)
-                }
+                CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL)
             }
             Column {
                 Text(travel.name,
@@ -300,21 +286,8 @@ private fun UserListItem(navController: NavController, user: UserInfo, vm: Searc
                     .clip(CircleShape)
                     .border(3.dp, Color.White, CircleShape)
             ) {
-                if(user.profilePictureFilePath != ""){
-                    AsyncImage(
-                        model = profilePictureFilePath(context = LocalContext.current, user.profilePictureFilePath!!),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }else{
-                    Image(
-                        painterResource(id = R.drawable.blank_profile),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                val imageModifier = Modifier.fillMaxSize()
+                CustomImage(imageModifier, user.profilePictureFilePath, ImageSourceSelector.PROFILE)
             }
             Column(Modifier.align(Alignment.CenterVertically).padding(start=10.dp)) {
                 Text(user.username,

@@ -1,6 +1,5 @@
 package com.androidlab.travelplannerapp.feature.travel
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,10 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,12 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
-import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
-import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
+import com.androidlab.travelplannerapp.feature.utils.CustomImage
+import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.calculateDays
 import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
@@ -96,16 +92,7 @@ private fun Header(vm: TravelViewModel = hiltViewModel()){
             .fillMaxWidth()
             .height(300.dp)
             .blur(5.dp)
-        if(vm.travel.pictureFileName!=null){
-            AsyncImage(
-                model= travelPicturePath(context, vm.travel.pictureFileName!!),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = imageModifier
-            )
-        }else{
-            BlankTravelImage(imageModifier)
-        }
+        CustomImage(imageModifier, vm.travel.pictureFileName, ImageSourceSelector.TRAVEL)
         Column(Modifier.padding(top = 75.dp)) {
             Text(
                 vm.travel.name,

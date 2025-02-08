@@ -1,6 +1,5 @@
 package com.androidlab.travelplannerapp.feature.vacation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,10 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,16 +40,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
-import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
-import com.androidlab.travelplannerapp.feature.utils.profilePictureFilePath
-import com.androidlab.travelplannerapp.feature.utils.travelPicturePath
+import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
 fun VacationScreen(navController: NavController, id: String, vm: VacationViewModel = hiltViewModel()){
@@ -141,19 +133,7 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
                         .clip(CircleShape)
                         .height(40.dp)
                         .padding(bottom = 3.dp)
-                    if(!it.profilePictureFilePath.isNullOrEmpty()){
-                        AsyncImage(
-                            model = profilePictureFilePath(LocalContext.current, it.profilePictureFilePath!!),
-                            contentDescription = null,
-                            modifier = imageModifier
-                        )
-                    }else{
-                        Image(
-                            painter = painterResource(id = R.drawable.blank_profile),
-                            contentDescription = null,
-                            modifier= imageModifier
-                        )
-                    }
+                    CustomImage(imageModifier, it.profilePictureFilePath, ImageSourceSelector.PROFILE)
                     Text(it.username)
                 }
             }
