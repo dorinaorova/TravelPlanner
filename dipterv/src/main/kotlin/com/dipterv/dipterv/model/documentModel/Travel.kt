@@ -22,4 +22,5 @@ data class Travel(
         var ticketIds: List<String>?,
         var public: Boolean,
         var ownerId: String?,
+        var isCurrent: Boolean = false
 )

@@ -93,7 +93,8 @@ class TravelService (
             emptyList(),
             emptyList(),
             travelDTO.public,
-            id
+            id,
+
         )
         val newTravel = travelRepository.save(travel)
         userService.addTravel(id, newTravel)

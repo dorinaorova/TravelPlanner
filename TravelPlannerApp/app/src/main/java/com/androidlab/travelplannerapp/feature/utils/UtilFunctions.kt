@@ -25,6 +25,11 @@ fun profilePictureFilePath(context: Context, filePath: String): String{
     return BASE_URL+"user/image/profile/"+filePath
 }
 
+fun backgroundPicturePath(context: Context, filePath: String): String{
+    val BASE_URL = context.getString(R.string.BASE_URL)
+    return BASE_URL+"user/image/background/"+filePath
+}
+
 fun generateDate(date: Long) : String{
     val formatter = SimpleDateFormat("yyyy.MM.dd.")
     return formatter.format(Date(date))

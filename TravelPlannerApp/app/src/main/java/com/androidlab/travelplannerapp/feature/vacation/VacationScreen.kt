@@ -1,6 +1,5 @@
-package com.androidlab.travelplannerapp.feature
+package com.androidlab.travelplannerapp.feature.vacation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,29 +25,33 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
-import com.androidlab.travelplannerapp.feature.utils.BlankTravelImage
+import com.androidlab.travelplannerapp.feature.utils.CustomImage
+import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
+import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
-fun VacationScreen(navController: NavController){
+fun VacationScreen(navController: NavController, id: String, vm: VacationViewModel = hiltViewModel()){
+    LaunchedEffect(Unit) {
+        vm.fetchData(id)
+    }
     Scaffold(
         content = { paddingValues ->
             Box(modifier = Modifier
@@ -73,17 +76,17 @@ private fun Details(navController: NavController){
 }
 
 @Composable
-private fun Header(navController: NavController){
+private fun Header(navController: NavController, vm: VacationViewModel = hiltViewModel()){
     Box(modifier = Modifier
         .fillMaxSize()) {
         val imageModifier =  Modifier
             .fillMaxWidth()
             .height(300.dp)
             .blur(5.dp)
-        BlankTravelImage(imageModifier)
+        CustomImage(imageModifier, vm.travel.pictureFileName, ImageSourceSelector.TRAVEL)
         Column(Modifier.padding(top = 75.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
             Text(
-                "Krakow",
+                vm.travel.name,
                 color = colorResource(id = R.color.primary_text),
                 fontSize = 36.sp,
                 modifier = Modifier.padding(start = 25.dp)
@@ -115,26 +118,24 @@ private fun Body(scroll: ScrollState, navController: NavController){
 }
 
 @Composable
-private fun TravelBuddies(navController: NavController){
-    val items= arrayOf("Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips", "Emma Philips")
+private fun TravelBuddies(navController: NavController, vm: VacationViewModel = hiltViewModel()){
     SmallHeader("Your travel buddies")
-    LazyRow(
-        Modifier
-            .fillMaxWidth()
-            .padding(end = 25.dp, start = 30.dp)){
-        items(items) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(horizontal = 10.dp)
-                        .clickable { navController.navigate(Screen.ProfileScreen.route) }) {
-                Image(
-                    painter = painterResource(id = R.drawable.blank_profile),
-                    contentDescription = null,
-                    modifier= Modifier
+    if(vm.participants.isNotEmpty()){
+        LazyRow(
+            Modifier
+                .fillMaxWidth()
+                .padding(end = 25.dp, start = 30.dp)){
+            items(vm.participants) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                            .clickable { navController.navigate(Screen.ProfileScreen.route) }) {
+                    val imageModifier = Modifier
                         .clip(CircleShape)
                         .height(40.dp)
                         .padding(bottom = 3.dp)
-                )
-                Text(it)
+                    CustomImage(imageModifier, it.profilePictureFilePath, ImageSourceSelector.PROFILE)
+                    Text(it.username)
+                }
             }
         }
     }
@@ -146,7 +147,7 @@ private fun TravelBuddies(navController: NavController){
 }
 
 @Composable
-private fun Payments(navController: NavController){
+private fun Payments(navController: NavController, vm: VacationViewModel = hiltViewModel()){
     Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route)  }){
         SmallHeader("Payments")
         Row(verticalAlignment = Alignment.Top,
@@ -192,38 +193,39 @@ private fun Plan(){
 }
 
 @Composable
-private fun Tickets(navController: NavController){
+private fun Tickets(navController: NavController, vm: VacationViewModel = hiltViewModel()){
     Box(Modifier.clickable { navController.navigate(Screen.TicketsScreen.route) }) {
         SmallHeader("Tickets")
     }
-    LazyRow(
-        Modifier
-            .fillMaxWidth()
-            .padding(end = 25.dp, start = 30.dp, bottom = 30.dp)){
-        items(6) {
-            Box(modifier = Modifier
-                .padding(horizontal = 10.dp)
-                .size(80.dp, 60.dp)
-                .background(
-                    colorResource(id = R.color.secondary),
-                    shape = RoundedCornerShape(15.dp)
-                )) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxSize()){
-                    Text("Museum",
-                        fontSize=14.sp)
-                    Text("Emma",
-                        fontSize=10.sp)
+        LazyRow(
+            Modifier
+                .fillMaxWidth()
+                .padding(end = 25.dp, start = 30.dp, bottom = 30.dp)){
+            items(6) {
+                Box(modifier = Modifier
+                    .padding(horizontal = 10.dp)
+                    .size(80.dp, 60.dp)
+                    .background(
+                        colorResource(id = R.color.secondary),
+                        shape = RoundedCornerShape(15.dp)
+                    )) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxSize()){
+                        Text("Museum",
+                            fontSize=14.sp)
+                        Text("Emma",
+                            fontSize=10.sp)
+                    }
                 }
             }
         }
-    }
+
 }
 
 
 @Composable
 @Preview(showBackground =  true)
 fun VacationScreenPreview(){
-    VacationScreen(navController = rememberNavController())
+    VacationScreen(navController = rememberNavController(), "")
 }

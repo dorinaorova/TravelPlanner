@@ -13,5 +13,9 @@ data class Travel(
     var tags: List<String>?= null,
     val pictureFileName: String?= null,
     val public: Boolean = false,
-    val ownerId: String?= null
+    val ownerId: String?= null,
+    var participantIds: List<String>?= null,
+    var spendIds: List<String>? = null,
+    var ticketIds: List<String>? = null,
+    var isCurrent: Boolean = false,
 )

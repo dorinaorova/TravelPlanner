@@ -42,4 +42,8 @@ interface TravelService {
     @Headers("Accept: application/json")
     @GET("travel/filterValues")
     fun getFilterValues() : Call<List<Int>>?
+
+    @Headers("Accept: application/json")
+    @GET("travel/user/{id}")
+    fun getMyTravel(@Path("id") id: String): Call<List<Travel>>?
 }
