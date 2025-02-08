@@ -21,11 +21,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -42,6 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
+import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
@@ -96,7 +104,7 @@ private fun Header(navController: NavController, vm: VacationViewModel = hiltVie
 }
 
 @Composable
-private fun Body(scroll: ScrollState, navController: NavController){
+private fun Body(scroll: ScrollState, navController: NavController, vm: VacationViewModel = hiltViewModel()){
     Column{
         Spacer(
             Modifier
@@ -110,6 +118,42 @@ private fun Body(scroll: ScrollState, navController: NavController){
                     colorResource(id = R.color.primary_background),
                     shape = RoundedCornerShape(size = 30.dp)
                 )){
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                val menuExpanded = remember { mutableStateOf(false) }
+                Box{
+                    IconButton(onClick = { menuExpanded.value= true }) {
+                        Icon(
+                            imageVector= Icons.Rounded.MoreVert,
+                            contentDescription = null,
+                            tint= colorResource(id = R.color.primary)
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded.value,
+                        onDismissRequest = { menuExpanded.value = false },
+                        modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                    ){
+                        DropdownMenuItem(
+                            text={ Text("View travel profile") },
+                            onClick = {
+                                menuExpanded.value = false
+                                navController.navigate(Screen.TravelProfileScreen.route+"?id=${vm.travel._id}")
+                            },
+                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                        )
+                            DropdownMenuItem(
+                                text={ Text("Set as current vacation") },
+                                onClick = {
+                                    menuExpanded.value = false
+                                    /*TODO*/
+
+                                },
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            )
+
+                    }
+                }
+            }
             TravelBuddies(navController)
             Payments(navController)
             Plan()

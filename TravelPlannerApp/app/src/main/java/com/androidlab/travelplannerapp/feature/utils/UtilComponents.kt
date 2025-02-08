@@ -39,12 +39,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
+import com.example.compose.primaryCustom
 
 @Composable
 fun SmallHeader(text: String) {
     Text(text,
         fontSize=16.sp,
         fontWeight = FontWeight.Bold,
+        color = primaryCustom,
         modifier= Modifier.padding(start=25.dp, end=25.dp, top=15.dp, bottom = 10.dp))
 }
 
