@@ -2,6 +2,7 @@ package com.androidlab.travelplannerapp.feature.vacation
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
@@ -172,18 +174,20 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
             items(vm.participants) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(horizontal = 10.dp)
-                            .clickable { navController.navigate(Screen.ProfileScreen.route) }) {
-                    val imageModifier = Modifier
-                        .clip(CircleShape)
-                        .height(40.dp)
-                        .padding(bottom = 3.dp)
-                    CustomImage(imageModifier, it.profilePictureFilePath, ImageSourceSelector.PROFILE)
+                            .clickable { navController.navigate(Screen.ProfileScreen.route+"?id=${it._id}") }) {
+                    Box(Modifier.height(50.dp).width(50.dp).clip(CircleShape)
+                        .border(2.dp, Color.White, CircleShape).padding(bottom = 3.dp)){
+                        val imageModifier = Modifier
+                            .fillMaxSize()
+                        CustomImage(imageModifier, it.profilePictureFilePath, ImageSourceSelector.PROFILE)
+                    }
+
                     Text(it.username)
                 }
             }
         }
     }
-    TextButton(onClick = { /*TODO*/ }) {
+    TextButton(onClick = { navController.navigate(Screen.InvitationScreen.route+"?id=${vm.travel._id}")}) {
         Text("Add new member",
             color= colorResource(id = R.color.secondary_text),
             modifier=Modifier.padding(end=25.dp, start=25.dp))
