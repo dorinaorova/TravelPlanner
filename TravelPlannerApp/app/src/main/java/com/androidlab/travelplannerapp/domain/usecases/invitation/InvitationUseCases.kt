@@ -27,5 +27,16 @@ class DeleteInvitationUseCase @Inject constructor(private val invitationService:
     operator fun invoke(id: String): Call<Void> {
         return invitationService.delete(id)
     }
+}
 
+class AcceptInvitationUseCase @Inject constructor(private val invitationService: InvitationService) {
+    operator fun invoke(id: String): Call<Void> {
+        return invitationService.accept(id)
+    }
+}
+
+class RejectInvitationUseCase @Inject constructor(private val invitationService: InvitationService) {
+    operator fun invoke(id: String): Call<Void> {
+        return invitationService.reject(id)
+    }
 }

@@ -182,7 +182,7 @@ private fun TopBar(navController: NavController, travelId: String) {
 private fun InvitationList(navController: NavController, vm: InvitationViewModel = hiltViewModel()){
     Column(Modifier.fillMaxHeight().padding(horizontal = 10.dp)){
         Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.SpaceBetween){
-            Text("Pending")
+            Text("Pending", color = primaryCustom)
             LazyColumn(Modifier.weight(1f)) {
                 items(vm.filterInvitationByStatus(Status.PENDING)) {
                     InvitationListItem(it)
@@ -191,7 +191,7 @@ private fun InvitationList(navController: NavController, vm: InvitationViewModel
             CustomDivider()
         }
         Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.SpaceBetween){
-            Text("Accepted")
+            Text("Accepted", color = primaryCustom)
             LazyColumn(Modifier.weight(1f)) {
                 items(vm.filterInvitationByStatus(Status.ACCEPTED)) {
                     InvitationListItem(it)
@@ -200,7 +200,7 @@ private fun InvitationList(navController: NavController, vm: InvitationViewModel
             CustomDivider()
         }
         Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.Top){
-            Text("Rejected")
+            Text("Rejected", color = primaryCustom)
             LazyColumn(Modifier.weight(1f)) {
                 items(vm.filterInvitationByStatus(Status.REJECTED)) {
                     InvitationListItem(it)
@@ -240,8 +240,8 @@ private fun UserData(user: UserInfo){
             CustomImage(Modifier.fillMaxSize(), user.profilePictureFilePath,ImageSourceSelector.PROFILE )
         }
         Column(Modifier.padding(start=10.dp)){
-            Text(user.username, fontSize = 16.sp)
-            Text(user.name, Modifier.padding(start=5.dp))
+            Text(user.username, fontSize = 16.sp, color= Color.Black)
+            Text(user.name, Modifier.padding(start=5.dp), color= Color.Black)
         }
     }
 }

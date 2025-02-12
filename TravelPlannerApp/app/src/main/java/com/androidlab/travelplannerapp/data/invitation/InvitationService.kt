@@ -24,11 +24,11 @@ interface InvitationService {
 
     @Headers("Accept: application/json")
     @GET("invitation/accept/{id}")
-    fun accept(@Path("id") id: String) : Call<Invitation>?
+    fun accept(@Path("id") id: String) : Call<Void>
 
     @Headers("Accept: application/json")
     @GET("invitation/reject/{id}")
-    fun reject(@Path("id") id: String) : Call<Invitation>?
+    fun reject(@Path("id") id: String) : Call<Void>
 
     @Headers("Accept: application/json")
     @DELETE("invitation/{id}")

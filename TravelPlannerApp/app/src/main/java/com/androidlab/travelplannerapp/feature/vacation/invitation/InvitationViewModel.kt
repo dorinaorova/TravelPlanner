@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class InvitationViewModel @Inject constructor(
     private val getInvitationsByTravelIdUseCase: GetInvitationsByTravelIdUseCase,
-    private val  searchUserUseCase: SearchUserUseCase,
+    private val searchUserUseCase: SearchUserUseCase,
     private val createInvitationUseCase: CreateInvitationUseCase,
     private val deleteInvitationUseCase: DeleteInvitationUseCase
 ) : ViewModel() {
@@ -79,7 +79,7 @@ class InvitationViewModel @Inject constructor(
 
 
     fun findUser(id: String): UserInfo? {
-        return _users.value.firstOrNull({it._id == id})
+        return _users.value.firstOrNull { it._id == id }
     }
 
     fun inviteUser(user: UserInfo){
@@ -95,8 +95,8 @@ class InvitationViewModel @Inject constructor(
     fun deleteInvitation(id: String){
         viewModelScope.launch {
             val call = deleteInvitationUseCase(id)
-            val response = call?.awaitResponse()
-            if(response?.isSuccessful == true){
+            val response = call.awaitResponse()
+            if(response.isSuccessful){
                 fetchData()
             }
         }
