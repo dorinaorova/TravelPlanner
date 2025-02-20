@@ -39,12 +39,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
+import com.example.compose.primaryCustom
 
 @Composable
 fun SmallHeader(text: String) {
     Text(text,
         fontSize=16.sp,
         fontWeight = FontWeight.Bold,
+        color = primaryCustom,
         modifier= Modifier.padding(start=25.dp, end=25.dp, top=15.dp, bottom = 10.dp))
 }
 
@@ -141,9 +143,10 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
 
 
 @Composable
-fun BlankTravelImage(imageModifier: Modifier, ){
+fun BlankTravelImage(imageModifier: Modifier, source: ImageSourceSelector = ImageSourceSelector.TRAVEL ){
+    val image = if(source == ImageSourceSelector.PROFILE){R.drawable.blank_profile}else{R.drawable.blank_travel_image}
     Image(
-        painterResource(id = R.drawable.blank_travel_image),
+        painterResource(id = image),
         contentDescription = null,
         contentScale = ContentScale.Crop,
         modifier = imageModifier
@@ -174,7 +177,7 @@ fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSo
             modifier = imageModifier
         )
     }else{
-        BlankTravelImage(imageModifier)
+        BlankTravelImage(imageModifier, imageSource)
     }
 }
 
