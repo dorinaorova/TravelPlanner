@@ -27,4 +27,11 @@ class SpendsController (val spendService: SpendService) {
         spendService.removeSpend(id)
         return ResponseEntity.ok("deleted")
     }
+
+    @GetMapping("/transactions/{id}")
+    fun getTransactions(@PathVariable id: String): ResponseEntity<*>{
+        val transactions= spendService.calculateTransactions(id)
+        return ResponseEntity.ok(transactions)
+    }
 }
+

@@ -7,6 +7,7 @@ class Spend (
     val _id: String,
     val date: Long,
     val userId: String,
+    val partUserIds: Array<String>,
     val cost: Int,
     val type: SpendType
 ){

@@ -4,5 +4,6 @@ enum class SpendType {
     TRAVEL,
     FOOD,
     MUSEUM,
-    OTHER
+    OTHER,
+    SETTLEMENT
 }
