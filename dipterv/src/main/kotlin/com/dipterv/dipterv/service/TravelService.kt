@@ -103,7 +103,7 @@ class TravelService (
 
     fun update(travelRequest: Travel) : Travel{
         try{
-            val travel = getById(travelRequest._id!!)
+            val travel = getById(travelRequest._id!!)//penisz
             travel.name= travelRequest.name
             travel.startDate= travelRequest.startDate
             travel.endDate= travelRequest.endDate
@@ -127,21 +127,29 @@ class TravelService (
         return travels.toList()
     }
 
-//    fun updateParticipant(travelDTO: TravelDTO) : TravelDTO{
-//        try{
-//            val travel = getById(travelDTO._id!!)
-//            travel.participants = travelDTO.participants
-//            val updatedTravel = travelRepository.save(travel)
-//            return TravelDTO(
-//                updatedTravel._id,
-//                travelToTravelInfoDto(updatedTravel),
-//                updatedTravel.participants,
-//                updatedTravel.public
-//            )
-//        }catch (e: NullPointerException){
-//            throw NotFoundException("User not found with id: ${travelDTO._id}")
-//        }
-//    }
+    fun findParticipatedTravels(userId: String): List<Travel>?{
+        val travels = travelRepository.findAll()
+        val partTravels = travels.filter { !it.participantIds.isNullOrEmpty() }
+        System.out.println(partTravels)
+        val result = partTravels.filter { it.participantIds!!.contains(userId) }
+        System.out.println(result)
+        return result
+    }
+
+    fun addParticipant(userId: String, travelId: String) : Travel{
+        try{
+            val travel = getById(travelId)
+            if(travel.participantIds == null){
+                travel.participantIds= emptyList()
+            }
+            val updatedParticipantIds = travel.participantIds!!.toMutableList().apply { add(userId)}
+            travel.participantIds = updatedParticipantIds
+            val updatedTravel = travelRepository.save(travel)
+            return updatedTravel
+        }catch (e: NullPointerException){
+            throw NotFoundException("Travel not found with id: ${travelId}")
+        }
+    }
 
     fun uploadImage(imageName: String, id: String) : Travel{
         val travel = getById(id)

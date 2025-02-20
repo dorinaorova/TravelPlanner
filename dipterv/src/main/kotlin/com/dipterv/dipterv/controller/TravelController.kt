@@ -80,6 +80,19 @@ class TravelController(
         }
     }
 
+
+    @GetMapping("/participate/{id}")
+    fun getParticipatedTravels(@PathVariable("id") id: String) : ResponseEntity<*>{
+        try{
+            val travels = travelService.findParticipatedTravels(id)
+            return ResponseEntity(travels, HttpStatus.OK)
+        }catch (e: NotFoundException){
+            return ResponseEntity(e, HttpStatus.NOT_FOUND)
+        }catch (e: Exception){
+            return ResponseEntity(e, HttpStatus.BAD_REQUEST)
+        }
+    }
+
     @GetMapping("/{id}")
     fun getTravelById(@PathVariable("id") id: String) : ResponseEntity<*> {
         try {
