@@ -85,7 +85,6 @@ private fun Details(navController: NavController){
 
 @Composable
 private fun Header(vm: TravelViewModel = hiltViewModel()){
-    val context = LocalContext.current
     Box(modifier = Modifier
         .fillMaxSize()) {
         val imageModifier = Modifier

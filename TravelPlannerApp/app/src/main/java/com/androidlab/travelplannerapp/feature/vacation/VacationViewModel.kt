@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.travel.GetTravelByIdUseCase
+import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VacationViewModel @Inject constructor(
-    private val getTravelByIdUseCase: GetTravelByIdUseCase
+    private val getTravelByIdUseCase: GetTravelByIdUseCase,
+    private val getUserByIdUseCase: GetUserDataUseCase
 ) : ViewModel() {
     private var _travel = mutableStateOf(Travel())
     private val _participants = mutableStateOf<List<UserInfo>>(emptyList())
@@ -32,6 +34,17 @@ class VacationViewModel @Inject constructor(
             val response = call?.awaitResponse()
             if (response?.isSuccessful == true){
                 _travel.value = response.body()!!
+                if(!_travel.value.participantIds.isNullOrEmpty()){
+                    _participants.value = emptyList()
+                    for(id in _travel.value.participantIds!!){
+                        val userCall = getUserByIdUseCase(id)
+                        val user = userCall?.awaitResponse()
+                        if(user?.isSuccessful == true){
+                            _participants.value += user.body()!!
+                        }
+                    }
+                }
+
             }
         }
     }
