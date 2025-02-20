@@ -58,7 +58,6 @@ class HomeViewModel @Inject constructor(
                     _myTravels.addAll(partResponse.body()!!)
                 }
                 _myTravels.sortBy { it.startDate }
-                Log.d("TRAVELS", _myTravels.toString())
             }
         }
     }
@@ -83,12 +82,17 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getCurrentVacation(): Travel?{
-        val currentVacation = _myTravels.firstOrNull({ it.isCurrent })
+        if(!_myTravels.isEmpty()){
+
+        val currentVacation = _myTravels[0]
         return currentVacation
+        }
+        return null
     }
 
     fun filterUpcomingTravels() : List<Travel>{
-        val upcoming = _myTravels.filter{ it.startDate > System.currentTimeMillis() }
+        val now = System.currentTimeMillis()
+        val upcoming = _myTravels.filter{  it.endDate>=now}
         return upcoming
     }
 
