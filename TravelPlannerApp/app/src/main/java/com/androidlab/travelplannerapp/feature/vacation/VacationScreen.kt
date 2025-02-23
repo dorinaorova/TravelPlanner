@@ -196,7 +196,7 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
 
 @Composable
 private fun Payments(navController: NavController, vm: VacationViewModel = hiltViewModel()){
-    Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route)  }){
+    Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route+"?id=${vm.travel._id}")  }){
         SmallHeader("Payments")
         Row(verticalAlignment = Alignment.Top,
             modifier=Modifier.padding(horizontal=30.dp)){
