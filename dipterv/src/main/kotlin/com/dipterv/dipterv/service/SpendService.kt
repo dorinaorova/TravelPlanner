@@ -6,7 +6,7 @@ import com.dipterv.dipterv.repository.SpendRepository
 import org.springframework.stereotype.Service
 
 @Service
-class SpendService (val spendRepository: SpendRepository, val travelService:TravelService) {
+class SpendService (val spendRepository: SpendRepository) {
 
     fun findById(id: String): Spend {
         try {
@@ -17,9 +17,8 @@ class SpendService (val spendRepository: SpendRepository, val travelService:Trav
         }
     }
 
-    fun addSpend(spend: Spend, travelId: String) : Spend{
+    fun addSpend(spend: Spend) : Spend{
         val savedSpend = spendRepository.save(spend)
-        travelService.addSpend(savedSpend, travelId)
         return savedSpend
     }
 
@@ -29,15 +28,12 @@ class SpendService (val spendRepository: SpendRepository, val travelService:Trav
     }
 
     fun findSpendsForTravel(travelId: String) : List<Spend> {
-        val spendIds = travelService.getById(travelId).spendIds
-        val spends = mutableListOf<Spend>()
-        spendIds?.forEach { spendId -> spends.add(findById(spendId)) }
-        return spends.toList()
+        return spendRepository.findByTravelId(travelId)
     }
 
     fun calculateDebt(travelId: String): Map<String, Double>{
         val spends = findSpendsForTravel(travelId)
-        val userIds = spends.flatMap { it.partUserIds.asList() }.toSet()
+        val userIds = spends.flatMap { it.partUserIds.asList()+it.userId }.toSet()
         val debts = mutableMapOf<String, Double>()
         userIds.forEach{id->
             var debt =0.0
