@@ -7,6 +7,7 @@ import com.androidlab.travelplannerapp.data.image.ImageService
 import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
 import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
 import com.androidlab.travelplannerapp.data.invitation.InvitationService
+import com.androidlab.travelplannerapp.data.payment.PaymentService
 import com.androidlab.travelplannerapp.data.travel.TravelService
 import com.androidlab.travelplannerapp.data.user.UserService
 import dagger.Module
@@ -77,4 +78,9 @@ class ApiUseCaseModule {
         return retrofit.create(InvitationService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun providePaymentService(retrofit: Retrofit): PaymentService {
+        return retrofit.create(PaymentService::class.java)
+    }
 }

@@ -16,9 +16,9 @@ class SpendsController (val spendService: SpendService) {
         return ResponseEntity.ok(spends)
     }
 
-    @PostMapping("/travel/{id}")
-    fun addSpendForTravel(@PathVariable id: String, @RequestBody spend: Spend) : ResponseEntity<Spend>{
-        val newSpend = spendService.addSpend(spend, id)
+    @PostMapping()
+    fun addSpendForTravel( @RequestBody spend: Spend) : ResponseEntity<Spend>{
+        val newSpend = spendService.addSpend(spend)
         return ResponseEntity(newSpend, HttpStatus.CREATED)
     }
 
@@ -27,4 +27,11 @@ class SpendsController (val spendService: SpendService) {
         spendService.removeSpend(id)
         return ResponseEntity.ok("deleted")
     }
+
+    @GetMapping("/transaction/{id}")
+    fun getTransactions(@PathVariable id: String): ResponseEntity<*>{
+        val transactions= spendService.calculateTransactions(id)
+        return ResponseEntity.ok(transactions)
+    }
 }
+

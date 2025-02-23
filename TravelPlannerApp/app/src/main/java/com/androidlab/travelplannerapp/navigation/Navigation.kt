@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.androidlab.travelplannerapp.feature.home.HomeScreen
 import com.androidlab.travelplannerapp.feature.login.LoginScreen
-import com.androidlab.travelplannerapp.feature.PaymentsScreen
+import com.androidlab.travelplannerapp.feature.vacation.payment.PaymentsScreen
 import com.androidlab.travelplannerapp.feature.userProfile.ProfileScreen
 import com.androidlab.travelplannerapp.feature.search.SearchScreen
 import com.androidlab.travelplannerapp.feature.travel.TravelProfileScreen
@@ -37,8 +37,9 @@ fun Navigation(navController: NavHostController){
             val id = backStackEntry.arguments?.getString("id")
             TravelProfileScreen(navController = navController, id = id!!)
         }
-        composable(route = Screen.PaymentsScreen.route){
-            PaymentsScreen(navController = navController)
+        composable(route = Screen.PaymentsScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            PaymentsScreen(navController = navController, travelId = id!!)
         }
         composable(route = Screen.ProfileScreen.route+"?id={id}"){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")

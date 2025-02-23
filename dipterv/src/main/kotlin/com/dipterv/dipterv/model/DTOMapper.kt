@@ -26,18 +26,7 @@ class DTOMapper {
             travel.pictureFileName
         )
     }
-
-    fun travelToTravelDTO(travel: Travel): TravelDTO {
-        return TravelDTO(
-            travel._id,
-            travelToTravelInfoDto(travel),
-            travel.participantIds,
-            travel.spendIds,
-            travel.ticketIds,
-            travel.public
-        )
-    }
-
+    
     fun userToUserDTO(user: User): UserDTO {
         return UserDTO(
             user._id,

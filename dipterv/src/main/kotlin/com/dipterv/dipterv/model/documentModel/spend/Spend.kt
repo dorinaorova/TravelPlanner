@@ -4,10 +4,12 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "spend")
 class Spend (
-    val _id: String,
+    val _id: String?,
     val date: Long,
     val userId: String,
-    val cost: Int,
-    val type: SpendType
+    val partUserIds: Array<String>,
+    val cost: Double,
+    val type: SpendType,
+    val travelId: String
 ){
 }
