@@ -67,8 +67,7 @@ fun InvitationScreen(navController: NavController, travelId: String, vm : Invita
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         vm.travelId = travelId
-        vm.fetchData(travelId)
-        vm.fetchUsers(context)
+        vm.fetchData(travelId, context)
     }
 
     val showDialog =  remember { mutableStateOf(false) }
@@ -138,9 +137,10 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
                         }
                     }
                 }
+                val context = LocalContext.current
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
                     Button(onClick = {
-                        vm.inviteUser(selectedUser.value!!)
+                        vm.inviteUser(selectedUser.value!!, context)
                         setShowDialog(false)
                     },
                         colors = ButtonDefaults.buttonColors(containerColor = primaryCustom, contentColor = primaryTextCustom),
@@ -212,6 +212,7 @@ private fun InvitationList(navController: NavController, vm: InvitationViewModel
 
 @Composable
 private fun InvitationListItem(invitation: Invitation, vm: InvitationViewModel = hiltViewModel()){
+    val context = LocalContext.current
     val user = remember(vm.findUser(invitation.userId)){ mutableStateOf(vm.findUser(invitation.userId))}
     if(user.value != null){
         Row(Modifier.fillMaxWidth()
@@ -220,7 +221,7 @@ private fun InvitationListItem(invitation: Invitation, vm: InvitationViewModel =
                 verticalAlignment = Alignment.CenterVertically){
             UserData(user.value!!)
             Icon(Icons.Default.Clear, contentDescription = "delete invitation", Modifier.clickable {
-                vm.deleteInvitation(invitation._id!!)
+                vm.deleteInvitation(invitation._id!!, context)
             }.padding(horizontal = 10.dp, vertical = 15.dp))
         }
     }
