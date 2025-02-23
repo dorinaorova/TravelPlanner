@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.vacation.payment
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.androidlab.travelplannerapp.domain.usecases.payment.GetPaymentsByTrav
 import com.androidlab.travelplannerapp.domain.usecases.payment.GetTransactionsUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchUserUseCase
 import com.androidlab.travelplannerapp.domain.usecases.travel.GetTravelByIdUseCase
+import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
@@ -83,7 +85,8 @@ class PaymentViewModel@Inject constructor(
         }
     }
 
-    fun findUser(id: String): String{
+    fun findUser(id: String, context: Context): String{
+        if(ownProfile(id, context)) return "You"
         for(user in _users.value){
             if(user._id == id){
                 return user.username

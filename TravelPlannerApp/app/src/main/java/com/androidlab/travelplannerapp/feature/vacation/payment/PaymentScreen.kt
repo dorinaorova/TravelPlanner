@@ -45,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +61,7 @@ import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.TopBar
+import com.androidlab.travelplannerapp.feature.utils.generateDate
 
 
 @Composable
@@ -115,6 +117,7 @@ private fun Details(){
 
 @Composable
 private fun Payments(vm: PaymentViewModel = hiltViewModel()){
+    val context = LocalContext.current
     SmallHeader("Payments")
     LazyColumn(
         Modifier
@@ -126,7 +129,7 @@ private fun Payments(vm: PaymentViewModel = hiltViewModel()){
                 Column {
                     Row(Modifier.padding(bottom = 5.dp)) {
                         Text(
-                            "${vm.findUser(it.userId)} paid: ",
+                            "${vm.findUser(it.userId, context)} paid: ",
                             fontSize = 16.sp
                         )
                         Text(
@@ -134,13 +137,18 @@ private fun Payments(vm: PaymentViewModel = hiltViewModel()){
                             color = colorResource(id = R.color.primary),
                             fontSize = 16.sp,
                         )
+                        Text(
+                            text= generateDate(it.date),
+                            fontSize = 12.sp,
+                            modifier=Modifier.padding(start=10.dp)
+                        )
                     }
                     Row(Modifier.padding(bottom = 5.dp, start = 8.dp)) {
                         Text(
                             "To: ",
                             color = colorResource(id = R.color.primary)
                         )
-                        val to = it.partUserIds.joinToString(", ") { user -> vm.findUser(user) }
+                        val to = it.partUserIds.joinToString(", ") { user -> vm.findUser(user, context) }
                         Text(to)
                     }
                     Row(Modifier.padding(bottom = 10.dp, start = 8.dp)) {
@@ -164,6 +172,7 @@ private fun Payments(vm: PaymentViewModel = hiltViewModel()){
 @Composable
 private fun Sum(vm: PaymentViewModel = hiltViewModel()){
     val debts = vm.calculateDebt()
+    val context = LocalContext.current
     Row(verticalAlignment = Alignment.Bottom) {
         SmallHeader("Sum")
         Text(vm.calculateSum().toString(),
@@ -179,7 +188,7 @@ private fun Sum(vm: PaymentViewModel = hiltViewModel()){
             .height(150.dp)){
         items(debts.size){
             Row(Modifier.padding(bottom=10.dp)){
-                Text(vm.findUser(debts.keys.elementAt(it)),
+                Text(vm.findUser(debts.keys.elementAt(it), context),
                     modifier=Modifier.padding(end=5.dp))
                 Text(debts.values.elementAt(it).toString(),
                     color= colorResource(id = R.color.primary))
@@ -190,6 +199,7 @@ private fun Sum(vm: PaymentViewModel = hiltViewModel()){
 
 @Composable
 private fun SettleDebt(vm: PaymentViewModel = hiltViewModel()){
+    val context = LocalContext.current
     SmallHeader(text = "Settle Debt")
     LazyVerticalGrid(columns=GridCells.Fixed(2),
         modifier= Modifier
@@ -201,7 +211,7 @@ private fun SettleDebt(vm: PaymentViewModel = hiltViewModel()){
                 verticalAlignment = Alignment.Top){
                 Column(horizontalAlignment = Alignment.CenterHorizontally){
                     Text(
-                        vm.findUser(it.fromUser),
+                        vm.findUser(it.fromUser, context),
                         fontSize = 14.sp
                     )
                     Text(
@@ -219,7 +229,7 @@ private fun SettleDebt(vm: PaymentViewModel = hiltViewModel()){
                         .width(30.dp)
                 )
                 Text(
-                    vm.findUser(it.toUser),
+                    vm.findUser(it.toUser, context),
                     fontSize = 14.sp
                 )
                 IconButton(onClick = { vm.settleDebt(it) }) {

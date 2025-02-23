@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,16 +52,17 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
-import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.navigation.Screen
+import com.example.compose.primaryCustom
 
 @Composable
 fun VacationScreen(navController: NavController, id: String, vm: VacationViewModel = hiltViewModel()){
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
-        vm.fetchData(id)
+        vm.fetchData(id, context)
     }
     Scaffold(
         content = { paddingValues ->
@@ -183,6 +185,7 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
                     }
 
                     Text(it.username)
+                    if(it._id == vm.travel.ownerId) Text("(Owner)", color = primaryCustom, fontSize = 10.sp)
                 }
             }
         }
@@ -198,27 +201,31 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
 private fun Payments(navController: NavController, vm: VacationViewModel = hiltViewModel()){
     Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route+"?id=${vm.travel._id}")  }){
         SmallHeader("Payments")
-        Row(verticalAlignment = Alignment.Top,
-            modifier=Modifier.padding(horizontal=30.dp)){
-            Column(horizontalAlignment = Alignment.CenterHorizontally){
-                Text("Emma",
+        if(vm.ownTransaction.isNotEmpty()){
+            val transaction = vm.ownTransaction[0]
+            val context= LocalContext.current
+            Row(verticalAlignment = Alignment.Top,
+                modifier=Modifier.padding(horizontal=30.dp)){
+                Column(horizontalAlignment = Alignment.CenterHorizontally){
+                    Text(vm.findUserName(transaction.fromUser, context),
+                        fontSize=14.sp)
+                    Text(transaction.amount.toString(),
+                        color= colorResource(id = R.color.primary),
+                        fontWeight= FontWeight.Bold)
+                }
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_forward),
+                    contentDescription = null,
+                    tint= colorResource(id = R.color.primary),
+                    modifier= Modifier
+                        .height(30.dp)
+                        .width(30.dp))
+                Text(vm.findUserName(transaction.toUser, context),
                     fontSize=14.sp)
-                Text("15$",
-                    color= colorResource(id = R.color.primary),
-                    fontWeight= FontWeight.Bold)
             }
-            Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_forward),
-                contentDescription = null,
-                tint= colorResource(id = R.color.primary),
-                modifier= Modifier
-                    .height(30.dp)
-                    .width(30.dp))
-            Text("You",
-                fontSize=14.sp)
         }
         Row(Modifier.padding(horizontal=30.dp)){
             Text("You are in: ")
-            Text("+15$",
+            Text(vm.ownDebt.toString(),
                 color= colorResource(id = R.color.primary))
         }
     }
