@@ -91,7 +91,6 @@ class TravelService (
             null,
             emptyList(),
             emptyList(),
-            emptyList(),
             travelDTO.public,
             id,
 
@@ -169,16 +168,6 @@ class TravelService (
     private fun calculateDurationInDays(endDate: Long, startDate: Long) : Int{
         val differenceInMillis = endDate - startDate
         return TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
-    }
-
-    fun addSpend(spend: Spend, id: String){
-        val travel = getById(id)
-        if(travel.spendIds == null){
-            travel.spendIds = emptyList()
-        }
-        val updatedSpendList = travel.spendIds!!.toMutableList().apply { add(spend._id) }
-        travel.spendIds=updatedSpendList.toList()
-        travelRepository.save(travel)
     }
 
     fun uploadTicket(id: String, ticketId: String){
