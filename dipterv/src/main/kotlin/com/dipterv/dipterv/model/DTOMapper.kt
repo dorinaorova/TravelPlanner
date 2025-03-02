@@ -10,22 +10,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class DTOMapper {
-
-    fun travelToTravelInfoDto(travel: Travel): TravelInfoDTO {
-        return TravelInfoDTO(
-            travel._id,
-            travel.name,
-            travel.startDate,
-            travel.endDate,
-            travel.country,
-            travel.city,
-            travel.price,
-            travel.currency,
-            travel.description,
-            travel.tags,
-            travel.pictureFileName
-        )
-    }
     
     fun userToUserDTO(user: User): UserDTO {
         return UserDTO(

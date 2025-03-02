@@ -18,7 +18,6 @@ data class Travel(
         var pictureFileName: String?,
         var participantIds: List<String>?,
 //        val points: Array<Activity>,
-        var ticketIds: List<String>?,
         var public: Boolean,
         var ownerId: String?,
         var isCurrent: Boolean = false

@@ -1,5 +1,6 @@
 package com.dipterv.dipterv.service
 
+import com.dipterv.dipterv.model.documentModel.Ticket
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
@@ -10,6 +11,7 @@ import java.time.LocalDate
 
 @Service
 class FileService {
+
 
     fun uploadFile(file: MultipartFile, uploadDirectory: Path, id: String) : String {
         if (!Files.exists(uploadDirectory)) {
@@ -23,9 +25,9 @@ class FileService {
     }
 
     fun downloadFile(folderPath: Path, name: String) :Resource {
-        val imagePath = folderPath.resolve(name)
-        val imageResource: Resource = UrlResource(imagePath.toUri())
-        return imageResource
+        val filePath = folderPath.resolve(name)
+        val fileResource: Resource = UrlResource(filePath.toUri())
+        return fileResource
     }
 
     private fun generateFileName(file: MultipartFile, id: String): String{
