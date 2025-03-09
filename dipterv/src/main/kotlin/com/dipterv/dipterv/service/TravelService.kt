@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit
 @Service
 class TravelService (
     val travelRepository: TravelRepository,
-    val mapper: DTOMapper,
     val userService: UserService
 ) {
     fun getById(id: String): Travel{
@@ -26,10 +25,6 @@ class TravelService (
     fun getAllTravels(): List<Travel> {
         val allTravels = travelRepository.findAll().filter { it.public }
         return allTravels
-    }
-
-    fun getTravelInfoById(id: String): TravelInfoDTO{
-        return mapper.travelToTravelInfoDto(getById(id))
     }
 
     fun cityFilter(city: String, travels: List<Travel>) : List<Travel>{
@@ -90,7 +85,6 @@ class TravelService (
             travelDTO.tags,
             null,
             emptyList(),
-            emptyList(),
             travelDTO.public,
             id,
 
@@ -129,9 +123,7 @@ class TravelService (
     fun findParticipatedTravels(userId: String): List<Travel>?{
         val travels = travelRepository.findAll()
         val partTravels = travels.filter { !it.participantIds.isNullOrEmpty() }
-        System.out.println(partTravels)
         val result = partTravels.filter { it.participantIds!!.contains(userId) }
-        System.out.println(result)
         return result
     }
 
@@ -170,13 +162,13 @@ class TravelService (
         return TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
     }
 
-    fun uploadTicket(id: String, ticketId: String){
-        val travel = getById(id)
-        if(travel.ticketIds == null){
-            travel.ticketIds = emptyList()
-        }
-        val updatedTicketIds = travel.ticketIds!!.toMutableList().apply { add(ticketId)}
-        travel.ticketIds=updatedTicketIds.toList()
-        travelRepository.save(travel)
-    }
+//    fun uploadTicket(id: String, ticketId: String){
+//        val travel = getById(id)
+//        if(travel.ticketIds == null){
+//            travel.ticketIds = emptyList()
+//        }
+//        val updatedTicketIds = travel.ticketIds!!.toMutableList().apply { add(ticketId)}
+//        travel.ticketIds=updatedTicketIds.toList()
+//        travelRepository.save(travel)
+//    }
 }
