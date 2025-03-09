@@ -2,7 +2,7 @@ package com.androidlab.travelplannerapp.domain.usecases.payment
 
 import com.androidlab.travelplannerapp.data.model.Payment
 import com.androidlab.travelplannerapp.data.model.Transaction
-import com.androidlab.travelplannerapp.data.payment.PaymentService
+import com.androidlab.travelplannerapp.data.service.payment.PaymentService
 import retrofit2.Call
 import javax.inject.Inject
 

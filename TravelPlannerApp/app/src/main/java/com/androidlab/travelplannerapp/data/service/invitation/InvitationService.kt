@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.data.invitation
+package com.androidlab.travelplannerapp.data.service.invitation
 
 import com.androidlab.travelplannerapp.data.model.Invitation
 import retrofit2.Call

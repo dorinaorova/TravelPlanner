@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.data.user
+package com.androidlab.travelplannerapp.data.service.user
 
 import com.androidlab.travelplannerapp.data.model.FollowRequest
 import com.androidlab.travelplannerapp.data.model.UserInfo

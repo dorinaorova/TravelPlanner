@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.data.auth
+package com.androidlab.travelplannerapp.data.service.auth
 
 import com.androidlab.travelplannerapp.data.model.LoginRequest
 import com.androidlab.travelplannerapp.data.model.LoginResponse
