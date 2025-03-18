@@ -1,7 +1,7 @@
 package com.androidlab.travelplannerapp.domain.usecases.travel
 
 import com.androidlab.travelplannerapp.data.model.Travel
-import com.androidlab.travelplannerapp.data.travel.TravelService
+import com.androidlab.travelplannerapp.data.service.travel.TravelService
 import javax.inject.Inject
 
 class UpdateTravelUseCase @Inject constructor(

@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature.ticket
+package com.androidlab.travelplannerapp.feature.ticket.ticketListView
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,11 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -24,37 +23,49 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.Ticket
+import com.androidlab.travelplannerapp.feature.utils.DatePickerForm
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.TopBar
+import com.androidlab.travelplannerapp.feature.utils.generateDate
+import com.example.compose.primaryCustom
+import com.example.compose.primaryTextCustom
 
 @Composable
-fun TicketsScreen(navController: NavController){
+fun TicketsScreen(navController: NavController, id: String, vm: TicketViewModel = hiltViewModel()){
+    LaunchedEffect(Unit) {
+        vm.setTravelId(id)
+        vm.fetchData()
+    }
     val showDialog =  remember { mutableStateOf(false) }
     if(showDialog.value){
-        AddDialog(setShowDialog = { showDialog.value = it})
+        CreateTicketDialog(setShowDialog = { showDialog.value = it})
     }
 
     Scaffold(
@@ -68,24 +79,21 @@ fun TicketsScreen(navController: NavController){
             }
         },
         topBar = {
-            TopBar("Tickets", navController, Screen.VacationScreen.route)
+            TopBar("Tickets", navController, Screen.VacationScreen.route+"?id=$id")
         },
         floatingActionButton = {
-            IconButton(onClick = { /*TODO*/ },
-                modifier= Modifier.background(colorResource(id = R.color.secondary), shape= CircleShape)) {
-                Icon(imageVector = Icons.Rounded.Add,
-                    contentDescription = null,
-                    tint= colorResource(id = R.color.primary_text),
-                    modifier= Modifier.size(40.dp)
-                )
+            FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
     )
 }
+
 @Composable
-private fun AddDialog(setShowDialog: (Boolean) -> Unit,){
-    val nameTxtField = remember { mutableStateOf("") }
+private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewModel = hiltViewModel()){
+    val date = remember{ mutableLongStateOf(0L) }
     val ticketTxtField = remember { mutableStateOf("") }
+    val context = LocalContext.current
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -143,25 +151,11 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit,){
                             .padding(horizontal = 15.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically){
-                        Text("Name",
-                            modifier=Modifier.padding(end=10.dp),
-                            fontWeight= FontWeight.Bold,
-                            color= colorResource(id = R.color.primary))
-                        TextField(
-                            value = nameTxtField.value,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                            colors = TextFieldDefaults.textFieldColors(
-                                backgroundColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            ),
-                            singleLine = true,
-                            onValueChange = {
-                                nameTxtField.value = it
-                            },
-                            placeholder = { Text("Please enter the name") })
+                        DatePickerForm("Date", date)
                     }
-                    Button(onClick = { setShowDialog(false) },
+                    Button(onClick = {
+                        vm.createTicket(ticketTxtField.value,date.longValue, context)
+                        setShowDialog(false) },
                         modifier=Modifier.padding(bottom=10.dp),
                         colors= ButtonDefaults.buttonColors(colorResource(id = R.color.primary))) {
                         Text("Add",
@@ -176,51 +170,49 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit,){
 
 
 @Composable
-private fun Details(){
+private fun Details(vm: TicketViewModel = hiltViewModel()){
     Column(
         Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.primary_background))){
-        LazyColumn(Modifier.padding(20.dp).fillMaxWidth()) {
-            items(3){
-                Column(Modifier.padding(bottom=15.dp)) {
-                    SmallHeader("2024.05.01.")
-                    LazyRow(Modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
-                        items((it + 1) * 2) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 10.dp)
-                                    .size(80.dp, 60.dp)
-                                    .background(
-                                        colorResource(id = R.color.secondary),
-                                        shape = RoundedCornerShape(15.dp)
-                                    )
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    Text(
-                                        "Museum",
-                                        fontSize = 14.sp
-                                    )
-                                    Text(
-                                        "Emma",
-                                        fontSize = 10.sp
-                                    )
-                                }
-                            }
+        if(!vm.tickets.isEmpty()) {
+
+
+            LazyColumn(Modifier.padding(20.dp).fillMaxWidth()) {
+                items(vm.tickets) {
+                    Column(Modifier.padding(bottom = 15.dp)) {
+                        SmallHeader("${generateDate(it.date)} - ${it.name}")
+                        LazyRow(Modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
+//                        items((it + 1) * 2) {
+//                            Box(
+//                                modifier = Modifier
+//                                    .padding(horizontal = 10.dp)
+//                                    .size(80.dp, 60.dp)
+//                                    .background(
+//                                        colorResource(id = R.color.secondary),
+//                                        shape = RoundedCornerShape(15.dp)
+//                                    )
+//                            ) {
+//                                Column(
+//                                    horizontalAlignment = Alignment.CenterHorizontally,
+//                                    verticalArrangement = Arrangement.Center,
+//                                    modifier = Modifier.fillMaxSize()
+//                                ) {
+//                                    Text(
+//                                        "Museum",
+//                                        fontSize = 14.sp
+//                                    )
+//                                    Text(
+//                                        "Emma",
+//                                        fontSize = 10.sp
+//                                    )
+//                                }
+//                            }
+//                        }
                         }
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-@Preview(showBackground =  true)
-fun TicketsScreenPreview(){
-    TicketsScreen(navController = rememberNavController())
 }

@@ -1,6 +1,6 @@
 package com.androidlab.travelplannerapp.domain.usecases.image
 
-import com.androidlab.travelplannerapp.data.image.ImageService
+import com.androidlab.travelplannerapp.data.service.image.ImageService
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import okhttp3.MultipartBody

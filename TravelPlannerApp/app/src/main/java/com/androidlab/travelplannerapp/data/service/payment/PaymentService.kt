@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.data.payment
+package com.androidlab.travelplannerapp.data.service.payment
 
 import com.androidlab.travelplannerapp.data.model.Payment
 import com.androidlab.travelplannerapp.data.model.Transaction

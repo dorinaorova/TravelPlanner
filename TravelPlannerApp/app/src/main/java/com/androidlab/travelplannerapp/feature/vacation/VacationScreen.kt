@@ -55,6 +55,7 @@ import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
+import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryCustom
 
@@ -249,32 +250,44 @@ private fun Plan(){
 
 @Composable
 private fun Tickets(navController: NavController, vm: VacationViewModel = hiltViewModel()){
-    Box(Modifier.clickable { navController.navigate(Screen.TicketsScreen.route) }) {
+    Box(Modifier.clickable { navController.navigate(Screen.TicketsScreen.route+"?id=${vm.travel._id}") }) {
         SmallHeader("Tickets")
     }
-        LazyRow(
-            Modifier
-                .fillMaxWidth()
-                .padding(end = 25.dp, start = 30.dp, bottom = 30.dp)){
-            items(6) {
-                Box(modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .size(80.dp, 60.dp)
-                    .background(
-                        colorResource(id = R.color.secondary),
-                        shape = RoundedCornerShape(15.dp)
-                    )) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxSize()){
-                        Text("Museum",
-                            fontSize=14.sp)
-                        Text("Emma",
-                            fontSize=10.sp)
+
+            if(vm.tickets.isEmpty()){
+
+                TextButton(onClick = { navController.navigate(Screen.TicketsScreen.route+"?id=${vm.travel._id}")}) {
+                    Text("Add new ticket",
+                        color= colorResource(id = R.color.secondary_text),
+                        modifier=Modifier.padding(end=25.dp, start=25.dp, bottom=25.dp))
+                }
+            }
+            else{
+                LazyRow(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(end = 25.dp, start = 30.dp, bottom = 30.dp)){
+                    items(vm.tickets) {
+                        Box(modifier = Modifier
+                            .padding(horizontal = 10.dp)
+                            .size(80.dp, 60.dp)
+                            .background(
+                                colorResource(id = R.color.secondary),
+                                shape = RoundedCornerShape(15.dp)
+                            )) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxSize()){
+                                Text(it.name,
+                                    fontSize=14.sp)
+                                Text(
+                                    generateDate(it.date),
+                                    fontSize=10.sp)
+                            }
+                        }
                     }
                 }
             }
-        }
 
 }
 

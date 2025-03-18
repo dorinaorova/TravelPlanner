@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.data.image
+package com.androidlab.travelplannerapp.data.service.image
 
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo

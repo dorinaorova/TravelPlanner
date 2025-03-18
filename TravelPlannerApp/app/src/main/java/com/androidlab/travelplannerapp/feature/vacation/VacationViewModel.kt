@@ -2,14 +2,17 @@ package com.androidlab.travelplannerapp.feature.vacation
 
 import android.content.Context
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androidlab.travelplannerapp.data.model.Ticket
 import com.androidlab.travelplannerapp.data.model.Transaction
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.payment.GetPaymentsByTravelIdUseCase
 import com.androidlab.travelplannerapp.domain.usecases.payment.GetTransactionsUseCase
+import com.androidlab.travelplannerapp.domain.usecases.ticket.GetTicketsByTravelIdUseCase
 import com.androidlab.travelplannerapp.domain.usecases.travel.GetTravelByIdUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
@@ -24,13 +27,15 @@ class VacationViewModel @Inject constructor(
     private val getTravelByIdUseCase: GetTravelByIdUseCase,
     private val getUserByIdUseCase: GetUserDataUseCase,
     private val getTransactionsUseCase: GetTransactionsUseCase,
-    private val getPaymentsByTravelIdUseCase: GetPaymentsByTravelIdUseCase
+    private val getPaymentsByTravelIdUseCase: GetPaymentsByTravelIdUseCase,
+    private val getTicketsUseCase: GetTicketsByTravelIdUseCase
 ) : ViewModel() {
     private var _travel = mutableStateOf(Travel())
     private val _participants = mutableStateOf<List<UserInfo>>(emptyList())
     private var travel_id=""
     private val _ownTransaction = mutableStateOf<List<Transaction>>(emptyList())
     private val _ownDebt = mutableDoubleStateOf(0.0)
+    private val _tickets = mutableStateListOf<Ticket>()
 
 
     val travel : Travel
@@ -49,6 +54,10 @@ class VacationViewModel @Inject constructor(
     val ownDebt : Double
         get(){
             return _ownDebt.value
+        }
+    val tickets : List<Ticket>
+        get() {
+            return _tickets
         }
 
     fun fetchData(id: String, context: Context){
@@ -79,6 +88,7 @@ class VacationViewModel @Inject constructor(
                 }
                 getTransactionForUser(context)
                 getDebtForUser(context)
+                getTickets()
             }
         }
     }
@@ -109,6 +119,18 @@ class VacationViewModel @Inject constructor(
                         _ownDebt.value -= it.cost/it.partUserIds.size
                     }
                 }
+            }
+        }
+    }
+
+    private fun getTickets(){
+        viewModelScope.launch {
+            _tickets.clear()
+            val call = getTicketsUseCase(travel_id)
+            val response = call?.awaitResponse()
+            if(response!!.isSuccessful){
+                _tickets.addAll(response.body()!!)
+                _tickets.sortBy { it.date }
             }
         }
     }
