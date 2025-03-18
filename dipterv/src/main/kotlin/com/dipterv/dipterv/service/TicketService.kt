@@ -21,9 +21,7 @@ class TicketService (val ticketRepository: TicketRepository, val travelService: 
     fun uploadTicketFile(id: String, file: MultipartFile ): Ticket {
         val ticket = this.findById(id)
         val ticketName = fileService.uploadFile(file,Paths.get("travel/tickets"), ticket.travelId)
-        System.out.println(ticketName)
         ticket.files = ticket.files.toMutableList().apply { add(ticketName) }
-        System.out.println(ticket.files)
         return ticketRepository.save(ticket)
     }
 

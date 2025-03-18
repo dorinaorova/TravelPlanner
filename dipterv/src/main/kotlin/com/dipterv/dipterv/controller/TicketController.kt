@@ -21,7 +21,7 @@ class TicketController(private val ticketService: TicketService) {
         return ResponseEntity(ticketService.findById(id), HttpStatus.OK)
     }
 
-    @GetMapping("/travel/id")
+    @GetMapping("/travel/{id}")
     fun getTicketsByTravelId(@PathVariable("id") id: String): ResponseEntity<List<Ticket>>{
         return ResponseEntity(this.ticketService.ticketsForTravel(id), HttpStatus.OK)
     }
