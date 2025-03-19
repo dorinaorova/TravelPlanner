@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Surface
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -33,8 +34,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +48,8 @@ import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Activity
 import com.androidlab.travelplannerapp.data.model.ActivityType
+import com.androidlab.travelplannerapp.feature.utils.TopBar
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
 import com.example.compose.primaryTextCustom
@@ -52,9 +57,10 @@ import com.example.compose.secondaryCustom
 
 @Composable
 fun ActivityListScreen(navController: NavController, travelId: String,vm: ActivitiesListViewModel = hiltViewModel()) {
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         vm.travelId = travelId
-        vm.fetchData(travelId)
+        vm.fetchData(travelId, context)
     }
 
     val showDialog =  remember { mutableStateOf(false) }
@@ -72,11 +78,20 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
             }
         },
         topBar = {
-            TopBar(navController, travelId)
+            val route = if(vm.ownTravel) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
+            TopBar(
+                "Activities",
+                navController,
+                route,
+                R.drawable.baseline_map_24,
+                "TODO"
+            )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+            if(vm.ownTravel){
+                FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
+                    Icon(Icons.Default.Add, contentDescription = "Add")
+                }
             }
         }
     )
@@ -171,14 +186,23 @@ private fun ActivitiesList(navController: NavController, vm: ActivitiesListViewM
 
 @Composable
 private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = hiltViewModel()){
-    Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp), horizontalArrangement = Arrangement.SpaceBetween){
-        Row{
-        Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type")
-        Text(activity.name)
+    val opacity = if(activity.visited) 0.5f else 1f
+    Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
+        Row(Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically){
+            if(vm.ownTravel){
+                Checkbox(
+                    checked = activity.visited,
+                    onCheckedChange = { vm.visitActivity(activity.id!!) },
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
+            }
+            Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = colorResource(id = R.color.secondary_text))
+            Text(activity.name, color = colorResource(id = R.color.secondary_text))
         }
-        IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {
-            Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity")
-
+        if(vm.ownTravel){
+            IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity", tint = colorResource(id = R.color.secondary_text))
+            }
         }
     }
 }
@@ -207,9 +231,4 @@ fun iconForActivityType(type: ActivityType): Int{
             R.drawable.baseline_location_pin_24
         }
     }
-}
-
-@Composable
-private fun TopBar(navController: NavController, travelId: String){
-
 }
