@@ -4,7 +4,9 @@ data class Activity(
     val id: String? = null,
     val location: String? = null,
     val name: String,
-    val type: ActivityType
+    val type: ActivityType,
+    val travelId: String? = null,
+    val visited: Boolean = false
 )
 
 enum class ActivityType(val type: String) {

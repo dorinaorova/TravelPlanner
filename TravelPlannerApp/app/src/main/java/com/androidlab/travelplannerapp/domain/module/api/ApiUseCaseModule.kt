@@ -2,11 +2,13 @@ package com.androidlab.travelplannerapp.domain.module.api
 
 import android.content.Context
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.activities.ActivityService
 import com.androidlab.travelplannerapp.data.auth.AuthService
 import com.androidlab.travelplannerapp.data.image.ImageService
 import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
 import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
 import com.androidlab.travelplannerapp.data.invitation.InvitationService
+import com.androidlab.travelplannerapp.data.model.Activity
 import com.androidlab.travelplannerapp.data.payment.PaymentService
 import com.androidlab.travelplannerapp.data.travel.TravelService
 import com.androidlab.travelplannerapp.data.user.UserService
@@ -82,5 +84,11 @@ class ApiUseCaseModule {
     @Singleton
     fun providePaymentService(retrofit: Retrofit): PaymentService {
         return retrofit.create(PaymentService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideActivityService(retrofit: Retrofit): ActivityService {
+        return retrofit.create(ActivityService::class.java)
     }
 }
