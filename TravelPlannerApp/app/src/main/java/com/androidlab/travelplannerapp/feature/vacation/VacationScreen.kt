@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -114,55 +115,58 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: Vacation
             Modifier
                 .height(160.dp)
                 .fillMaxWidth())
-        Column(
-            Modifier
-                .verticalScroll(scroll)
-                .fillMaxWidth()
-                .background(
-                    colorResource(id = R.color.primary_background),
-                    shape = RoundedCornerShape(size = 30.dp)
-                )){
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
-                val menuExpanded = remember { mutableStateOf(false) }
-                Box{
-                    IconButton(onClick = { menuExpanded.value= true }) {
-                        Icon(
-                            imageVector= Icons.Rounded.MoreVert,
-                            contentDescription = null,
-                            tint= colorResource(id = R.color.primary)
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = menuExpanded.value,
-                        onDismissRequest = { menuExpanded.value = false },
-                        modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                    ){
-                        DropdownMenuItem(
-                            text={ Text("View travel profile") },
-                            onClick = {
-                                menuExpanded.value = false
-                                navController.navigate(Screen.TravelProfileScreen.route+"?id=${vm.travel._id}")
-                            },
+        Box(Modifier.fillMaxWidth().fillMaxHeight().clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))){
+            Column(
+                Modifier
+                    .verticalScroll(scroll)
+                    .fillMaxWidth()
+                    .background(
+                        colorResource(id = R.color.primary_background),
+//                        shape = RoundedCornerShape(size = 30.dp)
+                    )){
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                    val menuExpanded = remember { mutableStateOf(false) }
+                    Box{
+                        IconButton(onClick = { menuExpanded.value= true }) {
+                            Icon(
+                                imageVector= Icons.Rounded.MoreVert,
+                                contentDescription = null,
+                                tint= colorResource(id = R.color.primary)
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded.value,
+                            onDismissRequest = { menuExpanded.value = false },
                             modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                        )
+                        ){
                             DropdownMenuItem(
-                                text={ Text("Set as current vacation") },
+                                text={ Text("View travel profile") },
                                 onClick = {
                                     menuExpanded.value = false
-                                    /*TODO*/
-
+                                    navController.navigate(Screen.TravelProfileScreen.route+"?id=${vm.travel._id}")
                                 },
                                 modifier = Modifier.background(colorResource(id = R.color.primary_text))
                             )
+                                DropdownMenuItem(
+                                    text={ Text("Set as current vacation") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        /*TODO*/
 
+                                    },
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+
+                        }
                     }
                 }
+                TravelBuddies(navController)
+                Payments(navController)
+                Plan(navController)
+                Tickets(navController )
             }
-            TravelBuddies(navController)
-            Payments(navController)
-            Plan()
-            Tickets(navController )
-        }}
+        }
+    }
 }
 
 @Composable
@@ -232,9 +236,11 @@ private fun Payments(navController: NavController, vm: VacationViewModel = hiltV
 }
 
 @Composable
-private fun Plan(){
+private fun Plan(navController: NavController, vm: VacationViewModel = hiltViewModel() ){
     Column{
-        SmallHeader("What's the plan?")
+        Row(Modifier.fillMaxWidth().clickable { navController.navigate(Screen.ActivityListScreen.route+"?id=${vm.travel._id}") }){
+            SmallHeader("What's the plan?")
+        }
         Box(
             Modifier
                 .padding(start = 25.dp, end = 25.dp, bottom = 25.dp, top = 10.dp)

@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.feature.utils
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -60,20 +61,30 @@ fun CustomDivider(){
 }
 
 @Composable
-fun TopBar(label: String, navController: NavController, route: String){
+fun TopBar(label: String, navController: NavController, route: String, secondaryIcon: Int? = null, secondaryRoute: String? = null){
     Row(
         Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.secondary)),
-        verticalAlignment = Alignment.CenterVertically){
-        IconButton(onClick = { navController.navigate(route) }) {
-            Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
-                contentDescription = null,
-                tint= colorResource(id = R.color.primary_text))
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
+        Row{
+            IconButton(onClick = { navController.navigate(route) }) {
+                Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
+                    contentDescription = null,
+                    tint= colorResource(id = R.color.primary_text))
+            }
+            androidx.compose.material3.Text(label,
+                fontSize=18.sp,
+                modifier= Modifier.padding(vertical = 20.dp))
         }
-        androidx.compose.material3.Text(label,
-            fontSize=18.sp,
-            modifier= Modifier.padding(vertical = 20.dp))
+        if(secondaryIcon != null && secondaryRoute != null){
+            IconButton(onClick = { navController.navigate(secondaryRoute) }) {
+                Icon(imageVector = ImageVector.vectorResource(secondaryIcon),
+                    contentDescription = null,
+                    tint= colorResource(id = R.color.primary_text))
+            }
+        }
+
     }
 }
 

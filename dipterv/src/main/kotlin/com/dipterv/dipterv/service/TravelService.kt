@@ -38,7 +38,6 @@ class TravelService (
 
     fun countryFilter(country: String, travels: List<Travel>) : List<Travel>{
         return travels.filter { it.country.contains(country, true) }
-        return travels.filter { it.country.contains(country, true)}
     }
 
     fun nameFilter(name: String, travels: List<Travel>): List<Travel>{

@@ -2,6 +2,7 @@ package com.androidlab.travelplannerapp.feature.travel
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -51,6 +53,7 @@ import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
+import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.calculateDays
 import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
@@ -129,106 +132,134 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
             Modifier
                 .height(160.dp)
                 .fillMaxWidth())
-        Column(
-            Modifier
-                .verticalScroll(scroll)
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(
-                    colorResource(id = R.color.primary_background),
-                    shape = RoundedCornerShape(size = 30.dp)
-                )){
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 5.dp, horizontal = 5.dp),
-                horizontalArrangement = Arrangement.SpaceBetween){
-                Column(Modifier.padding(start=25.dp, top=15.dp, bottom=15.dp)) {
-                    DataRow(vm.travel.city+", "+vm.travel.country, ImageVector.vectorResource(R.drawable.baseline_map_24))
-                    DataRow(vm.travel.price.toString()+" "+vm.travel.currency, ImageVector.vectorResource(R.drawable.baseline_attach_money_24))
-                    DataRow("${calculateDays(vm.travel.startDate, vm.travel.endDate)} days (${generateDate(vm.travel.startDate)} - ${generateDate(vm.travel.endDate)})", ImageVector.vectorResource(R.drawable.baseline_calendar_month_24))
-                }
-                if(!vm.ownTravel(context)){
-                    val liked  = if (true) {
-                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                    }else {
-                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                    }
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(imageVector = liked,
-                            contentDescription = "like",
-                            tint = colorResource(id = R.color.primary),
-                            modifier = Modifier
-                                .width(30.dp)
-                                .height(30.dp))
-                    }
-                }else{
-                    val menuExpanded = remember { mutableStateOf(false) }
-                    Box{
-                        IconButton(onClick = { menuExpanded.value= true }) {
-                            Icon(
-                                imageVector= Icons.Rounded.MoreVert,
-                                contentDescription = null,
-                                tint= colorResource(id = R.color.primary)
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = menuExpanded.value,
-                            onDismissRequest = { menuExpanded.value = false },
-                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                        ){
-                            DropdownMenuItem(
-                                text={ Text("View vacation profile") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    navController.navigate(Screen.VacationScreen.route+"?id=${vm.travel._id}")
-                                },
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Edit") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    navController.navigate(Screen.NewTravelScreen.route+"?id=${vm.travel._id}")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
-                                        contentDescription = null
-                                    )},
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                            DropdownMenuItem(
-                                text={ Text("Upload background image") },
-                                onClick = {
-                                    menuExpanded.value = false
-                                    navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.travel._id}&uploadImageType=${UploadImageType.TRAVEL}")
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
-                                        contentDescription = null
-                                    )},
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                            )
-                        }
-                    }
-                }
-            }
+        Box(Modifier.fillMaxWidth().fillMaxHeight().clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))) {
             Column(
                 Modifier
+                    .verticalScroll(scroll)
                     .fillMaxWidth()
-                    .padding(bottom = 15.dp, end = 25.dp, start = 25.dp)){
-                Text("Description",
-                        fontSize = 8.sp,
+                    .background(
+                        colorResource(id = R.color.primary_background),
+                    )
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 5.dp, horizontal = 5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(Modifier.padding(start = 25.dp, top = 15.dp, bottom = 15.dp)) {
+                        DataRow(
+                            vm.travel.city + ", " + vm.travel.country,
+                            ImageVector.vectorResource(R.drawable.baseline_map_24)
+                        )
+                        DataRow(
+                            vm.travel.price.toString() + " " + vm.travel.currency,
+                            ImageVector.vectorResource(R.drawable.baseline_attach_money_24)
+                        )
+                        DataRow(
+                            "${
+                                calculateDays(
+                                    vm.travel.startDate,
+                                    vm.travel.endDate
+                                )
+                            } days (${generateDate(vm.travel.startDate)} - ${generateDate(vm.travel.endDate)})",
+                            ImageVector.vectorResource(R.drawable.baseline_calendar_month_24)
+                        )
+                    }
+                    if (!vm.ownTravel(context)) {
+                        val liked = if (true) {
+                            ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+                        } else {
+                            ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                imageVector = liked,
+                                contentDescription = "like",
+                                tint = colorResource(id = R.color.primary),
+                                modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                            )
+                        }
+                    } else {
+                        val menuExpanded = remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { menuExpanded.value = true }) {
+                                Icon(
+                                    imageVector = Icons.Rounded.MoreVert,
+                                    contentDescription = null,
+                                    tint = colorResource(id = R.color.primary)
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = menuExpanded.value,
+                                onDismissRequest = { menuExpanded.value = false },
+                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("View vacation profile") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.VacationScreen.route + "?id=${vm.travel._id}")
+                                    },
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Edit") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.NewTravelScreen.route + "?id=${vm.travel._id}")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
+                                            contentDescription = null
+                                        )
+                                    },
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Upload background image") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.UploadImageScreen.route + "?id=${vm.travel._id}&uploadImageType=${UploadImageType.TRAVEL}")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
+                                            contentDescription = null
+                                        )
+                                    },
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                            }
+                        }
+                    }
+                }
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 15.dp, end = 25.dp, start = 25.dp)
+                ) {
+                    Text(
+                        "Description",
+                        fontSize = 12.sp,
                         color = colorResource(id = R.color.secondary_text)
-                )
-                Text(vm.travel.description?:"...",
-                    fontSize = 10.sp,
-                    modifier= Modifier.padding(horizontal=5.dp))
+                    )
+                    Text(
+                        vm.travel.description ?: "...",
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    )
+                }
+                Row(
+                    Modifier.fillMaxWidth()
+                        .clickable { navController.navigate(Screen.ActivityListScreen.route + "?id=${vm.travel._id}") }) {
+                    SmallHeader("What's the plan?")
+                }
+                Map()
             }
-            Map()
-            PackingList()
         }
     }
 }
@@ -255,29 +286,4 @@ private fun Map(){
                 colorResource(id = R.color.primary),
                 shape = RoundedCornerShape(size = 30.dp)
             ))
-}
-
-@Composable
-private fun PackingList(){
-    Column(Modifier.padding(start=25.dp, end=25.dp, bottom=25.dp)){
-        Text("What should you bring",
-            fontSize=16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier=Modifier.padding(bottom=8.dp))
-        var list = arrayOf("item1", "item2", "item3", "item4", "item5", "item6", "item7")
-        val bullet = "\u2022"
-        val paragraphStyle = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))
-        Text(
-            buildAnnotatedString {
-                list.forEach {
-                    withStyle(style = paragraphStyle) {
-                        append(bullet)
-                        append("\t\t")
-                        append(it)
-                    }
-                }
-            },
-            modifier=Modifier.padding(start=10.dp)
-        )
-    }
 }

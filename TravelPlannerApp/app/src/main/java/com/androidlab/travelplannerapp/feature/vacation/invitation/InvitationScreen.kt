@@ -56,6 +56,7 @@ import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
+import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
@@ -85,7 +86,11 @@ fun InvitationScreen(navController: NavController, travelId: String, vm : Invita
             }
         },
         topBar = {
-            TopBar(navController, travelId)
+            TopBar(
+                "Invitations",
+                navController,
+                Screen.VacationScreen.route + "?id=${travelId}"
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
@@ -151,31 +156,6 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopBar(navController: NavController, travelId: String) {
-    CenterAlignedTopAppBar(
-        navigationIcon = {
-            IconButton(onClick = {
-                navController.navigate(Screen.VacationScreen.route+"?id=${travelId}")
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Navigate back",
-                    tint = colorResource(id = R.color.primary_text)
-                )
-            }
-        },
-        title = {
-            Text("Invitations")
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = colorResource(id = R.color.primary),
-            titleContentColor = colorResource(id = R.color.primary_text),
-        ),
-    )
 }
 
 @Composable

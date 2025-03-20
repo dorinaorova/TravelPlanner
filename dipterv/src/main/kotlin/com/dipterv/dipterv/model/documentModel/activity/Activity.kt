@@ -3,9 +3,10 @@ package com.dipterv.dipterv.model.documentModel.activity
 import com.dipterv.dipterv.model.documentModel.activity.Coordinate
 
 class Activity (
-    val id: String,
-    val location: Coordinate,
+    var id: String?,
+    val location: String?,
     val name: String,
-    val type: ActivityType
-        ){
-}
+    val type: ActivityType,
+    var travelId: String,
+    var visited: Boolean = false
+        )
