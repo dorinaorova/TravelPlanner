@@ -122,7 +122,6 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: Vacation
                     .fillMaxWidth()
                     .background(
                         colorResource(id = R.color.primary_background),
-//                        shape = RoundedCornerShape(size = 30.dp)
                     )){
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
                     val menuExpanded = remember { mutableStateOf(false) }
@@ -249,7 +248,8 @@ private fun Plan(navController: NavController, vm: VacationViewModel = hiltViewM
                 .background(
                     colorResource(id = R.color.primary),
                     shape = RoundedCornerShape(size = 30.dp)
-                ))
+                )
+                .clickable { navController.navigate(Screen.MapScreen.route+"?id=${vm.travel._id}") })
     }
 }
 
