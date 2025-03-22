@@ -42,10 +42,7 @@ import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
 import com.example.compose.primaryTextCustom
 import com.example.compose.secondaryCustom
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.rememberCameraPositionState
 import com.androidlab.travelplannerapp.feature.utils.Map
 
 
@@ -69,7 +66,7 @@ fun MapScreen(navController: NavController, travelId: String, vm: MapViewModel =
                         vm.coordsSelected(latLng)
                         showDialog.value = true
                     }
-                    Map(vm.markers, longClickAction, Modifier.fillMaxSize(), vm.loading)
+                Map(vm.markers, longClickAction, Modifier.fillMaxSize(), vm.loading, vm.travel.city, context)
             }
         },
         topBar = {

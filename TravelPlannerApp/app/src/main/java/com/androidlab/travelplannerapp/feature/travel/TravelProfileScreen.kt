@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.travel
 
+import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -58,6 +59,7 @@ import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.calculateDays
 import com.androidlab.travelplannerapp.feature.utils.generateDate
+import com.androidlab.travelplannerapp.feature.utils.getLatLngFromCity
 import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
@@ -279,6 +281,8 @@ private fun DataRow(text: String, icon: ImageVector){
 
 @Composable
 private fun Map(navController: NavController, vm: TravelViewModel = hiltViewModel()){
+    val context = LocalContext.current
+
     val boxModifier = Modifier
         .padding(start = 25.dp, end = 25.dp, bottom = 25.dp, top = 10.dp)
         .fillMaxWidth()
@@ -289,6 +293,7 @@ private fun Map(navController: NavController, vm: TravelViewModel = hiltViewMode
         vm.markers,
         { navController.navigate(Screen.MapScreen.route + "?id=${vm.travel._id}") },
         boxModifier,
-        vm.mapLoading
+        vm.mapLoading,
+        vm.travel.city, context,
     )
 }

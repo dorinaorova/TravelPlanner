@@ -49,7 +49,7 @@ class TravelViewModel @Inject constructor(
             val response = call?.awaitResponse()
             if(response!!.isSuccessful) {
                 markers.clear()
-                markers.addAll(response.body()!!.filter { it.xcoord != null && it.ycoord != null })
+                markers.addAll(response.body()!!.filter { it.latitude != null && it.longitude != null })
                 mapLoading.value = false
             }
         }

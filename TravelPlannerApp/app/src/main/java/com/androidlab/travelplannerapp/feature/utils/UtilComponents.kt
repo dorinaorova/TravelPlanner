@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.feature.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Paint
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,7 +49,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Activity
-import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -218,7 +218,7 @@ enum class ImageSourceSelector {
 
 @Composable
 fun CustomMaker(activity: Activity){
-    val singaporeMarkerState = rememberMarkerState(position = LatLng(activity.xcoord!!, activity.ycoord!!))
+    val singaporeMarkerState = rememberMarkerState(position = LatLng(activity.latitude!!, activity.longitude!!))
     val context = LocalContext.current
     Marker(
         state = singaporeMarkerState,
@@ -229,10 +229,10 @@ fun CustomMaker(activity: Activity){
 }
 
 private fun bitmapFromVector(context: Context, @DrawableRes vectorResId: Int): BitmapDescriptor {
-    val markerDrawable = ContextCompat.getDrawable(context, R.drawable.baseline_location_pin_24)!! // Default marker shape
-    markerDrawable.setTint(android.graphics.Color.rgb(173,0,0))
-    val customIconDrawable = ContextCompat.getDrawable(context, vectorResId)
-
+    val markerDrawable = ContextCompat.getDrawable(context, R.drawable.baseline_location_pin_24)!!
+    markerDrawable.setTint(android.graphics.Color.rgb(0, 80, 76))
+    val customIconDrawable = ContextCompat.getDrawable(context, vectorResId)!!
+    customIconDrawable.setTint(android.graphics.Color.WHITE)
 
     val width = markerDrawable.intrinsicWidth*2
     val height = markerDrawable.intrinsicHeight*2
@@ -242,6 +242,18 @@ private fun bitmapFromVector(context: Context, @DrawableRes vectorResId: Int): B
 
     markerDrawable.setBounds(0, 0, width, height)
     markerDrawable.draw(canvas)
+
+    val holePaint = Paint().apply {
+        color = android.graphics.Color.rgb(0, 80, 76)
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+
+    val centerX = width / 2f
+    val centerY = height / 3f
+    val holeRadius = width / 5f
+
+    canvas.drawCircle(centerX, centerY, holeRadius, holePaint)
 
     val iconSize = width / 2
     val left = (width - iconSize) / 2
@@ -254,17 +266,12 @@ private fun bitmapFromVector(context: Context, @DrawableRes vectorResId: Int): B
 }
 
 @Composable
-fun Map(markers: List<Activity>, longClickAction: (LatLng) -> Unit, boxModifier: Modifier, isLoading: MutableState<Boolean>){
+fun Map(markers: List<Activity>, longClickAction: (LatLng) -> Unit, boxModifier: Modifier, isLoading: MutableState<Boolean>, city: String, context: Context){
     Box(modifier = boxModifier) {
         if(isLoading.value){
             Text("Loading...")
         }else {
-
-            var center = LatLng(47.49, 19.04)
-            if (markers.size > 0) {
-                val activity = markers[0]
-                center = LatLng(activity.xcoord!!, activity.ycoord!!)
-            }
+            val center = getLatLngFromCity(context, city) ?: LatLng(47.49, 19.04)
             val cameraPositionState = rememberCameraPositionState {
                 position = CameraPosition.fromLatLngZoom(center, 10f)
             }

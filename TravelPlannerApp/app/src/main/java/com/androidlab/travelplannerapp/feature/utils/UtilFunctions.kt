@@ -1,10 +1,14 @@
 package com.androidlab.travelplannerapp.feature.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Geocoder
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.ActivityType
+import com.google.android.gms.maps.model.LatLng
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 fun getOwnUserId(context: Context) : String?{
     val sharedPreferences =
@@ -67,7 +71,23 @@ fun iconForActivityType(type: ActivityType): Int{
             R.drawable.baseline_add_a_photo_24
         }
         else -> {
-            R.drawable.baseline_location_pin_24
+            R.drawable.baseline_public_24
         }
+    }
+}
+
+@SuppressLint("MissingPermission")
+fun getLatLngFromCity(context: Context, cityName: String): LatLng? {
+    val geocoder = Geocoder(context, Locale.getDefault())
+    return try {
+        val addresses = geocoder.getFromLocationName(cityName, 1)
+        if (addresses?.isNotEmpty() == true) {
+            LatLng(addresses[0].latitude, addresses[0].longitude)
+        } else {
+            null
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }

@@ -79,7 +79,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
             }
         },
         topBar = {
-            val route = if(vm.ownTravel) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
+            val route = if(vm.ownTravel.value) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
             TopBar(
                 "Activities",
                 navController,
@@ -89,7 +89,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
             )
         },
         floatingActionButton = {
-            if(vm.ownTravel){
+            if(vm.ownTravel.value){
                 FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
                     Icon(Icons.Default.Add, contentDescription = "Add")
                 }

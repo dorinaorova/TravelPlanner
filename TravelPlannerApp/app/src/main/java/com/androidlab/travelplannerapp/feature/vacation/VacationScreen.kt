@@ -247,7 +247,7 @@ private fun Plan(navController: NavController, vm: VacationViewModel = hiltViewM
             .height(200.dp)
             .border(1.dp, Color.White, RoundedCornerShape(size = 30.dp))
             .clip(RoundedCornerShape(size = 30.dp))
-            Map(vm.markers, {navController.navigate(Screen.MapScreen.route+"?id=${vm.travel._id}") }, boxModifier, vm.mapLoading)
+            Map(vm.markers, {navController.navigate(Screen.MapScreen.route+"?id=${vm.travel._id}") }, boxModifier, vm.mapLoading, vm.travel.city, LocalContext.current)
     }
 }
 
