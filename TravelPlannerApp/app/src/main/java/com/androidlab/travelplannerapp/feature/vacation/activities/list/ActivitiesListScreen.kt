@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature.vacation.invitation
+package com.androidlab.travelplannerapp.feature.vacation.activities.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,56 +7,49 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Surface
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.data.model.Invitation
-import com.androidlab.travelplannerapp.data.model.Status
-import com.androidlab.travelplannerapp.data.model.UserInfo
-import com.androidlab.travelplannerapp.feature.utils.CustomDivider
-import com.androidlab.travelplannerapp.feature.utils.CustomImage
-import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
+import com.androidlab.travelplannerapp.data.model.Activity
+import com.androidlab.travelplannerapp.data.model.ActivityType
 import com.androidlab.travelplannerapp.feature.utils.TopBar
+import com.androidlab.travelplannerapp.feature.utils.iconForActivityType
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
@@ -64,7 +57,7 @@ import com.example.compose.primaryTextCustom
 import com.example.compose.secondaryCustom
 
 @Composable
-fun InvitationScreen(navController: NavController, travelId: String, vm : InvitationViewModel = hiltViewModel()) {
+fun ActivityListScreen(navController: NavController, travelId: String,vm: ActivitiesListViewModel = hiltViewModel()) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         vm.travelId = travelId
@@ -82,27 +75,35 @@ fun InvitationScreen(navController: NavController, travelId: String, vm : Invita
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues).background(primaryBackgroundCustom)) {
-                InvitationList(navController)
+                ActivitiesList(navController)
             }
         },
         topBar = {
+            val route = if(vm.ownTravel.value) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
             TopBar(
-                "Invitations",
+                "Activities",
                 navController,
-                Screen.VacationScreen.route + "?id=${travelId}"
+                route,
+                R.drawable.baseline_map_24,
+                Screen.MapScreen.route + "?id=${travelId}"
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
-                Icon(Icons.Default.Add, contentDescription = "Add")
+            if(vm.ownTravel.value){
+                FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
+                    Icon(Icons.Default.Add, contentDescription = "Add")
+                }
             }
         }
     )
 }
+
 @Composable
-private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel = hiltViewModel()){
+private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: ActivitiesListViewModel = hiltViewModel()){
     val expanded = remember { mutableStateOf(false) }
-    val selectedUser = remember(null){mutableStateOf<UserInfo?>(null)}
+    val type = remember{mutableStateOf<ActivityType?>(null)}
+    val name = remember{mutableStateOf("")}
+    val typeList = enumValues<ActivityType>().toList()
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -110,47 +111,64 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
             modifier = Modifier.padding(10.dp)
         ){
             Column (Modifier.fillMaxWidth(0.8f).padding(vertical=15.dp), verticalArrangement = Arrangement.SpaceBetween){
+                Row(
+                    Modifier
+                        .padding(horizontal = 15.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically){
+                    Text("Name",
+                        modifier=Modifier.padding(end=10.dp),
+                        fontWeight= FontWeight.Bold,
+                        color= colorResource(id = R.color.primary))
+                    TextField(
+                        value = name.value,
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        singleLine = true,
+                        onValueChange = {
+                            name.value = it
+                        },
+                        placeholder = { Text("Please enter the name")})
+                }
                 Box(Modifier.fillMaxWidth().padding(10.dp)){
                     Row(Modifier.fillMaxWidth().border(1.dp, secondaryCustom).clickable(onClick = { expanded.value = true })){
-                        if(selectedUser.value != null){
-                            UserData(selectedUser.value!!)
-                        }else{
-                            Text("Select a user",
+                            Text(text = type.value?.type?: "Select a type",
                                 color = colorResource(R.color.secondary_text),
                                 modifier = Modifier
                                     .padding(8.dp)
                             )
-                        }
                     }
                     DropdownMenu(expanded = expanded.value,
                         onDismissRequest = { expanded.value = false },
                         modifier = Modifier.background(colorResource(id = R.color.primary_text))) {
-                        vm.users.forEach { i ->
+                        typeList.forEach { i ->
                             DropdownMenuItem(
                                 text={
                                     Text(
-                                        text = i.username,
+                                        text = i.type,
                                         color = colorResource(R.color.primary)
                                     )
                                 },
                                 onClick = {
                                     expanded.value = false
-                                    selectedUser.value = i
+                                    type.value = i
                                 },
                                 modifier = Modifier.fillMaxWidth().background(colorResource(id = R.color.primary_text))
                             )
                         }
                     }
                 }
-                val context = LocalContext.current
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
                     Button(onClick = {
-                        vm.inviteUser(selectedUser.value!!, context)
+                        vm.addActivity(name.value, type.value!!)
                         setShowDialog(false)
                     },
                         colors = ButtonDefaults.buttonColors(containerColor = primaryCustom, contentColor = primaryTextCustom),
-                        enabled = selectedUser.value != null){
-                        Text("Invite")
+                        enabled = type.value != null){
+                        Text("Add")
                     }
                 }
             }
@@ -159,70 +177,35 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
 }
 
 @Composable
-private fun InvitationList(navController: NavController, vm: InvitationViewModel = hiltViewModel()){
-    Column(Modifier.fillMaxHeight().padding(horizontal = 10.dp)){
-        Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.SpaceBetween){
-            Text("Pending", color = primaryCustom)
-            LazyColumn(Modifier.weight(1f)) {
-                items(vm.filterInvitationByStatus(Status.PENDING)) {
-                    InvitationListItem(it)
-                }
-            }
-            CustomDivider()
-        }
-        Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.SpaceBetween){
-            Text("Accepted", color = primaryCustom)
-            LazyColumn(Modifier.weight(1f)) {
-                items(vm.filterInvitationByStatus(Status.ACCEPTED)) {
-                    InvitationListItem(it)
-                }
-            }
-            CustomDivider()
-        }
-        Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.Top){
-            Text("Rejected", color = primaryCustom)
-            LazyColumn(Modifier.weight(1f)) {
-                items(vm.filterInvitationByStatus(Status.REJECTED)) {
-                    InvitationListItem(it)
-                }
-            }
+private fun ActivitiesList(navController: NavController, vm: ActivitiesListViewModel = hiltViewModel()){
+    LazyColumn() {
+        items(vm.activities){
+            ActivityListItem(it)
         }
     }
 }
 
 @Composable
-private fun InvitationListItem(invitation: Invitation, vm: InvitationViewModel = hiltViewModel()){
-    val context = LocalContext.current
-    val user = remember(vm.findUser(invitation.userId)){ mutableStateOf(vm.findUser(invitation.userId))}
-    if(user.value != null){
-        Row(Modifier.fillMaxWidth()
-                    .padding(horizontal=5.dp, vertical=3.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically){
-            UserData(user.value!!)
-            Icon(Icons.Default.Clear, contentDescription = "delete invitation", Modifier.clickable {
-                vm.deleteInvitation(invitation._id!!, context)
-            }.padding(horizontal = 10.dp, vertical = 15.dp))
+private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = hiltViewModel()){
+    val opacity = if(activity.visited) 0.5f else 1f
+    Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
+        Row(Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically){
+            if(vm.ownTravel.value){
+                Checkbox(
+                    checked = activity.visited,
+                    onCheckedChange = { vm.visitActivity(activity.id!!) },
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
+            }
+            Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = colorResource(id = R.color.secondary_text))
+            Text(activity.name, color = colorResource(id = R.color.secondary_text))
+        }
+        if(vm.ownTravel.value){
+            IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity", tint = colorResource(id = R.color.secondary_text))
+            }
         }
     }
 }
 
 
-@Composable
-private fun UserData(user: UserInfo){
-    Row(Modifier.padding(horizontal = 10.dp, vertical = 15.dp)){
-        Box(
-            Modifier
-                .width(50.dp)
-                .height(50.dp)
-                .clip(CircleShape)
-                .border(3.dp, Color.White, CircleShape)
-        ) {
-            CustomImage(Modifier.fillMaxSize(), user.profilePictureFilePath,ImageSourceSelector.PROFILE )
-        }
-        Column(Modifier.padding(start=10.dp)){
-            Text(user.username, fontSize = 16.sp, color= Color.Black)
-            Text(user.name, Modifier.padding(start=5.dp), color= Color.Black)
-        }
-    }
-}

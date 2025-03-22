@@ -3,17 +3,16 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.dagger.hilt.android")
     kotlin("kapt") version "1.9.0"
-
 }
 
 android {
     namespace = "com.androidlab.travelplannerapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.androidlab.travelplannerapp"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -91,4 +90,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
     implementation("androidx.compose.material3:material3:1.2.0-alpha02")
+
+    implementation("com.google.maps.android:maps-compose:6.4.1")
 }

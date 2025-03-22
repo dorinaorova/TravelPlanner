@@ -16,6 +16,8 @@ import com.androidlab.travelplannerapp.feature.ticket.ticketListView.TicketsScre
 import com.androidlab.travelplannerapp.feature.travel.travelCreate.TravelCreateUpdateScreen
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageScreen
 import com.androidlab.travelplannerapp.feature.userProfile.userUpdate.UserUpdateScreen
+import com.androidlab.travelplannerapp.feature.vacation.activities.list.ActivityListScreen
+import com.androidlab.travelplannerapp.feature.vacation.activities.map.MapScreen
 import com.androidlab.travelplannerapp.feature.vacation.invitation.InvitationScreen
 
 @Composable
@@ -70,6 +72,15 @@ fun Navigation(navController: NavHostController){
         composable(route = Screen.InvitationScreen.route+"?id={id}"){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             InvitationScreen(navController = navController, travelId = id!!)
+        }
+        composable(route = Screen.ActivityListScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            ActivityListScreen(navController = navController, travelId = id!!)
+        }
+
+        composable(route = Screen.MapScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            MapScreen(navController = navController, travelId = id!!)
         }
     }
 }

@@ -11,6 +11,16 @@ import com.androidlab.travelplannerapp.data.service.payment.PaymentService
 import com.androidlab.travelplannerapp.data.service.ticket.TicketService
 import com.androidlab.travelplannerapp.data.service.travel.TravelService
 import com.androidlab.travelplannerapp.data.service.user.UserService
+import com.androidlab.travelplannerapp.data.activities.ActivityService
+import com.androidlab.travelplannerapp.data.auth.AuthService
+import com.androidlab.travelplannerapp.data.image.ImageService
+import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
+import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
+import com.androidlab.travelplannerapp.data.invitation.InvitationService
+import com.androidlab.travelplannerapp.data.model.Activity
+import com.androidlab.travelplannerapp.data.payment.PaymentService
+import com.androidlab.travelplannerapp.data.travel.TravelService
+import com.androidlab.travelplannerapp.data.user.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,5 +99,10 @@ class ApiUseCaseModule {
     @Singleton
     fun provideTicketService(retrofit: Retrofit): TicketService {
         return retrofit.create(TicketService::class.java)
+    }
+        @Provides
+    @Singleton
+    fun provideActivityService(retrofit: Retrofit): ActivityService {
+        return retrofit.create(ActivityService::class.java)
     }
 }
