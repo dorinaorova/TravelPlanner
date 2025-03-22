@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.feature.vacation.activities.list
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidlab.travelplannerapp.data.model.Activity
@@ -29,13 +30,13 @@ class ActivitiesListViewModel @Inject constructor(
     private val _activities = mutableStateListOf<Activity>()
     var travelId: String = ""
     val activities: List<Activity> = _activities
-    var ownTravel: Boolean = false
+    var ownTravel= mutableStateOf(true)
 
     fun fetchData(id: String, context: Context){
         viewModelScope.launch {
             travelId = id
-            getActivities()
             ownTravel(context)
+            getActivities()
         }
     }
 
@@ -44,7 +45,7 @@ class ActivitiesListViewModel @Inject constructor(
             val call = getTravelByIdUseCase(travelId)
             val response = call?.awaitResponse()
             if (response?.isSuccessful == true){
-                ownTravel = response.body()!!.ownerId == getOwnUserId(context)
+                ownTravel.value = response.body()!!.ownerId == getOwnUserId(context)
             }
         }
     }

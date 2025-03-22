@@ -1,5 +1,6 @@
-package com.androidlab.travelplannerapp.feature.vacation.activities.list
+package com.androidlab.travelplannerapp.feature.vacation.activities.map
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,22 +11,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Surface
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,75 +27,68 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.data.model.Activity
 import com.androidlab.travelplannerapp.data.model.ActivityType
 import com.androidlab.travelplannerapp.feature.utils.TopBar
-import com.androidlab.travelplannerapp.feature.utils.iconForActivityType
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
 import com.example.compose.primaryTextCustom
 import com.example.compose.secondaryCustom
+import com.google.android.gms.maps.model.LatLng
+import com.androidlab.travelplannerapp.feature.utils.Map
+
 
 @Composable
-fun ActivityListScreen(navController: NavController, travelId: String,vm: ActivitiesListViewModel = hiltViewModel()) {
+fun MapScreen(navController: NavController, travelId: String, vm: MapViewModel = hiltViewModel()) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         vm.travelId = travelId
         vm.fetchData(travelId, context)
     }
-
     val showDialog =  remember { mutableStateOf(false) }
     if(showDialog.value){
-        AddDialog(setShowDialog = { showDialog.value = it})
+        AddDialog(setShowDialog = {
+            showDialog.value = it
+        })
     }
-
-
     Scaffold(
         content = { paddingValues ->
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues).background(primaryBackgroundCustom)) {
-                ActivitiesList(navController)
+            Box(modifier = Modifier.padding(paddingValues).fillMaxSize()){
+                    val longClickAction = { latLng: LatLng ->
+                        vm.coordsSelected(latLng)
+                        showDialog.value = true
+                    }
+                Map(vm.markers, longClickAction, Modifier.fillMaxSize(), vm.loading, vm.travel.city, context)
             }
         },
         topBar = {
-            val route = if(vm.ownTravel.value) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
+            val route = if(vm.ownTravel) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
             TopBar(
                 "Activities",
                 navController,
                 route,
-                R.drawable.baseline_map_24,
-                Screen.MapScreen.route + "?id=${travelId}"
+                R.drawable.baseline_menu_24,
+                Screen.ActivityListScreen.route + "?id=${travelId}"
             )
         },
-        floatingActionButton = {
-            if(vm.ownTravel.value){
-                FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
-                    Icon(Icons.Default.Add, contentDescription = "Add")
-                }
-            }
-        }
     )
+
+
 }
 
 @Composable
-private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: ActivitiesListViewModel = hiltViewModel()){
+private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: MapViewModel = hiltViewModel()){
     val expanded = remember { mutableStateOf(false) }
-    val type = remember{mutableStateOf<ActivityType?>(null)}
-    val name = remember{mutableStateOf("")}
+    val type = remember{ mutableStateOf<ActivityType?>(null) }
+    val name = remember{ mutableStateOf("") }
     val typeList = enumValues<ActivityType>().toList()
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
@@ -119,27 +105,28 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: ActivitiesListViewMo
                     Text("Name",
                         modifier=Modifier.padding(end=10.dp),
                         fontWeight= FontWeight.Bold,
-                        color= colorResource(id = R.color.primary))
+                        color= colorResource(id = R.color.primary)
+                    )
                     TextField(
                         value = name.value,
                         colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
+                            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+                            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent
                         ),
                         singleLine = true,
                         onValueChange = {
                             name.value = it
                         },
-                        placeholder = { Text("Please enter the name")})
+                        placeholder = { Text("Please enter the name") })
                 }
                 Box(Modifier.fillMaxWidth().padding(10.dp)){
                     Row(Modifier.fillMaxWidth().border(1.dp, secondaryCustom).clickable(onClick = { expanded.value = true })){
-                            Text(text = type.value?.type?: "Select a type",
-                                color = colorResource(R.color.secondary_text),
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            )
+                        Text(text = type.value?.type?: "Select a type",
+                            color = colorResource(R.color.secondary_text),
+                            modifier = Modifier
+                                .padding(8.dp)
+                        )
                     }
                     DropdownMenu(expanded = expanded.value,
                         onDismissRequest = { expanded.value = false },
@@ -175,37 +162,3 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: ActivitiesListViewMo
         }
     }
 }
-
-@Composable
-private fun ActivitiesList(navController: NavController, vm: ActivitiesListViewModel = hiltViewModel()){
-    LazyColumn() {
-        items(vm.activities){
-            ActivityListItem(it)
-        }
-    }
-}
-
-@Composable
-private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = hiltViewModel()){
-    val opacity = if(activity.visited) 0.5f else 1f
-    Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
-        Row(Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically){
-            if(vm.ownTravel.value){
-                Checkbox(
-                    checked = activity.visited,
-                    onCheckedChange = { vm.visitActivity(activity.id!!) },
-                    modifier = Modifier.padding(horizontal = 5.dp)
-                )
-            }
-            Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = colorResource(id = R.color.secondary_text))
-            Text(activity.name, color = colorResource(id = R.color.secondary_text))
-        }
-        if(vm.ownTravel.value){
-            IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {
-                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity", tint = colorResource(id = R.color.secondary_text))
-            }
-        }
-    }
-}
-
-
