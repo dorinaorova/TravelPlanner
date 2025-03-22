@@ -2,11 +2,12 @@ package com.androidlab.travelplannerapp.data.model
 
 data class Activity(
     val id: String? = null,
-    val location: String? = null,
     val name: String,
     val type: ActivityType,
     val travelId: String? = null,
-    val visited: Boolean = false
+    val visited: Boolean = false,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )
 
 enum class ActivityType(val type: String) {

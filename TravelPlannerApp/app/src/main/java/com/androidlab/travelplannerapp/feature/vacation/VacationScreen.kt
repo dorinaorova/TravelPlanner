@@ -55,6 +55,7 @@ import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
+import com.androidlab.travelplannerapp.feature.utils.Map
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryCustom
@@ -122,7 +123,6 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: Vacation
                     .fillMaxWidth()
                     .background(
                         colorResource(id = R.color.primary_background),
-//                        shape = RoundedCornerShape(size = 30.dp)
                     )){
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
                     val menuExpanded = remember { mutableStateOf(false) }
@@ -241,15 +241,13 @@ private fun Plan(navController: NavController, vm: VacationViewModel = hiltViewM
         Row(Modifier.fillMaxWidth().clickable { navController.navigate(Screen.ActivityListScreen.route+"?id=${vm.travel._id}") }){
             SmallHeader("What's the plan?")
         }
-        Box(
-            Modifier
-                .padding(start = 25.dp, end = 25.dp, bottom = 25.dp, top = 10.dp)
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(
-                    colorResource(id = R.color.primary),
-                    shape = RoundedCornerShape(size = 30.dp)
-                ))
+        val boxModifier = Modifier
+            .padding(start = 25.dp, end = 25.dp, bottom = 25.dp, top = 10.dp)
+            .fillMaxWidth()
+            .height(200.dp)
+            .border(1.dp, Color.White, RoundedCornerShape(size = 30.dp))
+            .clip(RoundedCornerShape(size = 30.dp))
+            Map(vm.markers, {navController.navigate(Screen.MapScreen.route+"?id=${vm.travel._id}") }, boxModifier, vm.mapLoading, vm.travel.city, LocalContext.current)
     }
 }
 
