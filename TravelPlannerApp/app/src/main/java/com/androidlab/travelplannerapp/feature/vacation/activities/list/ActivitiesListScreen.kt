@@ -190,7 +190,7 @@ private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = h
     val opacity = if(activity.visited) 0.5f else 1f
     Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
         Row(Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically){
-            if(vm.ownTravel){
+            if(vm.ownTravel.value){
                 Checkbox(
                     checked = activity.visited,
                     onCheckedChange = { vm.visitActivity(activity.id!!) },
@@ -200,7 +200,7 @@ private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = h
             Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = colorResource(id = R.color.secondary_text))
             Text(activity.name, color = colorResource(id = R.color.secondary_text))
         }
-        if(vm.ownTravel){
+        if(vm.ownTravel.value){
             IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {
                 Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity", tint = colorResource(id = R.color.secondary_text))
             }
