@@ -2,6 +2,7 @@ package com.androidlab.travelplannerapp.feature.travel
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -258,7 +260,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                         .clickable { navController.navigate(Screen.ActivityListScreen.route + "?id=${vm.travel._id}") }) {
                     SmallHeader("What's the plan?")
                 }
-                Map()
+                Map(navController)
             }
         }
     }
@@ -276,14 +278,17 @@ private fun DataRow(text: String, icon: ImageVector){
 }
 
 @Composable
-private fun Map(){
-    Box(
-        Modifier
-            .padding(start = 25.dp, end = 25.dp, bottom = 25.dp)
-            .fillMaxWidth()
-            .height(200.dp)
-            .background(
-                colorResource(id = R.color.primary),
-                shape = RoundedCornerShape(size = 30.dp)
-            ))
+private fun Map(navController: NavController, vm: TravelViewModel = hiltViewModel()){
+    val boxModifier = Modifier
+        .padding(start = 25.dp, end = 25.dp, bottom = 25.dp, top = 10.dp)
+        .fillMaxWidth()
+        .height(200.dp)
+        .border(1.dp, Color.White, RoundedCornerShape(size = 30.dp))
+        .clip(RoundedCornerShape(size = 30.dp))
+    com.androidlab.travelplannerapp.feature.utils.Map(
+        vm.markers,
+        { navController.navigate(Screen.MapScreen.route + "?id=${vm.travel._id}") },
+        boxModifier,
+        vm.mapLoading
+    )
 }

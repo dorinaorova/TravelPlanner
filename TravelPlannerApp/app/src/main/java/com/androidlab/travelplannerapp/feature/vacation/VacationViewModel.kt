@@ -2,12 +2,15 @@ package com.androidlab.travelplannerapp.feature.vacation
 
 import android.content.Context
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androidlab.travelplannerapp.data.model.Activity
 import com.androidlab.travelplannerapp.data.model.Transaction
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
+import com.androidlab.travelplannerapp.domain.usecases.activities.GetActivitiesByTravelIdUseCase
 import com.androidlab.travelplannerapp.domain.usecases.payment.GetPaymentsByTravelIdUseCase
 import com.androidlab.travelplannerapp.domain.usecases.payment.GetTransactionsUseCase
 import com.androidlab.travelplannerapp.domain.usecases.travel.GetTravelByIdUseCase
@@ -24,13 +27,16 @@ class VacationViewModel @Inject constructor(
     private val getTravelByIdUseCase: GetTravelByIdUseCase,
     private val getUserByIdUseCase: GetUserDataUseCase,
     private val getTransactionsUseCase: GetTransactionsUseCase,
-    private val getPaymentsByTravelIdUseCase: GetPaymentsByTravelIdUseCase
+    private val getPaymentsByTravelIdUseCase: GetPaymentsByTravelIdUseCase,
+    private val getActivitiesByTravelIdUseCase: GetActivitiesByTravelIdUseCase,
 ) : ViewModel() {
     private var _travel = mutableStateOf(Travel())
     private val _participants = mutableStateOf<List<UserInfo>>(emptyList())
     private var travel_id=""
     private val _ownTransaction = mutableStateOf<List<Transaction>>(emptyList())
     private val _ownDebt = mutableDoubleStateOf(0.0)
+    val markers = mutableStateListOf<Activity>()
+    val mapLoading = mutableStateOf(true)
 
 
     val travel : Travel
@@ -79,6 +85,7 @@ class VacationViewModel @Inject constructor(
                 }
                 getTransactionForUser(context)
                 getDebtForUser(context)
+                getActivities()
             }
         }
     }
@@ -90,6 +97,19 @@ class VacationViewModel @Inject constructor(
             val response = call?.awaitResponse()
             if(response!!.isSuccessful){
                 _ownTransaction.value = response.body()!!.filter { it.toUser == userId || it.fromUser == userId}
+            }
+        }
+    }
+
+    private fun getActivities(){
+        viewModelScope.launch {
+            mapLoading.value = true
+            val call = getActivitiesByTravelIdUseCase(travel_id)
+            val response = call?.awaitResponse()
+            if(response!!.isSuccessful) {
+                markers.clear()
+                markers.addAll(response.body()!!.filter { it.xcoord != null && it.ycoord != null })
+                mapLoading.value = false
             }
         }
     }

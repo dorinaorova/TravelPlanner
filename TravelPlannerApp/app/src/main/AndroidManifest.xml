@@ -16,6 +16,8 @@
         android:theme="@style/Theme.TravelPlannerApp"
         tools:targetApi="31">
 
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDA55mvXPCAXBQPQ3cA8QwAKcQxUGqnVz8"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -32,8 +34,5 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyCiybHTzH9m4pZs47LBfQw6kQCvntGrlGM" />
 
 </manifest>

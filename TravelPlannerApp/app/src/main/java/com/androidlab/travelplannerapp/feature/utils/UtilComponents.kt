@@ -1,12 +1,18 @@
 package com.androidlab.travelplannerapp.feature.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,10 +43,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
+import com.androidlab.travelplannerapp.data.model.Activity
+import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 
 @Composable
 fun SmallHeader(text: String) {
@@ -197,4 +214,71 @@ enum class ImageSourceSelector {
     TRAVEL,
     PROFILE,
     BACKGROUND
+}
+
+@Composable
+fun CustomMaker(activity: Activity){
+    val singaporeMarkerState = rememberMarkerState(position = LatLng(activity.xcoord!!, activity.ycoord!!))
+    val context = LocalContext.current
+    Marker(
+        state = singaporeMarkerState,
+        title = activity.name,
+        snippet = activity.type.toString(),
+        icon = bitmapFromVector(context, iconForActivityType(activity.type))
+    )
+}
+
+private fun bitmapFromVector(context: Context, @DrawableRes vectorResId: Int): BitmapDescriptor {
+    val markerDrawable = ContextCompat.getDrawable(context, R.drawable.baseline_location_pin_24)!! // Default marker shape
+    markerDrawable.setTint(android.graphics.Color.rgb(173,0,0))
+    val customIconDrawable = ContextCompat.getDrawable(context, vectorResId)
+
+
+    val width = markerDrawable.intrinsicWidth*2
+    val height = markerDrawable.intrinsicHeight*2
+
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    markerDrawable.setBounds(0, 0, width, height)
+    markerDrawable.draw(canvas)
+
+    val iconSize = width / 2
+    val left = (width - iconSize) / 2
+    val top = (height - iconSize) / 3
+
+    customIconDrawable!!.setBounds(left, top, left + iconSize, top + iconSize)
+    customIconDrawable!!.draw(canvas)
+
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
+}
+
+@Composable
+fun Map(markers: List<Activity>, longClickAction: (LatLng) -> Unit, boxModifier: Modifier, isLoading: MutableState<Boolean>){
+    Box(modifier = boxModifier) {
+        if(isLoading.value){
+            Text("Loading...")
+        }else {
+
+            var center = LatLng(47.49, 19.04)
+            if (markers.size > 0) {
+                val activity = markers[0]
+                center = LatLng(activity.xcoord!!, activity.ycoord!!)
+            }
+            val cameraPositionState = rememberCameraPositionState {
+                position = CameraPosition.fromLatLngZoom(center, 10f)
+            }
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                onMapLongClick = { latLng ->
+                    longClickAction(latLng)
+                }
+            ) {
+                markers.forEach { marker ->
+                    CustomMaker(marker)
+                }
+            }
+        }
+    }
 }

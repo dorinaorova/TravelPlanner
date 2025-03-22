@@ -49,6 +49,7 @@ import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Activity
 import com.androidlab.travelplannerapp.data.model.ActivityType
 import com.androidlab.travelplannerapp.feature.utils.TopBar
+import com.androidlab.travelplannerapp.feature.utils.iconForActivityType
 import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryBackgroundCustom
 import com.example.compose.primaryCustom
@@ -84,7 +85,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
                 navController,
                 route,
                 R.drawable.baseline_map_24,
-                "TODO"
+                Screen.MapScreen.route + "?id=${travelId}"
             )
         },
         floatingActionButton = {
@@ -207,28 +208,4 @@ private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = h
     }
 }
 
-fun iconForActivityType(type: ActivityType): Int{
-    return when(type){
-        ActivityType.RESTAURANT->{
-            R.drawable.baseline_restaurant_24
-        }
-        ActivityType.SHOP->{
-            R.drawable.baseline_shopping_basket_24
-        }
-        ActivityType.MUSEUM->{
-            R.drawable.baseline_museum_24
-        }
-        ActivityType.CAFE -> {
-            R.drawable.baseline_local_cafe_24
-        }
-        ActivityType.BAR -> {
-            R.drawable.baseline_local_bar_24
-        }
-        ActivityType.STATUE -> {
-            R.drawable.baseline_add_a_photo_24
-        }
-        else -> {
-            R.drawable.baseline_location_pin_24
-        }
-    }
-}
+
