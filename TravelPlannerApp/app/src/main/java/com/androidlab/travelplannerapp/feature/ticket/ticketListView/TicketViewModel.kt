@@ -2,8 +2,10 @@ package com.androidlab.travelplannerapp.feature.ticket.ticketListView
 
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +28,7 @@ import retrofit2.awaitResponse
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -78,7 +81,7 @@ class TicketViewModel @Inject constructor(
         }
     }
 
-    fun openPdfFile(context: Context, pdfFile: File) {
+    private fun openPdfFile(context: Context, pdfFile: File) {
         try {
             val uri: Uri = FileProvider.getUriForFile(
                 context,
@@ -97,7 +100,7 @@ class TicketViewModel @Inject constructor(
         }
     }
 
-    fun saveFileToStorage(responseBody: ResponseBody, fileName: String) {
+    private fun saveFileToStorage(responseBody: ResponseBody, fileName: String) {
         val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) // Save under Downloads directory
         val file = File(storageDir, fileName)
 
@@ -124,6 +127,12 @@ class TicketViewModel @Inject constructor(
         }
     }
 
+    fun fileExists(fileName: String): Boolean {
+        val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val localFile = File(downloadsDir, fileName)
+        return localFile.exists()
+    }
+
     fun createTicket(name: String, date: Long, context: Context){
         val ticket = Ticket(name=name, date=date, userId = getOwnUserId(context)!!, travelId = travelId, files = emptyList())
         viewModelScope.launch {
@@ -138,26 +147,40 @@ class TicketViewModel @Inject constructor(
 
     fun uploadTicket(uri: Uri, context: Context, ticketId: String){
         viewModelScope.launch {
-            val contentResolver = context.contentResolver
-            val inputStream = contentResolver.openInputStream(uri)
-            if (inputStream == null) {
-                Log.e("UploadTicket", "Failed to open InputStream.")
-                return@launch
-            }
+            val originalFilename = queryFileName(context, uri) ?: Date().toString()
 
-            val tempFile = File(context.cacheDir, "temp_upload_file.pdf")
+            val contentResolver = context.contentResolver
+            val inputStream: InputStream = contentResolver.openInputStream(uri)
+                ?: throw IllegalArgumentException("Unable to open InputStream from the provided Uri.")
+
+            val tempFile = File(context.cacheDir, originalFilename)
             tempFile.outputStream().use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
 
-            val requestFile = RequestBody.create("application/pdf".toMediaTypeOrNull(), tempFile)
-            val body = MultipartBody.Part.createFormData("file", tempFile.name, requestFile)
-                val call = uploadTicketFileUseCase(body, ticketId)
-                val response = call?.awaitResponse()
-                if (response?.isSuccessful == true) {
-                    fetchData()
-                }
+            val requestBody = RequestBody.create("application/pdf".toMediaTypeOrNull(), tempFile)
+            val body =MultipartBody.Part.createFormData("file", tempFile.name, requestBody)
+            val call = uploadTicketFileUseCase(body, ticketId)
+            val response = call?.awaitResponse()
+            if (response?.isSuccessful == true) {
+                fetchData()
             }
         }
     }
+
+    fun queryFileName(context: Context, uri: Uri): String? {
+        return if (uri.scheme == "content") {
+            val cursor: Cursor? = context.contentResolver.query(
+                uri, null, null, null, null
+            )
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    it.getString(it.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                } else null
+            }
+        } else {
+            uri.path?.let { File(it).name }
+        }
+    }
+}
 

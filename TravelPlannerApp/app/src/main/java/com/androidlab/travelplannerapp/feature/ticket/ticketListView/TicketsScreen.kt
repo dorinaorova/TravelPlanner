@@ -1,6 +1,7 @@
 package com.androidlab.travelplannerapp.feature.ticket.ticketListView
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -200,6 +201,7 @@ private fun Details(vm: TicketViewModel = hiltViewModel()){
                             }
                             result.value?.let{
                                 vm.uploadTicket(it, LocalContext.current, ticket._id!!)
+                                result.value = null
                             }
                         }
                         LazyRow(Modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
@@ -220,10 +222,11 @@ private fun Details(vm: TicketViewModel = hiltViewModel()){
                                     verticalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxSize()
                                 ) {
+                                    val icon = if(vm.fileExists(it)){ ImageVector.vectorResource(R.drawable.baseline_open_in_new_24) } else{ ImageVector.vectorResource(R.drawable.baseline_save_alt_24)}
                                     Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_save_alt_24),
+                                        imageVector = icon,
                                         contentDescription = "",
-                                        tint = colorResource(android.R.color.darker_gray),
+                                        tint = colorResource(id = R.color.primary_text)
                                     )
                                 }
                             }
