@@ -2,6 +2,7 @@ package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.model.documentModel.Ticket
 import com.dipterv.dipterv.service.TicketService
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -38,6 +39,10 @@ class TicketController(private val ticketService: TicketService) {
 
     @GetMapping("/download/{fileName}")
     fun downloadFile(@PathVariable("fileName") fileName: String): ResponseEntity<*>{
-    return ResponseEntity(this.ticketService.downloadTicketFile(fileName), HttpStatus.OK)
+        val file = this.ticketService.downloadTicketFile(fileName)
+        val headers = HttpHeaders()
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf")
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"${fileName}\"")
+        return ResponseEntity.ok().headers(headers).body(file)
     }
 }
