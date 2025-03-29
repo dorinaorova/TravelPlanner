@@ -3,7 +3,9 @@ package com.androidlab.travelplannerapp.domain.usecases.ticket
 import com.androidlab.travelplannerapp.data.model.Ticket
 import com.androidlab.travelplannerapp.data.service.ticket.TicketService
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Call
+import java.io.File
 import javax.inject.Inject
 
 class GetTicketsByTravelIdUseCase @Inject constructor(private val ticketService: TicketService) {
@@ -31,7 +33,7 @@ class UploadTicketFileUseCase @Inject constructor(private val ticketService: Tic
 }
 
 class DownloadTicketFileUseCase @Inject constructor(private val ticketService: TicketService) {
-    operator fun invoke(fileName: String): Call<*>? {
+    operator fun invoke(fileName: String): Call<ResponseBody>? {
         return ticketService.downloadTicketFile(fileName)
     }
 }

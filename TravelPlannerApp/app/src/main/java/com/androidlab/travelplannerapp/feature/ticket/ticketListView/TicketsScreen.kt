@@ -1,5 +1,8 @@
 package com.androidlab.travelplannerapp.feature.ticket.ticketListView
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -18,13 +22,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -48,12 +52,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.data.model.Ticket
 import com.androidlab.travelplannerapp.feature.utils.DatePickerForm
-import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.feature.utils.generateDate
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryCustom
 import com.example.compose.primaryTextCustom
 
@@ -168,47 +171,63 @@ private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewM
     }
 }
 
-
 @Composable
 private fun Details(vm: TicketViewModel = hiltViewModel()){
+    val context = LocalContext.current
+    val result = remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
+        result.value = it
+    }
     Column(
         Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.primary_background))){
-        if(!vm.tickets.isEmpty()) {
-
-
+        if(vm.tickets.isNotEmpty()) {
             LazyColumn(Modifier.padding(20.dp).fillMaxWidth()) {
-                items(vm.tickets) {
+                items(vm.tickets) { ticket ->
                     Column(Modifier.padding(bottom = 15.dp)) {
-                        SmallHeader("${generateDate(it.date)} - ${it.name}")
+                        Row{
+                            SmallHeader("${generateDate(ticket.date)} - ${ticket.name}")
+                            IconButton(onClick = { launcher.launch(arrayOf("application/pdf")) }) {
+                                androidx.compose.material.Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.baseline_add_24),
+                                    contentDescription = null,
+                                    tint = colorResource(id = R.color.primary),
+                                    modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                )
+                            }
+                            result.value?.let{
+                                vm.uploadTicket(it, LocalContext.current, ticket._id!!)
+                            }
+                        }
                         LazyRow(Modifier.fillMaxWidth().padding(horizontal = 10.dp)) {
-//                        items((it + 1) * 2) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .padding(horizontal = 10.dp)
-//                                    .size(80.dp, 60.dp)
-//                                    .background(
-//                                        colorResource(id = R.color.secondary),
-//                                        shape = RoundedCornerShape(15.dp)
-//                                    )
-//                            ) {
-//                                Column(
-//                                    horizontalAlignment = Alignment.CenterHorizontally,
-//                                    verticalArrangement = Arrangement.Center,
-//                                    modifier = Modifier.fillMaxSize()
-//                                ) {
-//                                    Text(
-//                                        "Museum",
-//                                        fontSize = 14.sp
-//                                    )
-//                                    Text(
-//                                        "Emma",
-//                                        fontSize = 10.sp
-//                                    )
-//                                }
-//                            }
-//                        }
+                        items(ticket.files) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 10.dp)
+                                    .size(80.dp, 60.dp)
+                                    .background(
+                                        colorResource(id = R.color.secondary),
+                                        shape = RoundedCornerShape(15.dp)
+                                    ).clickable {
+                                        vm.downloadTicket(it, context)
+                                    }
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.baseline_save_alt_24),
+                                        contentDescription = "",
+                                        tint = colorResource(android.R.color.darker_gray),
+                                    )
+                                }
+                            }
+                        }
                         }
                     }
                 }

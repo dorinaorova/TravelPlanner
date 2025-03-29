@@ -30,7 +30,7 @@ class VacationViewModel @Inject constructor(
     private val getUserByIdUseCase: GetUserDataUseCase,
     private val getTransactionsUseCase: GetTransactionsUseCase,
     private val getPaymentsByTravelIdUseCase: GetPaymentsByTravelIdUseCase,
-    private val getTicketsUseCase: GetTicketsByTravelIdUseCase
+    private val getTicketsUseCase: GetTicketsByTravelIdUseCase,
     private val getActivitiesByTravelIdUseCase: GetActivitiesByTravelIdUseCase,
 ) : ViewModel() {
     private var _travel = mutableStateOf(Travel())
