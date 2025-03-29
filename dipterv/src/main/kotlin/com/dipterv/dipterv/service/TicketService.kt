@@ -18,26 +18,23 @@ class TicketService (val ticketRepository: TicketRepository, val travelService: 
         }
     }
 
-    fun saveTicket(ticket: Ticket, file: MultipartFile, travelId: String ): Ticket {
-        val ticketName = fileService.uploadFile(file,Paths.get("travel/tickets"), travelId)
-        ticket.fileName = ticketName
-        val newTicket = ticketRepository.save(ticket)
-        travelService.uploadTicket(travelId, newTicket._id)
-        return newTicket
+    fun uploadTicketFile(id: String, file: MultipartFile ): Ticket {
+        val ticket = this.findById(id)
+        val ticketName = fileService.uploadFile(file,Paths.get("travel/tickets"), ticket.travelId)
+        ticket.files = ticket.files.toMutableList().apply { add(ticketName) }
+        return ticketRepository.save(ticket)
     }
 
-    fun findTicketById(id: String) : Resource {
-        val ticketPaths = findById(id).fileName
-        val file = fileService.downloadFile(Paths.get("travel/tickets"), ticketPaths)
+    fun createTicket(ticket: Ticket ): Ticket{
+        return this.ticketRepository.save(ticket)
+    }
+
+    fun downloadTicketFile(fileName: String) : Resource {
+        val file = fileService.downloadFile(Paths.get("travel/tickets"), fileName)
         return file
     }
 
     fun ticketsForTravel(travelId: String): List<Ticket> {
-        val ticketIds = travelService.getById(travelId).ticketIds
-        val tickets = mutableListOf<Ticket>()
-        ticketIds?.forEach { id ->
-            tickets.add(findById(id) )
-        }
-        return tickets.toList()
+        return ticketRepository.findByTravelId(travelId)
     }
 }

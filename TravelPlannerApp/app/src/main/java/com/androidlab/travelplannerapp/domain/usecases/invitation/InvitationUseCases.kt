@@ -1,6 +1,6 @@
 package com.androidlab.travelplannerapp.domain.usecases.invitation
 
-import com.androidlab.travelplannerapp.data.invitation.InvitationService
+import com.androidlab.travelplannerapp.data.service.invitation.InvitationService
 import com.androidlab.travelplannerapp.data.model.Invitation
 import retrofit2.Call
 import javax.inject.Inject

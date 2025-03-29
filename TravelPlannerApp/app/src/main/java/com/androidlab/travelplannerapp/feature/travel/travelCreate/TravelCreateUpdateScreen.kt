@@ -64,7 +64,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Travel
+import com.androidlab.travelplannerapp.feature.utils.DatePickerForm
 import com.androidlab.travelplannerapp.feature.utils.InputField
+import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -341,74 +343,6 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
             }
         }
     }
-}
-
-@Composable
-private fun DatePickerForm(label: String, date: MutableState<Long>){
-    val showDatePicker = remember { mutableStateOf(false)}
-    val dateText = if(date.value == 0L){"Select date"}else{
-        convertMillisToDate(date.value)
-    }
-    Column(Modifier.padding(10.dp)) {
-        Text(text = label, modifier = Modifier.padding(bottom = 5.dp).align(Alignment.CenterHorizontally), color = colorResource(id = R.color.primary))
-        Button(onClick = { showDatePicker.value = true },
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.primary_text),
-                contentColor = colorResource(id = R.color.primary),
-            )) {
-            Text(text = dateText)
-        }
-    }
-
-    if (showDatePicker.value) {
-        MyDatePickerDialog(
-            onDateSelected = { date.value = it },
-            onDismiss = { showDatePicker.value = false }
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyDatePickerDialog(
-    onDateSelected: (Long) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
-    })
-
-    val selectedDate = datePickerState.selectedDateMillis?: Date().time
-
-    DatePickerDialog(
-        onDismissRequest = { onDismiss() },
-        confirmButton = {
-            Button(onClick = {
-                onDateSelected(selectedDate)
-                onDismiss()
-            }
-
-            ) {
-                Text(text = "OK")
-            }
-        },
-        dismissButton = {
-            Button(onClick = {
-                onDismiss()
-            }) {
-                Text(text = "Cancel")
-            }
-        }
-    ) {
-        DatePicker(
-            state = datePickerState
-        )
-    }
-}
-
-private fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("yyyy.MM.dd.")
-    return formatter.format(Date(millis))
 }
 
 

@@ -24,10 +24,19 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -50,6 +59,7 @@ import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Activity
 import com.example.compose.primaryCustom
+import java.util.Date
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -206,6 +216,73 @@ fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSo
         )
     }else{
         BlankTravelImage(imageModifier, imageSource)
+    }
+}
+
+@Composable
+fun DatePickerForm(label: String, date: MutableState<Long>){
+    val showDatePicker = remember { mutableStateOf(false) }
+    val dateText = if(date.value == 0L){"Select date"}else{
+        generateDate(date.value)
+    }
+    Column(Modifier.padding(10.dp)) {
+        androidx.compose.material3.Text(
+            text = label,
+            modifier = Modifier.padding(bottom = 5.dp).align(Alignment.CenterHorizontally),
+            color = colorResource(id = R.color.primary)
+        )
+        Button(onClick = { showDatePicker.value = true },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.primary_text),
+                contentColor = colorResource(id = R.color.primary),
+            )) {
+            androidx.compose.material3.Text(text = dateText)
+        }
+    }
+
+    if (showDatePicker.value) {
+        MyDatePickerDialog(
+            onDateSelected = { date.value = it },
+            onDismiss = { showDatePicker.value = false }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyDatePickerDialog(
+    onDateSelected: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
+    })
+
+    val selectedDate = datePickerState.selectedDateMillis?: Date().time
+
+    DatePickerDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            androidx.compose.material3.Button(onClick = {
+                onDateSelected(selectedDate)
+                onDismiss()
+            }
+
+            ) {
+                androidx.compose.material3.Text(text = "OK")
+            }
+        },
+        dismissButton = {
+            androidx.compose.material3.Button(onClick = {
+                onDismiss()
+            }) {
+                androidx.compose.material3.Text(text = "Cancel")
+            }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState
+        )
     }
 }
 

@@ -144,22 +144,4 @@ class TravelController(
         return ResponseEntity.ok().headers(headers).body(image)
     }
 
-    @PostMapping("/ticket/upload/{id}")
-    fun uploadTicket(@RequestPart("file") file: MultipartFile, @RequestBody ticket: Ticket, @PathVariable("id") id: String): ResponseEntity<*>{
-        val newTicket = ticketService.saveTicket(ticket, file, id)
-        return ResponseEntity(newTicket, HttpStatus.CREATED)
-    }
-
-    @GetMapping("/ticket/{id}")
-    fun getTicketById(@PathVariable("id") id: String) : ResponseEntity<*> {
-        val file = ticketService.findTicketById(id)
-        return ResponseEntity(file, HttpStatus.OK)
-    }
-
-    @GetMapping("/ticket/travel/{id}")
-    fun getTicketByTravelId(@PathVariable("id") id: String) : ResponseEntity<*> {
-        val tickets = ticketService.ticketsForTravel(id)
-        return ResponseEntity(tickets, HttpStatus.OK)
-    }
-
 }

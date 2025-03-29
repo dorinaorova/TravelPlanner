@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TicketRepository : MongoRepository<Ticket, String> {
+    fun findByTravelId(travelId: String): List<Ticket>
 }
