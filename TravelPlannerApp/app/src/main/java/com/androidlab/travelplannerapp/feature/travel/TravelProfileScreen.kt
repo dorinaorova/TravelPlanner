@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -146,6 +147,20 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(Modifier.padding(start = 25.dp, top = 15.dp, bottom = 15.dp)) {
+                        Row(Modifier.clickable { navController.navigate(Screen.ProfileScreen.route + "?id=${vm.user._id}" )}.padding(bottom=5.dp), verticalAlignment = Alignment.CenterVertically){
+                            val modifier = Modifier
+                                .width(40.dp)
+                                .height(40.dp)
+                                .clip(CircleShape)
+                                .border(3.dp, Color.White, CircleShape)
+                            CustomImage(modifier, vm.user.profilePictureFilePath, ImageSourceSelector.PROFILE)
+                            Column(Modifier.padding(start=5.dp)){
+                                Text(
+                                    vm.user.username,
+                                    fontSize = 14.sp,)
+                                Text(vm.user.name, fontSize = 11.sp,modifier=Modifier.padding(start=5.dp), color = colorResource(id = R.color.secondary_text) )
+                            }
+                        }
                         DataRow(
                             vm.travel.city + ", " + vm.travel.country,
                             ImageVector.vectorResource(R.drawable.baseline_map_24)
@@ -242,12 +257,12 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                 ) {
                     Text(
                         "Description",
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = colorResource(id = R.color.secondary_text)
                     )
                     Text(
                         vm.travel.description ?: "...",
-                        fontSize = 10.sp,
+                        fontSize = 12.sp,
                         modifier = Modifier.padding(horizontal = 5.dp)
                     )
                 }
