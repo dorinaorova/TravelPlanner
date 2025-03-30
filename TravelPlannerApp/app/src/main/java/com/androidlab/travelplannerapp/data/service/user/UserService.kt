@@ -35,4 +35,13 @@ interface UserService {
     @PUT("user/is-follower")
     fun isFollower(@Body followInfo: FollowRequest) : Call<Boolean>?
 
+    @Headers("Accept: application/json")
+    @GET("user/travel/like/{id}/{travelId}")
+    fun likeTravel(@Path("id") id: String, @Path("travelId") travelId: String) : Call<UserInfo>?
+
+    @Headers("Accept: application/json")
+    @GET("user/travel/liked/{id}/{travelId}")
+    fun isTravelLiked(@Path("id") id: String, @Path("travelId") travelId: String) : Call<Boolean>?
+
+
 }
