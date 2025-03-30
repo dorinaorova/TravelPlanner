@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidlab.travelplannerapp.data.model.Activity
 import com.androidlab.travelplannerapp.data.model.Travel
+import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.activities.GetActivitiesByTravelIdUseCase
 import com.androidlab.travelplannerapp.domain.usecases.travel.GetTravelByIdUseCase
+import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.IsTravelLikedUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.LikeTravelUseCase
 import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
@@ -22,15 +24,20 @@ class TravelViewModel @Inject constructor(
     private val getTravelByIdUseCase: GetTravelByIdUseCase,
     private val getActivitiesByTravelIdUseCase: GetActivitiesByTravelIdUseCase,
     private val likeTravelUseCase: LikeTravelUseCase,
-    private val isTravelLikedUseCase: IsTravelLikedUseCase
+    private val isTravelLikedUseCase: IsTravelLikedUseCase,
+    private val getUserDataUseCase: GetUserDataUseCase
 ) : ViewModel()  {
     private var _travel = mutableStateOf(Travel())
+    private var _owner = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", "", emptyList(), emptyList(), emptyList()))
     var liked = mutableStateOf(false)
     val markers = mutableStateListOf<Activity>()
     val mapLoading = mutableStateOf(true)
 
     val travel : Travel
         get() = _travel.value
+
+    val user: UserInfo
+        get()= _owner.value
 
 
     fun fetchData(id: String, context: Context){
@@ -40,9 +47,20 @@ class TravelViewModel @Inject constructor(
          if (response?.isSuccessful == true){
              _travel.value = response.body()!!
              getActivities()
+             getOwnerData()
              isTravelLiked(context)
          }
      }
+    }
+
+    private fun getOwnerData(){
+        viewModelScope.launch {
+            val call = getUserDataUseCase(_travel.value.ownerId!!)
+            val response = call?.awaitResponse()
+            if (response?.isSuccessful == true) {
+                _owner.value = response.body()!!
+            }
+        }
     }
 
     fun ownTravel(context: Context) : Boolean{

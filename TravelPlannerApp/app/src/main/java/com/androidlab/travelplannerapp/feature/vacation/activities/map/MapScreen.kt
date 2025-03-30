@@ -63,8 +63,10 @@ fun MapScreen(navController: NavController, travelId: String, vm: MapViewModel =
         content = { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues).fillMaxSize()){
                     val longClickAction = { latLng: LatLng ->
-                        vm.coordsSelected(latLng)
-                        showDialog.value = true
+                        if(vm.ownTravel){
+                            vm.coordsSelected(latLng)
+                            showDialog.value = true
+                        }
                     }
                 Map(vm.markers, longClickAction, Modifier.fillMaxSize(), vm.loading, vm.travel.city, context)
             }
