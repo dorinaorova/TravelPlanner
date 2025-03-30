@@ -1,6 +1,5 @@
 package com.dipterv.dipterv.model.dto
 
-import com.dipterv.dipterv.model.documentModel.Travel
 
 data class UserInfoDTO(
     val _id: String?,
@@ -15,4 +14,5 @@ data class UserInfoDTO(
     var city: String?,
     val followingIds: List<String>?,
     val followerIds: List<String>?,
+    val likedTravelIds: List<String>?
     )

@@ -3,7 +3,6 @@ package com.dipterv.dipterv.controller
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.FollowDTO
-import com.dipterv.dipterv.model.dto.UserDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
 import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
 import com.dipterv.dipterv.service.FileService
@@ -113,4 +112,13 @@ class UserController
     }
 
 
+    @GetMapping("travel/like/{id}/{travelId}")
+    fun likeTravel(@PathVariable("id") id: String, @PathVariable("travelId") travelId: String): ResponseEntity<UserInfoDTO>{
+        return ResponseEntity.ok(userService.likeTravel(id, travelId))
+    }
+
+    @GetMapping("travel/liked/{id}/{travelId}")
+    fun isTravelLiked(@PathVariable("id") id: String, @PathVariable("travelId") travelId: String): ResponseEntity<Boolean>{
+        return ResponseEntity.ok(userService.isTravelLiked(id, travelId))
+    }
 }
