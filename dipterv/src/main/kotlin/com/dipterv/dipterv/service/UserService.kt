@@ -39,6 +39,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
             emptyList(),
             emptyList(),
             emptyList(),
+            emptyList(),
             emptyList()
         )
         return mapper.userToUserInfoDTO(userRepository.save(newUser))
@@ -48,10 +49,6 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         return userRepository.findAll().map{
             user-> mapper.userToUserInfoDTO(user)
         }
-    }
-
-    fun findUserDTOById(id: String): UserDTO{
-        return mapper.userToUserDTO(findById(id))
     }
 
     fun findUserInfoDTOById(id: String) : UserInfoDTO{
@@ -146,6 +143,32 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
             findUser.backgroundPictureFilePath = backgroundPictureFilePath
             val savedUser = userRepository.save(findUser)
             return mapper.userToUserInfoDTO(savedUser)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
+    }
+
+
+    fun likeTravel(id: String, travelId: String): UserInfoDTO{
+        try {
+            var user = findById(id)
+            val updatedLikedTravelList = if(user.likedTravelIds.contains(travelId)){
+                user.likedTravelIds.toMutableList().apply { remove(travelId) }
+            }else{
+                user.likedTravelIds.toMutableList().apply { add(travelId) }
+            }
+            user =user.copy(likedTravelIds = updatedLikedTravelList)
+            val savedUser = userRepository.save(user)
+            return mapper.userToUserInfoDTO(savedUser)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
+    }
+
+    fun isTravelLiked(id: String, travelId: String): Boolean{
+        try {
+            val user = findById(id)
+            return user.likedTravelIds.contains(travelId)
         }catch (e: Exception){
             throw NotFoundException("User not found with id: $id")
         }

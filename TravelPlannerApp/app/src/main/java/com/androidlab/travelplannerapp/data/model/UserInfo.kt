@@ -11,7 +11,7 @@ data class UserInfo(
     val travelIds: List<String>?,
     val city: String?,
     val country: String?,
-//    val participatedTravelIds: List<String>?,
     val followingIds: List<String>?,
-    val followerIds: List<String>?
+    val followerIds: List<String>?,
+    val likedTravelIds: List<String>?
 )

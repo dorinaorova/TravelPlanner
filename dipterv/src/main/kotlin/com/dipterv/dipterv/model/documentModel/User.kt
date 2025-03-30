@@ -19,4 +19,5 @@ data class User(
         val participatedTravelIds: List<String>,
         var followingIds: List<String>,
         val followerIds: List<String>,
+        val likedTravelIds: List<String>
 )

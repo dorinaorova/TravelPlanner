@@ -2,7 +2,6 @@ package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.LoginDTO
-import com.dipterv.dipterv.model.dto.UserDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
 import com.dipterv.dipterv.model.requestModel.LoginRequest
 import com.dipterv.dipterv.model.requestModel.RefreshTokenRequest

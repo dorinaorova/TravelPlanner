@@ -1,10 +1,7 @@
 package com.dipterv.dipterv.service
 
 import com.dipterv.dipterv.exception.NotFoundException
-import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.documentModel.spend.Spend
-import com.dipterv.dipterv.model.dto.TravelInfoDTO
 import com.dipterv.dipterv.repository.TravelRepository
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
@@ -161,13 +158,4 @@ class TravelService (
         return TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
     }
 
-//    fun uploadTicket(id: String, ticketId: String){
-//        val travel = getById(id)
-//        if(travel.ticketIds == null){
-//            travel.ticketIds = emptyList()
-//        }
-//        val updatedTicketIds = travel.ticketIds!!.toMutableList().apply { add(ticketId)}
-//        travel.ticketIds=updatedTicketIds.toList()
-//        travelRepository.save(travel)
-//    }
 }

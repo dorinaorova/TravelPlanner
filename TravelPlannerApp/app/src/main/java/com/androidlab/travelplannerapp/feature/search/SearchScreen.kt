@@ -82,6 +82,7 @@ val openFilterDialog =mutableStateOf(false)
 
 @Composable
 fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewModel()){
+    val context = LocalContext.current
     val travelPicked = remember { mutableStateOf(true) }
     when{
         openFilterDialog.value -> {
@@ -93,6 +94,7 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
     }
     LaunchedEffect(Unit, block ={
         vm.getFilterValues()
+        vm.getOwnUserData(context)
     })
     Scaffold(
         content={paddingValues ->
@@ -249,20 +251,23 @@ private fun TravelListItem(navController: NavController, travel: Travel, vm: Sea
             }
         }
         Box {
-            val liked  = if (true) {
-                ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-            }else {
-                ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-            }
-            IconButton(onClick = { /*TODO*/ }, Modifier.padding(end=20.dp)) {
-                Icon(
-                    imageVector = liked,
-                    contentDescription = "like",
-                    tint = colorResource(id = R.color.primary),
-                    modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                )
+            if(!vm.isTravelOwn(travel._id!!)){
+                val context = LocalContext.current
+                val liked  = if (vm.isTravelLiked(travel._id!!)) {
+                    ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                }else {
+                    ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+                }
+                IconButton(onClick = { vm.likeTravel(travel._id!!, context) }, Modifier.padding(end=20.dp)) {
+                    Icon(
+                        imageVector = liked,
+                        contentDescription = "like",
+                        tint = colorResource(id = R.color.primary),
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                    )
+                }
             }
         }
     }

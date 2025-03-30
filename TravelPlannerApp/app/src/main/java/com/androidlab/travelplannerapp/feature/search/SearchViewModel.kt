@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.search
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,15 +10,21 @@ import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.usecases.search.GetFilterValuesUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchTravelUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchUserUseCase
+import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
+import com.androidlab.travelplannerapp.domain.usecases.user.LikeTravelUseCase
+import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor( private val searchTravelUseCase: SearchTravelUseCase,
+class SearchViewModel @Inject constructor(
+    private val searchTravelUseCase: SearchTravelUseCase,
     private val searchUserUseCase: SearchUserUseCase,
-    private val filetValuesUseCase: GetFilterValuesUseCase
+    private val filterValuesUseCase: GetFilterValuesUseCase,
+    private val getUserDataUseCase: GetUserDataUseCase,
+    private val likeTravelUseCase: LikeTravelUseCase
 )  : ViewModel() {
     private val baseFilterValues = mutableStateListOf<Int>()
     var country = mutableStateOf("")
@@ -25,6 +32,8 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
     var priceSliderPosition = mutableStateOf(0f..100f)
     var daysSliderPosition = mutableStateOf(0f..100f)
     var tagList =  mutableStateListOf<String>()
+    var likedTravelList = mutableStateListOf<String>()
+    val ownTravelList = mutableStateListOf<String>()
 
     var searchName = mutableStateOf("")
 
@@ -38,12 +47,45 @@ class SearchViewModel @Inject constructor( private val searchTravelUseCase: Sear
 
     fun getFilterValues(){
         viewModelScope.launch {
-            val call = filetValuesUseCase()
+            val call = filterValuesUseCase()
             val response = call?.awaitResponse()
             if(response?.isSuccessful == true){
                 baseFilterValues.addAll(response.body()!!)
             }
         }
+    }
+
+    fun getOwnUserData(context: Context){
+        viewModelScope.launch {
+            val userId = getOwnUserId(context)
+            val call = getUserDataUseCase(userId!!)
+            val response = call?.awaitResponse()
+            if(response?.isSuccessful == true){
+                likedTravelList.clear()
+                ownTravelList.clear()
+                response.body()!!.likedTravelIds?.let { likedTravelList.addAll(it) }
+                response.body()!!.travelIds?.let { ownTravelList.addAll(it) }
+            }
+        }
+    }
+
+    fun likeTravel(travelId: String, context: Context){
+        viewModelScope.launch {
+            val userId = getOwnUserId(context)
+            val call = likeTravelUseCase(userId!!, travelId)
+            val response = call?.awaitResponse()
+            if(response?.isSuccessful == true){
+                getOwnUserData(context)
+            }
+        }
+    }
+
+    fun isTravelLiked(travelId: String): Boolean{
+        return likedTravelList.contains(travelId)
+    }
+
+    fun isTravelOwn(travelId: String): Boolean{
+        return ownTravelList.contains(travelId)
     }
 
     fun getAllTravel(){

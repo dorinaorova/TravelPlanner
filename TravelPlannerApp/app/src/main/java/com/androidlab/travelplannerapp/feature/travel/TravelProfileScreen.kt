@@ -1,6 +1,5 @@
 package com.androidlab.travelplannerapp.feature.travel
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,13 +39,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,13 +53,13 @@ import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.calculateDays
 import com.androidlab.travelplannerapp.feature.utils.generateDate
-import com.androidlab.travelplannerapp.feature.utils.getLatLngFromCity
 import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
 fun TravelProfileScreen(navController: NavController, id: String, vm: TravelViewModel = hiltViewModel()){
+    val context = LocalContext.current
     LaunchedEffect(Unit){
-        vm.fetchData(id)
+        vm.fetchData(id, context)
     }
     Scaffold(
         content = { paddingValues ->
@@ -171,12 +165,12 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                         )
                     }
                     if (!vm.ownTravel(context)) {
-                        val liked = if (true) {
-                            ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                        } else {
+                        val liked = if (vm.liked.value) {
                             ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                        } else {
+                            ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { vm.likeTravel(context) }) {
                             Icon(
                                 imageVector = liked,
                                 contentDescription = "like",
