@@ -32,7 +32,7 @@ class UserProfileViewModel @Inject constructor(
     private val unfollowUseCase: UnfollowUseCase,
     private val getTravelByUserIdUseCase: GetTravelByUserIdUseCase
 ) : ViewModel() {
-    private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", "", emptyList(), emptyList()))
+    private var _user = mutableStateOf(UserInfo("","","","","","", "", emptyList(), "", "", emptyList(), emptyList(), emptyList()))
     private var _travels = mutableStateListOf<Travel>()
     var ownProfile: Boolean = false
 
@@ -77,11 +77,6 @@ class UserProfileViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun backgroundPicturePath(context: Context): String{
-        val BASE_URL = context.getString(R.string.BASE_URL)
-        return BASE_URL+"user/image/background/"+user.backgroundPictureFilePath
     }
 
     fun followAction(context: Context){
