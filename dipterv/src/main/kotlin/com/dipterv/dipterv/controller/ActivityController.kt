@@ -33,10 +33,10 @@ class ActivityController (val activityService: ActivityService) {
         return ResponseEntity.ok("deleted")
     }
 
-    @GetMapping("/copy/{id}/{travelId}")
-    fun copyActivity(@PathVariable id: String, @PathVariable travelId: String): ResponseEntity<Activity>{
-        return ResponseEntity.ok(this.activityService.copyActivity(id, travelId))
-    }
+//    @GetMapping("/copy/{id}/{travelId}")
+//    fun copyActivity(@PathVariable id: String, @PathVariable travelId: String): ResponseEntity<Activity>{
+//        return ResponseEntity.ok(this.activityService.copyActivity(id, travelId))
+//    }
 
     @GetMapping("/visit/{id}")
     fun visitActivity(@PathVariable id: String): ResponseEntity<Activity>{

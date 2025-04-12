@@ -30,7 +30,7 @@ class FileService {
         return fileResource
     }
 
-    private fun generateFileName(file: MultipartFile, id: String): String{
+    fun generateFileName(file: MultipartFile, id: String): String{
         return "${id}_${LocalDate.now()}_${file.originalFilename}"
     }
 }

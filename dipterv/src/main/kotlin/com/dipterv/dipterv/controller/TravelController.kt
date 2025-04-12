@@ -1,7 +1,6 @@
 package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
-import com.dipterv.dipterv.model.documentModel.Ticket
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TicketService
@@ -35,7 +34,7 @@ class TravelController(
         @RequestParam(required = false) city: String?,
         @RequestParam(required = false) country: String?,
     ) : ResponseEntity<List<Travel>> {
-        var travels = travelService.getAllTravels()
+        var travels = travelService.findAllPublicTravels()
         maxPrice?.let {
             travels= travelService.maxCostFiler(it, travels)
         }
@@ -96,7 +95,7 @@ class TravelController(
     @GetMapping("/{id}")
     fun getTravelById(@PathVariable("id") id: String) : ResponseEntity<*> {
         try {
-            val travel = travelService.getById(id)
+            val travel = travelService.findById(id)
             return ResponseEntity.ok(travel)
         }catch (e: NotFoundException){
             return ResponseEntity(e, HttpStatus.NOT_FOUND)

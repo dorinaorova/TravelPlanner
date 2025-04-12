@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Paths
 
 @Service
-class TicketService (val ticketRepository: TicketRepository, val travelService: TravelService, val fileService: FileService) {
+class TicketService (val ticketRepository: TicketRepository, val fileService: FileService) {
     fun findById(id: String): Ticket {
         try {
             return ticketRepository.findById(id).get()
