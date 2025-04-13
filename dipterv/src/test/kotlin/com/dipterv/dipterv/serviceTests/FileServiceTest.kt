@@ -1,10 +1,9 @@
-package com.dipterv.dipterv
+package com.dipterv.dipterv.serviceTests
 
 import com.dipterv.dipterv.service.FileService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockMultipartFile
-import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 class FileServiceTest {

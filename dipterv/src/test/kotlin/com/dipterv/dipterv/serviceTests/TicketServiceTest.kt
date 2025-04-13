@@ -1,4 +1,4 @@
-package com.dipterv.dipterv
+package com.dipterv.dipterv.serviceTests
 
 import com.dipterv.dipterv.model.documentModel.Ticket
 import com.dipterv.dipterv.repository.TicketRepository

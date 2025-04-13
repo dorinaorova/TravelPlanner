@@ -1,4 +1,4 @@
-package com.dipterv.dipterv
+package com.dipterv.dipterv.serviceTests
 
 import com.dipterv.dipterv.model.documentModel.spend.Spend
 import com.dipterv.dipterv.model.documentModel.spend.SpendType

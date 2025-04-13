@@ -1,4 +1,4 @@
-package com.dipterv.dipterv
+package com.dipterv.dipterv.serviceTests
 
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.dto.UserInfoDTO
@@ -12,16 +12,14 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.*
-import kotlin.math.exp
-
 class TravelServiceTest {
 
     private val travelRepository: TravelRepository = mockk()
     private val userService: UserService = mockk()
     private val travelService = TravelService(travelRepository, userService)
-    private val travels = listOf(Travel("1", "name", 1748736000000L, 1748908800000L, "country", "city", 100, "HUF", "", listOf("tag1"), null, listOf("user2"), false, "user1", ),
-                                Travel("2", "name", 1748736000000L, 1749504000000L, "country", "city", 300, "HUF", "", listOf("tag1"), null, null, true, "user1", ),
-                                Travel("3", "name", 1748736000000L, 1748908800000L, "country", "city", 100, "HUF", "", listOf("tag1"), null, null, true, "user2", ))
+    private val travels = listOf(Travel("1", "name1", 1748736000000L, 1748908800000L, "country1", "city1", 200, "HUF", "", listOf("tag1"), null, listOf("user2"), false, "user1", ),
+                                Travel("2", "name2", 1748736000000L, 1749504000000L, "country2", "city2", 300, "HUF", "", listOf("tag2"), null, null, true, "user1", ),
+                                Travel("3", "name3", 1748736000000L, 1748908800000L, "country3", "city3", 100, "HUF", "", listOf("tag3"), null, null, true, "user2", ))
 
     @Test
     fun whenGetById_ReturnsOneTravel(){
@@ -76,7 +74,7 @@ class TravelServiceTest {
 
     @Test
     fun addParticipantSuccessfully(){
-        val updatedTravel = Travel("1", "name", 1748736000000L, 1748908800000L, "country", "city", 100, "HUF", "", listOf("tag1"), null, listOf("user2", "user3"), false, "user1", )
+        val updatedTravel = Travel("1", "name1", 1748736000000L, 1748908800000L, "country1", "city1", 200, "HUF", "", listOf("tag1"), null, listOf("user2", "user3"), false, "user1", )
         every { travelRepository.findById("1") } returns Optional.of(travels[0])
         every { travelRepository.save(updatedTravel) } returns updatedTravel
 
@@ -97,5 +95,61 @@ class TravelServiceTest {
         val result = travelService.findMyTravels("user1")
 
         assertEquals(expectedResult, result)
+    }
+
+    @Test
+    fun cityFilterTest(){
+        val result = travelService.cityFilter("2", travels)
+
+        assertTrue(result.all { it.city!!.contains("2") })
+    }
+
+    @Test
+    fun countryFilterTest(){
+        val result = travelService.countryFilter("2", travels)
+
+        assertTrue(result.all { it.country.contains("2") })
+    }
+
+    @Test
+    fun nameFilterTest(){
+        val result = travelService.nameFilter("2", travels)
+
+        assertTrue(result.all { it.name.contains("2") })
+    }
+
+    @Test
+    fun minCostFilterTest(){
+        val result = travelService.minCostFilter(200, travels)
+
+        assertTrue(result.all { it.price >=200})
+    }
+
+    @Test
+    fun maxCostFilterTest(){
+        val result = travelService.maxCostFiler(200, travels)
+
+        assertTrue(result.all { it.price <=200})
+    }
+
+    @Test
+    fun tagFilterTest(){
+        val result = travelService.tagFilter(listOf("tag1"), travels)
+
+        assertTrue(result.all { it.tags!!.contains("tag1")})
+    }
+
+    @Test
+    fun minDaysFilterTest(){
+        val result = travelService.minDaysFilter(4, travels)
+
+        assertTrue(result.all { travelService.calculateDurationInDays(it.endDate, it.startDate) >=4})
+    }
+
+    @Test
+    fun maxDaysFilterTest(){
+        val result = travelService.maxDaysFilter(6, travels)
+
+        assertTrue(result.all { travelService.calculateDurationInDays(it.endDate, it.startDate) <=6})
     }
 }

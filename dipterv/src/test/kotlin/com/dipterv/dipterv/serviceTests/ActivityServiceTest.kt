@@ -1,4 +1,4 @@
-package com.dipterv.dipterv
+package com.dipterv.dipterv.serviceTests
 
 import com.dipterv.dipterv.model.documentModel.activity.Activity
 import com.dipterv.dipterv.model.documentModel.activity.ActivityType
@@ -18,7 +18,7 @@ class ActivityServiceTest {
 
     @Test
     fun whenActivitySetVisited_VisitedValueNegated(){
-        val updatedActivity = Activity("testId","name", ActivityType.RESTAURANT, "travelId", true, null, null)
+        val updatedActivity = activity.copy(visited=true)
         every {activityRepository.findById("testId")} returns Optional.of(activity)
         every {activityRepository.save(updatedActivity)} returns updatedActivity
 
