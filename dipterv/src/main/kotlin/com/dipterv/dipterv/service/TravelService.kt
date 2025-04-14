@@ -2,6 +2,7 @@ package com.dipterv.dipterv.service
 
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.Travel
+import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
 import com.dipterv.dipterv.repository.TravelRepository
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
@@ -89,9 +90,9 @@ class TravelService (
         return newTravel
     }
 
-    fun update(travelRequest: Travel) : Travel{
+    fun update(id: String, travelRequest: TravelUpdateRequest) : Travel{
         try{
-            val travel = findById(travelRequest._id!!)
+            val travel = findById(id)
             travelRequest.name?.let { travel.name = it }
             travelRequest.startDate?.let { travel.startDate = it }
             travelRequest.endDate?.let { travel.endDate = it }
@@ -102,9 +103,9 @@ class TravelService (
             travelRequest.description?.let { travel.description = it }
             travelRequest.tags?.let { travel.tags = it }
             travelRequest.public?.let { travel.public = it }
-            return travelRepository.save(travelRequest)
+            return travelRepository.save(travel)
         }catch (e: NullPointerException){
-            throw NotFoundException("Travel not found with id: ${travelRequest._id}")
+            throw NotFoundException("Travel not found with id: ${id}")
         }
     }
 

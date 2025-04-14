@@ -2,6 +2,7 @@ package com.dipterv.dipterv.serviceTests
 
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.dto.UserInfoDTO
+import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
 import com.dipterv.dipterv.repository.TravelRepository
 import com.dipterv.dipterv.service.TravelService
 import com.dipterv.dipterv.service.UserService
@@ -37,6 +38,18 @@ class TravelServiceTest {
         val result = travelService.findAllPublicTravels()
 
         assertTrue(result.all { it.public })
+    }
+
+    @Test
+    fun travelUpdated_OnlyTheModifiedDataWillBeSaved(){
+        val updatedTravel = travels[0].copy(country="updatedCountry")
+        every { travelRepository.findById("1") } returns Optional.of(travels[0])
+        every { travelRepository.save(updatedTravel) } returns updatedTravel
+
+        val result = travelService.update("1", TravelUpdateRequest(null, null, null, "updatedCountry", null, null, null, null, null, null))
+
+        verify { travelRepository.save(updatedTravel) }
+        assertEquals(updatedTravel, result)
     }
 
     @Test

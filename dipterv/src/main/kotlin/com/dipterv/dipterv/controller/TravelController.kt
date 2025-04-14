@@ -2,6 +2,7 @@ package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.Travel
+import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TicketService
 import com.dipterv.dipterv.service.TravelService
@@ -116,10 +117,10 @@ class TravelController(
         }
     }
 
-    @PutMapping("/update")
-    fun updateTravel(@RequestBody travel: Travel): ResponseEntity<*> {
+    @PutMapping("/update/{id}")
+    fun updateTravel(@RequestBody travel: TravelUpdateRequest, @PathVariable("id") id: String): ResponseEntity<*> {
         try{
-            val updatedTravel = travelService.update(travel)
+            val updatedTravel = travelService.update(id, travel)
             return ResponseEntity(updatedTravel, HttpStatus.OK)
         }catch (e: NotFoundException){
             return ResponseEntity(e, HttpStatus.NOT_FOUND)

@@ -5,6 +5,8 @@ import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.FollowDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
+import com.dipterv.dipterv.model.requestModel.RegisterRequest
+import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
 import com.dipterv.dipterv.repository.UserRepository
 import com.dipterv.dipterv.service.UserService
 import io.mockk.every
@@ -29,7 +31,7 @@ class UserServiceTest {
 
     @Test
     fun whenGetUserById_ReturnsOneUserInfo(){
-        every { userRepository.findById(("1")) } returns Optional.of(user)
+        every { userRepository.findById("1") } returns Optional.of(user)
 
         val expectedResult = dtoMapper.userToUserInfoDTO(user)
         val result = userService.findUserInfoDTOById("1")
@@ -38,11 +40,50 @@ class UserServiceTest {
     }
 
     @Test
+    fun whenUserRegister_UserDataSavedCorrectly(){
+        val savedUser = User(
+            null,
+            "username",
+            "psw",
+            "name",
+            "email",
+            "",
+            "",
+            "",
+            "",
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyList()
+        )
+
+        every { userRepository.save(savedUser) } returns savedUser
+
+        userService.register(RegisterRequest("username", "psw", "email", "name"), "psw")
+
+        verify { userRepository.save(savedUser) }
+    }
+
+    @Test
     fun whenUserDataMapped_ReturnsCorrectUserInfo(){
         val expectedResult = UserInfoDTO("1","name1","name1", "email1", null, null, null, emptyList(), null, null, emptyList(), emptyList(), emptyList())
         val result = dtoMapper.userToUserInfoDTO(user)
 
         assertEquals(expectedResult, result)
+    }
+
+    @Test
+    fun whenUserUpdatedPartially_OnlyTheModifiedDataWillBeSaved(){
+        val updatedUser = user.copy(description = "test")
+        every { userRepository.findById("1") } returns  Optional.of(user)
+        every { userRepository.save(updatedUser) } returns  updatedUser
+
+        val result = userService.updateUser("1", UserUpdateRequest(null, null, null, null, "test"))
+
+        verify { userRepository.save(updatedUser) }
+        assertEquals(dtoMapper.userToUserInfoDTO(updatedUser), result)
     }
 
     @Test
