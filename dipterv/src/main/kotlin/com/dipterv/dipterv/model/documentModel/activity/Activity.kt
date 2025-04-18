@@ -1,6 +1,9 @@
 package com.dipterv.dipterv.model.documentModel.activity
 
-class Activity (
+import org.springframework.data.mongodb.core.mapping.Document
+
+@Document(collection = "activity")
+data class Activity (
     var id: String?,
     val name: String,
     val type: ActivityType,
