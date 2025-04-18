@@ -55,6 +55,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         return mapper.userToUserInfoDTO(findById(id))
     }
 
+    @Throws(NotFoundException::class)
     private fun findById(id: String) : User{
         try {
             return userRepository.findById(id).get()
@@ -71,6 +72,8 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         return users.filter{it.username.contains(name, true) }
     }
 
+
+    @Throws(NotFoundException::class)
     fun updateUser(id:String, user : UserUpdateRequest) : UserInfoDTO{
         try{
             val findUser = findById(id)

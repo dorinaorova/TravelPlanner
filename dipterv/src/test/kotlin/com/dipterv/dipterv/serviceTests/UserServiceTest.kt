@@ -1,5 +1,6 @@
 package com.dipterv.dipterv.serviceTests
 
+import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.documentModel.User
@@ -15,6 +16,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
