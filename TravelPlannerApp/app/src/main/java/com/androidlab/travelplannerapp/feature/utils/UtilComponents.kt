@@ -8,6 +8,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -39,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -54,10 +57,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Activity
+import com.androidlab.travelplannerapp.data.model.Travel
+import com.androidlab.travelplannerapp.data.model.UserInfo
+import com.androidlab.travelplannerapp.feature.search.SearchViewModel
+import com.androidlab.travelplannerapp.navigation.Screen
 import com.example.compose.primaryCustom
 import java.util.Date
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -361,6 +369,118 @@ fun Map(markers: List<Activity>, longClickAction: (LatLng) -> Unit, boxModifier:
             ) {
                 markers.forEach { marker ->
                     CustomMaker(marker)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Boolean, liked: Boolean, likeTravel: Unit) {
+    Row(
+        Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween){
+        Row(Modifier.clickable { navController.navigate(Screen.TravelProfileScreen.route+"?id=${travel._id}") }) {
+            Box(
+                Modifier
+                    .width(90.dp)
+                    .height(80.dp)
+                    .padding(horizontal = 10.dp)
+            ) {
+                val imageModifier = Modifier.fillMaxSize()
+                CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL)
+            }
+            Column {
+                Text(travel.name,
+                    fontSize = 18.sp)
+                Text("${travel.city}, ${travel.country}",
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start=8.dp))
+                Text("${travel.price} ${travel.currency}",
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start=8.dp))
+                Text(travel.tags?.joinToString(separator = ", ")?: "",
+                    fontSize = 8.sp,
+                    modifier = Modifier.padding(start=10.dp, top= 10.dp))
+            }
+        }
+        Box {
+            if(!ownTravel){
+                val likedIcon  = if (liked) {
+                    ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                }else {
+                    ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+                }
+                androidx.compose.material.IconButton(onClick = {
+//                    likeTravel(
+//                        travel._id!!,
+//                        context
+//                    )
+                }, Modifier.padding(end = 20.dp)) {
+                    androidx.compose.material.Icon(
+                        imageVector = likedIcon,
+                        contentDescription = "like",
+                        tint = colorResource(id = R.color.primary),
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun UserListItem(navController: NavController, user: UserInfo){
+    Row(
+        Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .clickable {
+                navController.navigate(Screen.ProfileScreen.route+"?id=${user._id}")
+            },
+        horizontalArrangement = Arrangement.SpaceBetween){
+        Row {
+            Box(
+                Modifier
+                    .width(60.dp)
+                    .height(60.dp)
+                    .clip(CircleShape)
+                    .border(3.dp, Color.White, CircleShape)
+            ) {
+                val imageModifier = Modifier.fillMaxSize()
+                CustomImage(imageModifier, user.profilePictureFilePath, ImageSourceSelector.PROFILE)
+            }
+            Column(Modifier.align(Alignment.CenterVertically).padding(start=10.dp)) {
+                Text(user.username,
+                    fontSize = 18.sp)
+                Text(user.name,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start=8.dp))
+            }
+        }
+        Box(Modifier.align(Alignment.CenterVertically).padding(end=20.dp)) {
+            val context = LocalContext.current
+            if(!ownProfile(user._id, context)){
+                Box {
+                    val isFollower = isFollower(user.followerIds, context)
+                    val liked  = if (!isFollower) {
+                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+                    }else {
+                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+                    }
+                    androidx.compose.material.Icon(
+                        imageVector = liked,
+                        contentDescription = "like",
+                        tint = colorResource(id = R.color.primary),
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                    )
+
                 }
             }
         }

@@ -5,20 +5,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.androidlab.travelplannerapp.feature.home.HomeScreen
+import com.androidlab.travelplannerapp.feature.list.ListScreen
 import com.androidlab.travelplannerapp.feature.login.LoginScreen
-import com.androidlab.travelplannerapp.feature.vacation.payment.PaymentsScreen
-import com.androidlab.travelplannerapp.feature.userProfile.ProfileScreen
-import com.androidlab.travelplannerapp.feature.search.SearchScreen
-import com.androidlab.travelplannerapp.feature.travel.TravelProfileScreen
-import com.androidlab.travelplannerapp.feature.vacation.VacationScreen
 import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
+import com.androidlab.travelplannerapp.feature.search.SearchScreen
 import com.androidlab.travelplannerapp.feature.ticket.ticketListView.TicketsScreen
+import com.androidlab.travelplannerapp.feature.travel.TravelProfileScreen
 import com.androidlab.travelplannerapp.feature.travel.travelCreate.TravelCreateUpdateScreen
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageScreen
+import com.androidlab.travelplannerapp.feature.userProfile.ProfileScreen
 import com.androidlab.travelplannerapp.feature.userProfile.userUpdate.UserUpdateScreen
+import com.androidlab.travelplannerapp.feature.vacation.VacationScreen
 import com.androidlab.travelplannerapp.feature.vacation.activities.list.ActivityListScreen
 import com.androidlab.travelplannerapp.feature.vacation.activities.map.MapScreen
 import com.androidlab.travelplannerapp.feature.vacation.invitation.InvitationScreen
+import com.androidlab.travelplannerapp.feature.vacation.payment.PaymentsScreen
 
 @Composable
 fun Navigation(navController: NavHostController){
@@ -81,6 +82,12 @@ fun Navigation(navController: NavHostController){
         composable(route = Screen.MapScreen.route+"?id={id}"){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             MapScreen(navController = navController, travelId = id!!)
+        }
+
+        composable(route = Screen.ListScreen.route+"?id={id}?type={type}"){backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")
+            val id = backStackEntry.arguments?.getString("id")
+            ListScreen(navController = navController, type = type!!, userId = id!!)
         }
     }
 }

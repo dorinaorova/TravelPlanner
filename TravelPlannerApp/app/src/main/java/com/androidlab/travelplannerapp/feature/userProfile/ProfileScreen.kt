@@ -148,6 +148,19 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                                 modifier = Modifier.background(colorResource(id = R.color.primary_text))
                             ){
                                 DropdownMenuItem(
+                                    text={ Text("Liked travels") },
+                                    onClick = {
+                                        menuExpanded.value = false
+                                        navController.navigate(Screen.ListScreen.route+"?id=${vm.user._id}?type=likedTravels")
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.baseline_favorite_24),
+                                            contentDescription = null
+                                        )},
+                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                )
+                                DropdownMenuItem(
                                     text = { Text("Edit") },
                                     onClick = {
                                         menuExpanded.value = false
@@ -251,7 +264,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                         )
 
                         items.forEach {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally){
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {navController.navigate(Screen.ListScreen.route+"?id=${vm.user._id}?type=${it.label}")  }){
                                 Text(it.value.toString(),
                                     fontSize=18.sp,
                                     fontWeight = FontWeight.Bold
