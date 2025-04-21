@@ -1,5 +1,19 @@
 package com.androidlab.travelplannerapp.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,29 +40,43 @@ fun Navigation(navController: NavHostController){
     NavHost(navController = navController,
         startDestination = Screen.LoginScreen.route)
     {
-        composable(route = Screen.HomeScreen.route){
+        composable(route = Screen.HomeScreen.route,
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){
             HomeScreen(navController =navController)
         }
-        composable(route = Screen.VacationScreen.route+"?id={id}"){backStackEntry ->
+        composable(route = Screen.VacationScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             VacationScreen(navController = navController, id = id!!)
         }
-        composable(route = Screen.SearchScreen.route){
+        composable(route = Screen.SearchScreen.route,
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){
             SearchScreen(navController = navController)
         }
-        composable(route = Screen.TravelProfileScreen.route+"?id={id}"){backStackEntry ->
+        composable(route = Screen.TravelProfileScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             TravelProfileScreen(navController = navController, id = id!!)
         }
-        composable(route = Screen.PaymentsScreen.route+"?id={id}"){backStackEntry ->
+        composable(route = Screen.PaymentsScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             PaymentsScreen(navController = navController, travelId = id!!)
         }
-        composable(route = Screen.ProfileScreen.route+"?id={id}"){backStackEntry ->
+        composable(route = Screen.ProfileScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             ProfileScreen(navController = navController, id = id)
         }
-        composable(route= Screen.TicketsScreen.route+"?id={id}"){backStackEntry ->
+        composable(route= Screen.TicketsScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")!!
             TicketsScreen(navController = navController, id = id)
         }
@@ -70,24 +98,43 @@ fun Navigation(navController: NavHostController){
             val id = backStackEntry.arguments?.getString("id")
             TravelCreateUpdateScreen(navController = navController, id = id)
         }
-        composable(route = Screen.InvitationScreen.route+"?id={id}"){backStackEntry ->
+        composable(route = Screen.InvitationScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             InvitationScreen(navController = navController, travelId = id!!)
         }
-        composable(route = Screen.ActivityListScreen.route+"?id={id}"){backStackEntry ->
+        composable(route = Screen.ActivityListScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             ActivityListScreen(navController = navController, travelId = id!!)
         }
 
-        composable(route = Screen.MapScreen.route+"?id={id}"){backStackEntry ->
+        composable(route = Screen.MapScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             MapScreen(navController = navController, travelId = id!!)
         }
 
-        composable(route = Screen.ListScreen.route+"?id={id}?type={type}"){backStackEntry ->
+        composable(route = Screen.ListScreen.route+"?id={id}?type={type}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
             val type = backStackEntry.arguments?.getString("type")
             val id = backStackEntry.arguments?.getString("id")
             ListScreen(navController = navController, type = type!!, userId = id!!)
         }
     }
+}
+private fun enterTransition(): EnterTransition {
+    return slideInHorizontally(animationSpec = tween(durationMillis = 300, easing = LinearEasing)) { fullWidth ->
+        -fullWidth / 3
+    } + fadeIn(animationSpec = tween(220, delayMillis = 90))
+}
+
+private fun exitTransition(): ExitTransition {
+    return         slideOutHorizontally(animationSpec = tween(300, easing = LinearEasing)) {
+        200
+    } + fadeOut()
 }

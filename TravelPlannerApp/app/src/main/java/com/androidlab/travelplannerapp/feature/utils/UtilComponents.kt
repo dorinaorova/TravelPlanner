@@ -5,6 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,7 +38,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -376,7 +381,7 @@ fun Map(markers: List<Activity>, longClickAction: (LatLng) -> Unit, boxModifier:
 }
 
 @Composable
-fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Boolean, liked: Boolean, likeTravel: Unit) {
+fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Boolean, liked: Boolean, likeTravel: () ->Unit) {
     Row(
         Modifier
             .padding(16.dp)
@@ -408,26 +413,7 @@ fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Bool
         }
         Box {
             if(!ownTravel){
-                val likedIcon  = if (liked) {
-                    ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                }else {
-                    ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                }
-                androidx.compose.material.IconButton(onClick = {
-//                    likeTravel(
-//                        travel._id!!,
-//                        context
-//                    )
-                }, Modifier.padding(end = 20.dp)) {
-                    androidx.compose.material.Icon(
-                        imageVector = likedIcon,
-                        contentDescription = "like",
-                        tint = colorResource(id = R.color.primary),
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                    )
-                }
+                LikeButton(liked, likeTravel)
             }
         }
     }
@@ -466,23 +452,61 @@ fun UserListItem(navController: NavController, user: UserInfo){
             val context = LocalContext.current
             if(!ownProfile(user._id, context)){
                 Box {
-                    val isFollower = isFollower(user.followerIds, context)
-                    val liked  = if (!isFollower) {
-                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                    }else {
-                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                    }
-                    androidx.compose.material.Icon(
-                        imageVector = liked,
-                        contentDescription = "like",
-                        tint = colorResource(id = R.color.primary),
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                    )
+                   val isFollower = isFollower(user.followerIds, context)
+//                    val liked  = if (!isFollower) {
+//                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+//                    }else {
+//                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+//                    }
+//                    androidx.compose.material.Icon(
+//                        imageVector = liked,
+//                        contentDescription = "like",
+//                        tint = colorResource(id = R.color.primary),
+//                        modifier = Modifier
+//                            .width(30.dp)
+//                            .height(30.dp)
+//                    )
+                    LikeButton(!isFollower, {})
 
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LikeButton(isLiked: Boolean, onClick: () -> Unit){
+    val icon = if (isLiked) {
+        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
+    } else {
+        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
+    }
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(isLiked) {
+        scale.animateTo(
+            targetValue = 1.4f,
+            animationSpec = tween(durationMillis = 100)
+        )
+        scale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 100)
+        )
+    }
+
+    IconButton(onClick = { onClick() }, modifier = Modifier.padding(5.dp)) {
+        Icon(
+            imageVector = icon,
+            contentDescription = "like",
+            tint = colorResource(id = R.color.primary),
+            modifier = Modifier
+                .width(30.dp)
+                .height(30.dp)
+                .graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                    this.alpha = alpha
+                }
+        )
     }
 }

@@ -67,7 +67,8 @@ private fun CustomList(navController: NavController,type: String, vm: ListViewMo
     }else{
         LazyColumn (){
             items(vm.travels){travel ->
-                TravelListItem(navController, travel, type == "travel", true, vm.likeTravel(travel._id!!, context))
+                TravelListItem(navController, travel, type == "travel", true,
+                    { vm.likeTravel(travel._id!!, context) })
             }
         }
 

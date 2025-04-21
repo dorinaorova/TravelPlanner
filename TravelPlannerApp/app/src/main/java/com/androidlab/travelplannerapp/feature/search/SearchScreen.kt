@@ -72,6 +72,8 @@ import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
+import com.androidlab.travelplannerapp.feature.utils.TravelListItem
+import com.androidlab.travelplannerapp.feature.utils.UserListItem
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.navigation.Screen
@@ -219,122 +221,17 @@ private fun FilterBtn(){
     }
 }
 
-@Composable
-private fun TravelListItem(navController: NavController, travel: Travel, vm: SearchViewModel = hiltViewModel()) {
-    Row(
-        Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween){
-        Row(Modifier.clickable { navController.navigate(Screen.TravelProfileScreen.route+"?id=${travel._id}") }) {
-            Box(
-                Modifier
-                    .width(90.dp)
-                    .height(80.dp)
-                    .padding(horizontal = 10.dp)
-            ) {
-                val imageModifier = Modifier.fillMaxSize()
-                CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL)
-            }
-            Column {
-                Text(travel.name,
-                        fontSize = 18.sp)
-                Text("${travel.city}, ${travel.country}",
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(start=8.dp))
-                Text("${travel.price} ${travel.currency}",
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(start=8.dp))
-                Text(travel.tags?.joinToString(separator = ", ")?: "",
-                        fontSize = 8.sp,
-                        modifier = Modifier.padding(start=10.dp, top= 10.dp))
-            }
-        }
-        Box {
-            if(!vm.isTravelOwn(travel._id!!)){
-                val context = LocalContext.current
-                val liked  = if (vm.isTravelLiked(travel._id!!)) {
-                    ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                }else {
-                    ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                }
-                IconButton(onClick = { vm.likeTravel(travel._id!!, context) }, Modifier.padding(end=20.dp)) {
-                    Icon(
-                        imageVector = liked,
-                        contentDescription = "like",
-                        tint = colorResource(id = R.color.primary),
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun UserListItem(navController: NavController, user: UserInfo, vm: SearchViewModel = hiltViewModel()){
-    Row(
-        Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-        .clickable {
-            navController.navigate(Screen.ProfileScreen.route+"?id=${user._id}")
-                   },
-        horizontalArrangement = Arrangement.SpaceBetween){
-        Row {
-            Box(
-                Modifier
-                    .width(60.dp)
-                    .height(60.dp)
-                    .clip(CircleShape)
-                    .border(3.dp, Color.White, CircleShape)
-            ) {
-                val imageModifier = Modifier.fillMaxSize()
-                CustomImage(imageModifier, user.profilePictureFilePath, ImageSourceSelector.PROFILE)
-            }
-            Column(Modifier.align(Alignment.CenterVertically).padding(start=10.dp)) {
-                Text(user.username,
-                    fontSize = 18.sp)
-                Text(user.name,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(start=8.dp))
-            }
-        }
-        Box(Modifier.align(Alignment.CenterVertically).padding(end=20.dp)) {
-            val context = LocalContext.current
-            if(!ownProfile(user._id, context)){
-                Box {
-                    val isFollower = isFollower(user.followerIds, context)
-                    val liked  = if (!isFollower) {
-                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                    }else {
-                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                    }
-                        Icon(
-                            imageVector = liked,
-                            contentDescription = "like",
-                            tint = colorResource(id = R.color.primary),
-                            modifier = Modifier
-                                .width(30.dp)
-                                .height(30.dp)
-                        )
-
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun TravelSearchResultList(navController: NavController, vm: SearchViewModel = hiltViewModel()){
+    val context = LocalContext.current
     LaunchedEffect(Unit, block ={
         vm.getAllTravel()
     })
     LazyColumn {
         items(vm.travel) { item ->
-            TravelListItem(navController, item)
+            TravelListItem(navController, item,vm.isTravelOwn(item._id!!), vm.isTravelLiked(item._id)
+            ) { vm.likeTravel(item._id, context) }
             ListItemDivider()
         }
     }
@@ -358,7 +255,9 @@ private fun UserSearchResultList(navController: NavController, vm: SearchViewMod
 private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hiltViewModel()){
     var tag by remember {mutableStateOf("")}
     Dialog(onDismissRequest = onDismissRequest) {
-        Card(modifier = Modifier.wrapContentSize().padding(10.dp),
+        Card(modifier = Modifier
+            .wrapContentSize()
+            .padding(10.dp),
             shape = RoundedCornerShape(16.dp),
             backgroundColor = colorResource(id = R.color.primary_background)) {
             Box{
@@ -395,13 +294,15 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                                         .background(
                                             color = colorResource(id = R.color.primary_background),
                                             shape = RoundedCornerShape(size = 10.dp)
-                                        ).padding(10.dp)
+                                        )
+                                        .padding(10.dp)
                                         .border(
                                             width = 1.dp,
-                                            color =  colorResource(id = R.color.secondary),
+                                            color = colorResource(id = R.color.secondary),
                                             shape = RoundedCornerShape(size = 10.dp)
 
-                                        ).padding(5.dp),
+                                        )
+                                        .padding(5.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     innerTextField()
@@ -424,13 +325,15 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                                         .background(
                                             color = colorResource(id = R.color.primary_background),
                                             shape = RoundedCornerShape(size = 10.dp)
-                                        ).padding(10.dp)
+                                        )
+                                        .padding(10.dp)
                                         .border(
                                             width = 1.dp,
-                                            color =  colorResource(id = R.color.secondary),
+                                            color = colorResource(id = R.color.secondary),
                                             shape = RoundedCornerShape(size = 10.dp)
 
-                                        ).padding(5.dp),
+                                        )
+                                        .padding(5.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     innerTextField()
@@ -490,10 +393,11 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                                     .background(
                                         color = colorResource(id = R.color.primary_background),
                                         shape = RoundedCornerShape(size = 10.dp)
-                                    ).padding(10.dp)
+                                    )
+                                    .padding(10.dp)
                                     .border(
                                         width = 1.dp,
-                                        color =  colorResource(id = R.color.secondary),
+                                        color = colorResource(id = R.color.secondary),
                                         shape = RoundedCornerShape(size = 10.dp)
 
                                     )
