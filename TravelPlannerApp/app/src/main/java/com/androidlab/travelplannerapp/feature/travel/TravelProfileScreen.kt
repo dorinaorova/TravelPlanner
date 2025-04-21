@@ -1,5 +1,10 @@
 package com.androidlab.travelplannerapp.feature.travel
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +34,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -51,6 +58,7 @@ import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
+import com.androidlab.travelplannerapp.feature.utils.LikeButton
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.calculateDays
 import com.androidlab.travelplannerapp.feature.utils.generateDate
@@ -180,21 +188,9 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                         )
                     }
                     if (!vm.ownTravel(context)) {
-                        val liked = if (vm.liked.value) {
-                            ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                        } else {
-                            ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                        }
-                        IconButton(onClick = { vm.likeTravel(context) }) {
-                            Icon(
-                                imageVector = liked,
-                                contentDescription = "like",
-                                tint = colorResource(id = R.color.primary),
-                                modifier = Modifier
-                                    .width(30.dp)
-                                    .height(30.dp)
-                            )
-                        }
+
+                        LikeButton(vm.liked.value,   onClick = {vm.likeTravel(context)})
+
                     } else {
                         val menuExpanded = remember { mutableStateOf(false) }
                         Box {

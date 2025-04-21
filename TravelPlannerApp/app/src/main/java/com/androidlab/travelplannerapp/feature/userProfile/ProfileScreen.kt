@@ -60,6 +60,7 @@ import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
 import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
+import com.androidlab.travelplannerapp.feature.utils.LikeButton
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.navigation.Screen
@@ -203,21 +204,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     else{
                         Box {
                             val isFollower = isFollower(vm.user.followerIds, context)
-                            val liked  = if (!isFollower) {
-                                ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-                            }else {
-                                ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-                            }
-                            IconButton(onClick = { vm.followAction(context) }, Modifier.padding(end=20.dp)) {
-                                Icon(
-                                    imageVector = liked,
-                                    contentDescription = "like",
-                                    tint = colorResource(id = R.color.primary),
-                                    modifier = Modifier
-                                        .width(30.dp)
-                                        .height(30.dp)
-                                )
-                            }
+                            LikeButton(!isFollower,{ vm.followAction(context) } )
                         }
                     }
                 }
