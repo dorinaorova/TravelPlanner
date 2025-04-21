@@ -413,7 +413,7 @@ fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Bool
         }
         Box {
             if(!ownTravel){
-                LikeButton(liked, {})
+                LikeButton(liked, likeTravel)
             }
         }
     }

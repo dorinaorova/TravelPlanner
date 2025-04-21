@@ -230,8 +230,8 @@ private fun TravelSearchResultList(navController: NavController, vm: SearchViewM
     })
     LazyColumn {
         items(vm.travel) { item ->
-            TravelListItem(navController, item,vm.isTravelOwn(item._id!!), vm.isTravelLiked(item._id),
-                { vm.likeTravel(item._id, context) })
+            TravelListItem(navController, item,vm.isTravelOwn(item._id!!), vm.isTravelLiked(item._id)
+            ) { vm.likeTravel(item._id, context) }
             ListItemDivider()
         }
     }
