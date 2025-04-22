@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -93,4 +94,14 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.0-alpha02")
 
     implementation("com.google.maps.android:maps-compose:6.4.1")
+
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.6.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.6.1")
+    implementation ("androidx.test.espresso:espresso-idling-resource:3.6.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-idling-resource:3.6.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.48")
+    kaptAndroidTest("com.google.dagger:hilt-compiler:2.48")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
+    androidTestImplementation ("androidx.navigation:navigation-testing:$nav_version")
+
 }

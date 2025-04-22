@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -129,7 +130,7 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
 }
 
 @Composable
-fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = colorResource(id = R.color.primary_background), lines: Int = 1){
+fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = colorResource(id = R.color.primary_background), lines: Int = 1, testTag: String=""){
     val focusManager = LocalFocusManager.current
     Column{
     androidx.compose.material3.Text(
@@ -157,6 +158,7 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
                 focusManager.moveFocus(FocusDirection.Down)
             }
         ),
+        modifier=Modifier.testTag(testTag),
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
