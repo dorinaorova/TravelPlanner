@@ -44,9 +44,8 @@ class TravelCreateUpdateViewModel @Inject constructor(
 
     fun update(travel: Travel, navController: NavController){
         viewModelScope.launch {
-            Log.d("TAG", "update: $travel")
             travel.tags = tagList
-            val call = updateTravelUseCase(travel)
+            val call = updateTravelUseCase(travel, travel._id!!)
             val response = call?.awaitResponse()
             if(response?.isSuccessful == true){
                 navController.navigate(Screen.TravelProfileScreen.route+"?id=${travel._id}")
