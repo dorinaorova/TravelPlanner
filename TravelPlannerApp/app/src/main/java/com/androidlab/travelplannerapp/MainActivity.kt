@@ -9,6 +9,8 @@ import com.androidlab.travelplannerapp.navigation.Navigation
 import com.example.compose.TravelPlannerAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     lateinit var navController : NavHostController

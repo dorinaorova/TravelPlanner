@@ -66,6 +66,7 @@ class LoginScreenTest {
         val username = "test"
         val password = "test"
 
+        /*TODO*/
         val mockResponse = MockResponse()
             .setResponseCode(200)
             .setBody("""{"accessToken": "fakeAccess"}""")
@@ -84,7 +85,5 @@ class LoginScreenTest {
         composeTestRule.onNodeWithText("Login")
             .performClick()
 
-//        assertTrue(username.isNotEmpty())
-//        assertTrue(password.isNotEmpty())
     }
 }
