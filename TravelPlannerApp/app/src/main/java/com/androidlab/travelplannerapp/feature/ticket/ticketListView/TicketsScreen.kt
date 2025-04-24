@@ -1,7 +1,6 @@
 package com.androidlab.travelplannerapp.feature.ticket.ticketListView
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -22,16 +21,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,10 +38,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -58,8 +54,6 @@ import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryCustom
-import com.example.compose.primaryTextCustom
 
 @Composable
 fun TicketsScreen(navController: NavController, id: String, vm: TicketViewModel = hiltViewModel()){
@@ -86,7 +80,7 @@ fun TicketsScreen(navController: NavController, id: String, vm: TicketViewModel 
             TopBar("Tickets", navController, Screen.VacationScreen.route+"?id=$id")
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
+            FloatingActionButton(onClick = { showDialog.value = true}) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
@@ -101,7 +95,7 @@ private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewM
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.background
         ){
             Box(Modifier.width(300.dp)){
                 Column(horizontalAlignment = Alignment.CenterHorizontally){
@@ -120,7 +114,7 @@ private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewM
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.cancel),
                             contentDescription = "",
-                            tint = colorResource(android.R.color.darker_gray),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .width(30.dp)
                                 .height(30.dp)
@@ -135,15 +129,10 @@ private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewM
                         Text("Ticket",
                             modifier=Modifier.padding(end=10.dp),
                             fontWeight= FontWeight.Bold,
-                            color= colorResource(id = R.color.primary))
+                            color= MaterialTheme.colorScheme.primary)
                         TextField(
                             value = ticketTxtField.value,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                            colors = TextFieldDefaults.textFieldColors(
-                                backgroundColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            ),
                             singleLine = true,
                             onValueChange = {
                                 ticketTxtField.value = it
@@ -161,9 +150,8 @@ private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewM
                         vm.createTicket(ticketTxtField.value,date.longValue, context)
                         setShowDialog(false) },
                         modifier=Modifier.padding(bottom=10.dp),
-                        colors= ButtonDefaults.buttonColors(colorResource(id = R.color.primary))) {
-                        Text("Add",
-                            color= Color.White)
+                    ) {
+                        Text("Add")
                     }
                 }
             }
@@ -182,7 +170,7 @@ private fun Details(vm: TicketViewModel = hiltViewModel()){
     Column(
         Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.primary_background))){
+            .background(MaterialTheme.colorScheme.background)){
         if(vm.tickets.isNotEmpty()) {
             LazyColumn(Modifier.padding(20.dp).fillMaxWidth()) {
                 items(vm.tickets) { ticket ->
@@ -193,7 +181,7 @@ private fun Details(vm: TicketViewModel = hiltViewModel()){
                                 androidx.compose.material.Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.baseline_add_24),
                                     contentDescription = null,
-                                    tint = colorResource(id = R.color.primary),
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier
                                         .width(30.dp)
                                         .height(30.dp)
@@ -211,7 +199,7 @@ private fun Details(vm: TicketViewModel = hiltViewModel()){
                                     .padding(horizontal = 10.dp)
                                     .size(80.dp, 60.dp)
                                     .background(
-                                        colorResource(id = R.color.secondary),
+                                        MaterialTheme.colorScheme.primaryContainer,
                                         shape = RoundedCornerShape(15.dp)
                                     ).clickable {
                                         vm.downloadTicket(it, context)
@@ -226,7 +214,7 @@ private fun Details(vm: TicketViewModel = hiltViewModel()){
                                     Icon(
                                         imageVector = icon,
                                         contentDescription = "",
-                                        tint = colorResource(id = R.color.primary_text)
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 }
                             }

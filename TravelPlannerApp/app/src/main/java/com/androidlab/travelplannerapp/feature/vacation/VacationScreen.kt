@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +43,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +59,6 @@ import com.androidlab.travelplannerapp.feature.utils.Map
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryCustom
 
 @Composable
 fun VacationScreen(navController: NavController, id: String, vm: VacationViewModel = hiltViewModel()){
@@ -102,7 +101,7 @@ private fun Header(navController: NavController, vm: VacationViewModel = hiltVie
         Column(Modifier.padding(top = 75.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
             Text(
                 vm.travel.name,
-                color = colorResource(id = R.color.primary_text),
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 36.sp,
                 modifier = Modifier.padding(start = 25.dp)
             )
@@ -123,7 +122,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: Vacation
                     .verticalScroll(scroll)
                     .fillMaxWidth()
                     .background(
-                        colorResource(id = R.color.primary_background),
+                        MaterialTheme.colorScheme.background,
                     )){
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
                     val menuExpanded = remember { mutableStateOf(false) }
@@ -131,32 +130,22 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: Vacation
                         IconButton(onClick = { menuExpanded.value= true }) {
                             Icon(
                                 imageVector= Icons.Rounded.MoreVert,
-                                contentDescription = null,
-                                tint= colorResource(id = R.color.primary)
+                                contentDescription = null
                             )
                         }
                         DropdownMenu(
                             expanded = menuExpanded.value,
                             onDismissRequest = { menuExpanded.value = false },
-                            modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                            modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                         ){
                             DropdownMenuItem(
-                                text={ Text("View travel profile") },
+                                text={ Text("View travel profile", color= MaterialTheme.colorScheme.onSecondaryContainer) },
                                 onClick = {
                                     menuExpanded.value = false
                                     navController.navigate(Screen.TravelProfileScreen.route+"?id=${vm.travel._id}")
                                 },
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                             )
-                                DropdownMenuItem(
-                                    text={ Text("Set as current vacation") },
-                                    onClick = {
-                                        menuExpanded.value = false
-                                        /*TODO*/
-
-                                    },
-                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
-                                )
 
                         }
                     }
@@ -189,15 +178,15 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
                         CustomImage(imageModifier, it.profilePictureFilePath, ImageSourceSelector.PROFILE)
                     }
 
-                    Text(it.username)
-                    if(it._id == vm.travel.ownerId) Text("(Owner)", color = primaryCustom, fontSize = 10.sp)
+                    Text(it.username,color= MaterialTheme.colorScheme.primary)
+                    if(it._id == vm.travel.ownerId) Text("(Owner)", color = MaterialTheme.colorScheme.secondary, fontSize = 10.sp)
                 }
             }
         }
     }
     TextButton(onClick = { navController.navigate(Screen.InvitationScreen.route+"?id=${vm.travel._id}")}) {
         Text("Add new member",
-            color= colorResource(id = R.color.secondary_text),
+            color= MaterialTheme.colorScheme.secondary,
             modifier=Modifier.padding(end=25.dp, start=25.dp))
     }
 }
@@ -213,25 +202,25 @@ private fun Payments(navController: NavController, vm: VacationViewModel = hiltV
                 modifier=Modifier.padding(horizontal=30.dp)){
                 Column(horizontalAlignment = Alignment.CenterHorizontally){
                     Text(vm.findUserName(transaction.fromUser, context),
-                        fontSize=14.sp)
+                        fontSize=14.sp, color= MaterialTheme.colorScheme.secondary)
                     Text(transaction.amount.toString(),
-                        color= colorResource(id = R.color.primary),
+                        color= MaterialTheme.colorScheme.primary,
                         fontWeight= FontWeight.Bold)
                 }
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_forward),
                     contentDescription = null,
-                    tint= colorResource(id = R.color.primary),
+                    tint= MaterialTheme.colorScheme.secondary,
                     modifier= Modifier
                         .height(30.dp)
                         .width(30.dp))
                 Text(vm.findUserName(transaction.toUser, context),
-                    fontSize=14.sp)
+                    fontSize=14.sp, color= MaterialTheme.colorScheme.primary)
             }
         }
         Row(Modifier.padding(horizontal=30.dp)){
-            Text("You are in: ")
+            Text("You are in: ", color= MaterialTheme.colorScheme.secondary)
             Text(vm.ownDebt.toString(),
-                color= colorResource(id = R.color.primary))
+                color= MaterialTheme.colorScheme.primary)
         }
     }
 }
@@ -262,7 +251,7 @@ private fun Tickets(navController: NavController, vm: VacationViewModel = hiltVi
 
                 TextButton(onClick = { navController.navigate(Screen.TicketsScreen.route+"?id=${vm.travel._id}")}) {
                     Text("Add new ticket",
-                        color= colorResource(id = R.color.secondary_text),
+                        color=MaterialTheme.colorScheme.secondary,
                         modifier=Modifier.padding(end=25.dp, start=25.dp, bottom=25.dp))
                 }
             }
@@ -276,17 +265,18 @@ private fun Tickets(navController: NavController, vm: VacationViewModel = hiltVi
                             .padding(horizontal = 10.dp)
                             .size(80.dp, 60.dp)
                             .background(
-                                colorResource(id = R.color.secondary),
+                                MaterialTheme.colorScheme.primaryContainer,
                                 shape = RoundedCornerShape(15.dp)
                             )) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.fillMaxSize()){
                                 Text(it.name,
-                                    fontSize=14.sp)
+                                    fontSize=14.sp,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer)
                                 Text(
                                     generateDate(it.date),
-                                    fontSize=10.sp)
+                                    fontSize=10.sp, color = MaterialTheme.colorScheme.onPrimaryContainer)
                             }
                         }
                     }

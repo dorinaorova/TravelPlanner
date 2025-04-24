@@ -34,6 +34,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,8 +58,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.SpendType
+import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.feature.utils.generateDate
@@ -89,11 +90,9 @@ fun PaymentsScreen(navController: NavController, travelId: String, vm: PaymentVi
             TopBar("Payments", navController, Screen.VacationScreen.route+"?id=${travelId}")
         },
         floatingActionButton = {
-            IconButton(onClick = { showDialog.value = true},
-                modifier=Modifier.background(colorResource(id = R.color.secondary), shape= CircleShape)) {
+            IconButton(onClick = { showDialog.value = true},) {
                 Icon(imageVector = Icons.Rounded.Add,
                     contentDescription = null,
-                    tint= colorResource(id = R.color.primary_text),
                     modifier=Modifier.size(40.dp)
                     )
             }
@@ -108,9 +107,9 @@ private fun Details(){
             .background(colorResource(id = R.color.primary_background))
             .fillMaxSize()){
         Payments()
-        CustomDivider()
+        ListItemDivider()
         Sum()
-        CustomDivider()
+        ListItemDivider()
         SettleDebt()
     }
 }
@@ -130,39 +129,41 @@ private fun Payments(vm: PaymentViewModel = hiltViewModel()){
                     Row(Modifier.padding(bottom = 5.dp)) {
                         Text(
                             "${vm.findUser(it.userId, context)} paid: ",
-                            fontSize = 16.sp
+                            fontSize = 16.sp,
+                            color= MaterialTheme.colorScheme.primary
                         )
                         Text(
                             text = it.cost.toString(),
-                            color = colorResource(id = R.color.primary),
+                            color = MaterialTheme.colorScheme.secondary,
                             fontSize = 16.sp,
                         )
                         Text(
                             text= generateDate(it.date),
                             fontSize = 12.sp,
-                            modifier=Modifier.padding(start=10.dp)
+                            modifier=Modifier.padding(start=10.dp),
+                            color= MaterialTheme.colorScheme.primary
                         )
                     }
                     Row(Modifier.padding(bottom = 5.dp, start = 8.dp)) {
                         Text(
                             "To: ",
-                            color = colorResource(id = R.color.primary)
+                            color = MaterialTheme.colorScheme.secondary
                         )
                         val to = it.partUserIds.joinToString(", ") { user -> vm.findUser(user, context) }
-                        Text(to)
+                        Text(to, color= MaterialTheme.colorScheme.primary)
                     }
                     Row(Modifier.padding(bottom = 10.dp, start = 8.dp)) {
                         Text(
                             "For: ",
-                            color = colorResource(id = R.color.primary)
+                            color = MaterialTheme.colorScheme.secondary
                         )
-                        Text(it.type.toString())
+                        Text(it.type.toString(), color= MaterialTheme.colorScheme.primary)
                     }
                 }
                 IconButton(onClick = { vm.deletePayment(it._id!!) }) {
                     Icon(imageVector = ImageVector.vectorResource(R.drawable.cancel),
                         contentDescription = null,
-                        tint= colorResource(id = R.color.secondary))
+                    )
                 }
             }
         }
@@ -176,7 +177,7 @@ private fun Sum(vm: PaymentViewModel = hiltViewModel()){
     Row(verticalAlignment = Alignment.Bottom) {
         SmallHeader("Sum")
         Text(vm.calculateSum().toString(),
-            color= colorResource(id = R.color.primary),
+            color= MaterialTheme.colorScheme.secondary,
             modifier=Modifier.padding(bottom=10.dp),
             fontWeight = FontWeight.Bold
         )
@@ -191,7 +192,7 @@ private fun Sum(vm: PaymentViewModel = hiltViewModel()){
                 Text(vm.findUser(debts.keys.elementAt(it), context),
                     modifier=Modifier.padding(end=5.dp))
                 Text(debts.values.elementAt(it).toString(),
-                    color= colorResource(id = R.color.primary))
+                    color= MaterialTheme.colorScheme.primary)
             }
         }
     }
@@ -212,30 +213,33 @@ private fun SettleDebt(vm: PaymentViewModel = hiltViewModel()){
                 Column(horizontalAlignment = Alignment.CenterHorizontally){
                     Text(
                         vm.findUser(it.fromUser, context),
-                        fontSize = 14.sp
+                        fontSize = 14.sp,
+                        color= MaterialTheme.colorScheme.primary
                     )
                     Text(
                         it.amount.toString(),
-                        color = colorResource(id = R.color.primary),
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
+
                     )
                 }
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.arrow_forward),
                     contentDescription = null,
-                    tint = colorResource(id = R.color.primary),
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .height(30.dp)
                         .width(30.dp)
                 )
                 Text(
                     vm.findUser(it.toUser, context),
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color= MaterialTheme.colorScheme.primary
                 )
                 IconButton(onClick = { vm.settleDebt(it) }) {
                     Icon(imageVector = Icons.Rounded.Check ,
                         contentDescription = null,
-                        tint= colorResource(id = R.color.secondary))
+                        )
                 }
             }
         }
@@ -253,7 +257,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.background
         ){
             Box(Modifier.width(300.dp)){
                 Column(horizontalAlignment = Alignment.CenterHorizontally){
@@ -272,7 +276,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.cancel),
                             contentDescription = "",
-                            tint = colorResource(android.R.color.darker_gray),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .width(30.dp)
                                 .height(30.dp)
@@ -286,7 +290,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                         val expanded = remember { mutableStateOf(false) }
                         Text("Who paid",
                             modifier=Modifier.padding(end=10.dp),
-                            color= colorResource(id = R.color.primary),
+                            color= MaterialTheme.colorScheme.secondary,
                             fontWeight= FontWeight.Bold)
                         val username = if (vm.participants.isNotEmpty()) {
                             vm.participants[selectedIndex.value].username
@@ -301,7 +305,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                                 modifier= Modifier
                                     .fillMaxWidth()
                                     .clickable(onClick = { expanded.value = true }),
-                                color= colorResource(id = R.color.secondary_text))
+                                color= MaterialTheme.colorScheme.primary)
                             DropdownMenu(expanded = expanded.value,
                                 onDismissRequest = { expanded.value = false }) {
                                 vm.participants.forEachIndexed { index, item ->
@@ -325,15 +329,10 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                         Text("Cost",
                             modifier=Modifier.padding(end=10.dp),
                             fontWeight= FontWeight.Bold,
-                            color= colorResource(id = R.color.primary))
+                            color= MaterialTheme.colorScheme.secondary)
                         TextField(
                             value = costTxtField.value,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            colors = TextFieldDefaults.textFieldColors(
-                                backgroundColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent
-                            ),
                             singleLine = true,
                             onValueChange = {
                                 costTxtField.value = it
@@ -347,7 +346,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                         val expanded = remember { mutableStateOf(false) }
                         Text("For what",
                             modifier=Modifier.padding(end=10.dp),
-                            color= colorResource(id = R.color.primary),
+                            color= MaterialTheme.colorScheme.secondary,
                             fontWeight= FontWeight.Bold)
                         Box(
                             Modifier
@@ -357,7 +356,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                                 modifier= Modifier
                                     .fillMaxWidth()
                                     .clickable(onClick = { expanded.value = true }),
-                                color= colorResource(id = R.color.secondary_text))
+                                color= MaterialTheme.colorScheme.primary)
                             DropdownMenu(expanded = expanded.value,
                                 onDismissRequest = { expanded.value = false }) {
                                 reasonsList.forEach { item ->
@@ -380,7 +379,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                         Text("For who",
                             modifier=Modifier.padding(end=10.dp),
                             fontWeight= FontWeight.Bold,
-                            color= colorResource(id = R.color.primary))
+                            color= MaterialTheme.colorScheme.secondary)
                         LazyVerticalGrid(columns=GridCells.Fixed(2),
                                         modifier=Modifier.height(150.dp)){
                             items(vm.participants.size){idx->
@@ -404,9 +403,8 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                             }, costTxtField.value.toDouble(), selectedReason.value)
                         setShowDialog(false) },
                             modifier=Modifier.padding(bottom=10.dp),
-                            colors= ButtonDefaults.buttonColors(colorResource(id = R.color.primary))) {
-                        Text("Add",
-                            color= Color.White)
+                           ) {
+                        Text("Add")
                     }
                 }
             }

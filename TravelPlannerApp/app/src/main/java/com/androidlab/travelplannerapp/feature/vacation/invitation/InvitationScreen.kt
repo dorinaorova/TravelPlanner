@@ -19,21 +19,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -43,25 +38,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Invitation
 import com.androidlab.travelplannerapp.data.model.Status
 import com.androidlab.travelplannerapp.data.model.UserInfo
-import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
+import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
 import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryBackgroundCustom
-import com.example.compose.primaryCustom
-import com.example.compose.primaryTextCustom
-import com.example.compose.secondaryCustom
 
 @Composable
 fun InvitationScreen(navController: NavController, travelId: String, vm : InvitationViewModel = hiltViewModel()) {
@@ -81,7 +70,7 @@ fun InvitationScreen(navController: NavController, travelId: String, vm : Invita
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues).background(primaryBackgroundCustom)) {
+                .padding(paddingValues).background(MaterialTheme.colorScheme.background)) {
                 InvitationList(navController)
             }
         },
@@ -93,7 +82,7 @@ fun InvitationScreen(navController: NavController, travelId: String, vm : Invita
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
+            FloatingActionButton(onClick = { showDialog.value = true}) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
@@ -106,17 +95,17 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = primaryBackgroundCustom,
+            color = MaterialTheme.colorScheme.background,
             modifier = Modifier.padding(10.dp)
         ){
             Column (Modifier.fillMaxWidth(0.8f).padding(vertical=15.dp), verticalArrangement = Arrangement.SpaceBetween){
                 Box(Modifier.fillMaxWidth().padding(10.dp)){
-                    Row(Modifier.fillMaxWidth().border(1.dp, secondaryCustom).clickable(onClick = { expanded.value = true })){
+                    Row(Modifier.fillMaxWidth().border(1.dp, MaterialTheme.colorScheme.primary).clickable(onClick = { expanded.value = true })){
                         if(selectedUser.value != null){
                             UserData(selectedUser.value!!)
                         }else{
                             Text("Select a user",
-                                color = colorResource(R.color.secondary_text),
+                                color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .padding(8.dp)
                             )
@@ -124,20 +113,20 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
                     }
                     DropdownMenu(expanded = expanded.value,
                         onDismissRequest = { expanded.value = false },
-                        modifier = Modifier.background(colorResource(id = R.color.primary_text))) {
+                        modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
                         vm.users.forEach { i ->
                             DropdownMenuItem(
                                 text={
                                     Text(
                                         text = i.username,
-                                        color = colorResource(R.color.primary)
-                                    )
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer)
+
                                 },
                                 onClick = {
                                     expanded.value = false
                                     selectedUser.value = i
                                 },
-                                modifier = Modifier.fillMaxWidth().background(colorResource(id = R.color.primary_text))
+                                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondaryContainer)
                             )
                         }
                     }
@@ -148,7 +137,6 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
                         vm.inviteUser(selectedUser.value!!, context)
                         setShowDialog(false)
                     },
-                        colors = ButtonDefaults.buttonColors(containerColor = primaryCustom, contentColor = primaryTextCustom),
                         enabled = selectedUser.value != null){
                         Text("Invite")
                     }
@@ -162,25 +150,25 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: InvitationViewModel 
 private fun InvitationList(navController: NavController, vm: InvitationViewModel = hiltViewModel()){
     Column(Modifier.fillMaxHeight().padding(horizontal = 10.dp)){
         Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.SpaceBetween){
-            Text("Pending", color = primaryCustom)
+            Text("Pending", color = MaterialTheme.colorScheme.primary)
             LazyColumn(Modifier.weight(1f)) {
                 items(vm.filterInvitationByStatus(Status.PENDING)) {
                     InvitationListItem(it)
                 }
             }
-            CustomDivider()
+            ListItemDivider()
         }
         Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.SpaceBetween){
-            Text("Accepted", color = primaryCustom)
+            Text("Accepted", color = MaterialTheme.colorScheme.primary)
             LazyColumn(Modifier.weight(1f)) {
                 items(vm.filterInvitationByStatus(Status.ACCEPTED)) {
                     InvitationListItem(it)
                 }
             }
-            CustomDivider()
+            ListItemDivider()
         }
         Column(Modifier.fillMaxWidth().weight(1f), verticalArrangement = Arrangement.Top){
-            Text("Rejected", color = primaryCustom)
+            Text("Rejected", color = MaterialTheme.colorScheme.primary)
             LazyColumn(Modifier.weight(1f)) {
                 items(vm.filterInvitationByStatus(Status.REJECTED)) {
                     InvitationListItem(it)
@@ -221,8 +209,8 @@ private fun UserData(user: UserInfo){
             CustomImage(Modifier.fillMaxSize(), user.profilePictureFilePath,ImageSourceSelector.PROFILE )
         }
         Column(Modifier.padding(start=10.dp)){
-            Text(user.username, fontSize = 16.sp, color= Color.Black)
-            Text(user.name, Modifier.padding(start=5.dp), color= Color.Black)
+            Text(user.username, fontSize = 16.sp,color= MaterialTheme.colorScheme.primary)
+            Text(user.name, Modifier.padding(start=5.dp), color= MaterialTheme.colorScheme.primary)
         }
     }
 }

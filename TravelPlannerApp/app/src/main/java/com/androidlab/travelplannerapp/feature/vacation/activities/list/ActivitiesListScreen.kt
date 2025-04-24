@@ -26,6 +26,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,10 +52,6 @@ import com.androidlab.travelplannerapp.data.model.ActivityType
 import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.feature.utils.iconForActivityType
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryBackgroundCustom
-import com.example.compose.primaryCustom
-import com.example.compose.primaryTextCustom
-import com.example.compose.secondaryCustom
 
 @Composable
 fun ActivityListScreen(navController: NavController, travelId: String,vm: ActivitiesListViewModel = hiltViewModel()) {
@@ -74,7 +71,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues).background(primaryBackgroundCustom)) {
+                .padding(paddingValues).background(MaterialTheme.colorScheme.background)) {
                 ActivitiesList(navController)
             }
         },
@@ -90,7 +87,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
         },
         floatingActionButton = {
             if(vm.ownTravel.value){
-                FloatingActionButton(onClick = { showDialog.value = true}, containerColor = primaryCustom, contentColor = primaryTextCustom) {
+                FloatingActionButton(onClick = { showDialog.value = true}) {
                     Icon(Icons.Default.Add, contentDescription = "Add")
                 }
             }
@@ -107,7 +104,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: ActivitiesListViewMo
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = primaryBackgroundCustom,
+            color = MaterialTheme.colorScheme.background,
             modifier = Modifier.padding(10.dp)
         ){
             Column (Modifier.fillMaxWidth(0.8f).padding(vertical=15.dp), verticalArrangement = Arrangement.SpaceBetween){
@@ -119,44 +116,39 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: ActivitiesListViewMo
                     Text("Name",
                         modifier=Modifier.padding(end=10.dp),
                         fontWeight= FontWeight.Bold,
-                        color= colorResource(id = R.color.primary))
+                        color= MaterialTheme.colorScheme.primary)
                     TextField(
                         value = name.value,
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
                         singleLine = true,
                         onValueChange = {
                             name.value = it
                         },
-                        placeholder = { Text("Please enter the name")})
+                        placeholder = { Text("Please enter the name", color= MaterialTheme.colorScheme.background)})
                 }
                 Box(Modifier.fillMaxWidth().padding(10.dp)){
-                    Row(Modifier.fillMaxWidth().border(1.dp, secondaryCustom).clickable(onClick = { expanded.value = true })){
+                    Row(Modifier.fillMaxWidth().border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp)).clickable(onClick = { expanded.value = true })){
                             Text(text = type.value?.type?: "Select a type",
-                                color = colorResource(R.color.secondary_text),
+                                color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .padding(8.dp)
                             )
                     }
                     DropdownMenu(expanded = expanded.value,
                         onDismissRequest = { expanded.value = false },
-                        modifier = Modifier.background(colorResource(id = R.color.primary_text))) {
+                        modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
                         typeList.forEach { i ->
                             DropdownMenuItem(
                                 text={
                                     Text(
                                         text = i.type,
-                                        color = colorResource(R.color.primary)
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 },
                                 onClick = {
                                     expanded.value = false
                                     type.value = i
                                 },
-                                modifier = Modifier.fillMaxWidth().background(colorResource(id = R.color.primary_text))
+                                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondaryContainer)
                             )
                         }
                     }
@@ -166,7 +158,6 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: ActivitiesListViewMo
                         vm.addActivity(name.value, type.value!!)
                         setShowDialog(false)
                     },
-                        colors = ButtonDefaults.buttonColors(containerColor = primaryCustom, contentColor = primaryTextCustom),
                         enabled = type.value != null){
                         Text("Add")
                     }
@@ -188,8 +179,8 @@ private fun ActivitiesList(navController: NavController, vm: ActivitiesListViewM
 @Composable
 private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = hiltViewModel()){
     val opacity = if(activity.visited) 0.5f else 1f
-    Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 3.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
-        Row(Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically){
+    Row (Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
+        Row(Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically){
             if(vm.ownTravel.value){
                 Checkbox(
                     checked = activity.visited,
@@ -197,12 +188,12 @@ private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = h
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
             }
-            Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = colorResource(id = R.color.secondary_text))
+            Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = MaterialTheme.colorScheme.secondary)
             Text(activity.name, color = colorResource(id = R.color.secondary_text))
         }
         if(vm.ownTravel.value){
             IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {
-                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity", tint = colorResource(id = R.color.secondary_text))
+                Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity", tint = MaterialTheme.colorScheme.secondary)
             }
         }
     }

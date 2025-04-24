@@ -37,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -66,6 +67,7 @@ import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.feature.utils.DatePickerForm
 import com.androidlab.travelplannerapp.feature.utils.InputField
+import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
 import java.text.SimpleDateFormat
@@ -89,7 +91,10 @@ fun TravelCreateUpdateScreen(navController: NavController, id: String?,  vm: Tra
             }
         },
         topBar = {
-            TopBar(navController, id)
+
+            val title = if(id == null){"New travel"} else "Update travel"
+            val route = if(id == null){Screen.ProfileScreen.route} else {Screen.TravelProfileScreen.route+"?id=$id"}
+            TopBar(title, navController, route)
         }
     )
 }
@@ -127,11 +132,11 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
     Column(modifier = Modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState())){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
-            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name*", labelColor = colorResource(R.color.primary))
+            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name*", labelColor = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(20.dp))
-            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City*", labelColor = colorResource(R.color.primary))
+            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City*", labelColor = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(20.dp))
-            InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country*", labelColor = colorResource(R.color.primary))
+            InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country*", labelColor = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(20.dp))
             PrivateCheckBox(isPublic)
             Spacer(Modifier.height(20.dp))
@@ -144,7 +149,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
             Spacer(Modifier.height(20.dp))
             PriceCurrencyForm(price,currency )
             Spacer(Modifier.height(20.dp))
-            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = colorResource(R.color.primary), lines = 4)
+            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = MaterialTheme.colorScheme.primary, lines = 4)
             Spacer(Modifier.height(20.dp))
             Button(onClick = {
                 if(isUpdateAction){
@@ -173,14 +178,14 @@ private fun PrivateCheckBox(isPublic: MutableState<Boolean>){
     ) {
         Text(
             "Public: ",
-            color = colorResource(R.color.primary)
+            color = MaterialTheme.colorScheme.primary
         )
         Checkbox(
             checked = isPublic.value,
             onCheckedChange = { isPublic.value = it },
             colors = androidx.compose.material3.CheckboxDefaults.colors(
-                checkedColor = colorResource(R.color.primary),
-                uncheckedColor = colorResource(R.color.primary)
+                checkedColor = MaterialTheme.colorScheme.primary,
+                uncheckedColor = MaterialTheme.colorScheme.primary
             )
         )
     }
@@ -316,27 +321,27 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
             Spacer(modifier = Modifier.width(width = 8.dp))
             Box{
                 Text(currency.value,
-                    color = colorResource(R.color.secondary_text),
+                    color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
                         .padding(8.dp)
                         .clickable(onClick = { expanded.value = true })
                 )
                 DropdownMenu(expanded = expanded.value,
                     onDismissRequest = { expanded.value = false },
-                    modifier = Modifier.background(colorResource(id = R.color.primary_text))) {
+                    modifier = Modifier.background( MaterialTheme.colorScheme.secondaryContainer)) {
                     currencyItems.forEach { i ->
                         DropdownMenuItem(
                             text={
                                 Text(
                                     text = i,
-                                    color = colorResource(R.color.primary)
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             },
                             onClick = {
                                 expanded.value = false
                                 currency.value = i
                             },
-                            modifier = Modifier.fillMaxWidth().background(colorResource(id = R.color.primary_text))
+                            modifier = Modifier.fillMaxWidth().background( MaterialTheme.colorScheme.secondaryContainer)
                         )
                     }
                 }
@@ -346,29 +351,24 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopBar(navController: NavController, id: String?){
-    val title = if(id == null){"New travel"} else "Update travel"
-    val route = if(id == null){Screen.ProfileScreen.route} else {Screen.TravelProfileScreen.route+"?id=$id"}
-    CenterAlignedTopAppBar(
-        navigationIcon = {
-            IconButton(onClick = {
-                navController.navigate(route)
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Navigate back",
-                    tint = colorResource(id = R.color.primary_text)
-                )
-            }
-        },
-        title = {
-            Text(title)
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = colorResource(id = R.color.primary),
-            titleContentColor = colorResource(id = R.color.primary_text),
-        ),
-    )
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//private fun TopBar(navController: NavController, id: String?){
+//    val title = if(id == null){"New travel"} else "Update travel"
+//    val route = if(id == null){Screen.ProfileScreen.route} else {Screen.TravelProfileScreen.route+"?id=$id"}
+//    CenterAlignedTopAppBar(
+//        navigationIcon = {
+//            IconButton(onClick = {
+//                navController.navigate(route)
+//            }) {
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                    contentDescription = "Navigate back"
+//                )
+//            }
+//        },
+//        title = {
+//            Text(title)
+//        },
+//    )
+//}
