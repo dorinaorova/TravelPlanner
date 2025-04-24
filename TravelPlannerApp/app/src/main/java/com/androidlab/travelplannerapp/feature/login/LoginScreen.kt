@@ -15,6 +15,7 @@ import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.utils.InputField
 import com.androidlab.travelplannerapp.navigation.Screen
@@ -46,7 +48,7 @@ fun LoginScreen(navController: NavController, vm : LoginViewModel = hiltViewMode
         vm.checkRefreshToken(context, navController)
     })
             Box(modifier = Modifier
-                .fillMaxSize(), contentAlignment = Alignment.Center
+                .fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center
             ) {
                     LoginForm(navController)
             }
@@ -59,28 +61,27 @@ private fun LoginForm(navController: NavController, vm : LoginViewModel = hiltVi
     val context = LocalContext.current
     Box(Modifier
         .padding(bottom = 100.dp)
-        .background(color=colorResource(R.color.secondary), shape = RoundedCornerShape(size = 10.dp))){
+        .background(color=MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(size = 10.dp))){
         Column(Modifier.padding(horizontal = 10.dp)){
             Text("Login",
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.primary_background),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier =Modifier.padding(15.dp).align(Alignment.CenterHorizontally))
             Spacer(Modifier.height(20.dp))
 
-            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), null, "Username", Icons.Rounded.AccountCircle, testTag= "username")
+            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), null, "Username", Icons.Rounded.AccountCircle, labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag= "username")
 
             Spacer(Modifier.height(20.dp))
 
-            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", icon = Icons.Rounded.Lock, testTag = "password")
+            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", icon = Icons.Rounded.Lock, labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag="password")
 
             Spacer(Modifier.height(10.dp))
             Button(onClick={
                 vm.login(username.value,password.value, context, navController)
             },
-                Modifier.align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary_background))){
-                Text("Login", color= colorResource(R.color.secondary), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                Modifier.align(Alignment.CenterHorizontally)){
+                Text("Login", fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
             Spacer(Modifier.height(30.dp))
             ClickableText(
@@ -93,7 +94,7 @@ private fun LoginForm(navController: NavController, vm : LoginViewModel = hiltVi
                 style = TextStyle(
                     fontSize = 14.sp,
                     textDecoration = TextDecoration.Underline,
-                    color = colorResource(id = R.color.primary_background)
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             )
         }

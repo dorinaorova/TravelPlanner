@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature.ticket.ticketListView
+package com.androidlab.travelplannerapp.feature.vacation.tickets
 
 import android.content.Context
 import android.content.Intent
@@ -6,9 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
 import android.provider.OpenableColumns
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

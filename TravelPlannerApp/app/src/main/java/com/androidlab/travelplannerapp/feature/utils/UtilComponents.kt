@@ -26,21 +26,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -63,17 +62,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Activity
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
-import com.androidlab.travelplannerapp.feature.search.SearchViewModel
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryCustom
-import java.util.Date
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -82,23 +77,15 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import java.util.Date
 
 @Composable
 fun SmallHeader(text: String) {
     Text(text,
         fontSize=16.sp,
         fontWeight = FontWeight.Bold,
-        color = primaryCustom,
+        color = MaterialTheme.colorScheme.primary,
         modifier= Modifier.padding(start=25.dp, end=25.dp, top=15.dp, bottom = 10.dp))
-}
-
-@Composable
-fun CustomDivider(){
-    Divider(
-        thickness = 1.dp,
-        color = colorResource(id = R.color.primary),
-        modifier = Modifier.padding(horizontal = 25.dp, vertical = 20.dp)
-    )
 }
 
 @Composable
@@ -106,23 +93,24 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
     Row(
         Modifier
             .fillMaxWidth()
-            .background(colorResource(id = R.color.secondary)),
+            .background(MaterialTheme.colorScheme.primaryContainer),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
-        Row{
+        Row(verticalAlignment = Alignment.CenterVertically){
             IconButton(onClick = { navController.navigate(route) }) {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
                     contentDescription = null,
-                    tint= colorResource(id = R.color.primary_text))
+                    tint= MaterialTheme.colorScheme.onPrimaryContainer)
             }
-            androidx.compose.material3.Text(label,
-                fontSize=18.sp,
-                modifier= Modifier.padding(vertical = 20.dp))
+            Text(label,
+                fontSize=22.sp,
+                fontWeight = FontWeight.Bold,
+                modifier= Modifier.padding(vertical = 20.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         if(secondaryIcon != null && secondaryRoute != null){
             IconButton(onClick = { navController.navigate(secondaryRoute) }) {
                 Icon(imageVector = ImageVector.vectorResource(secondaryIcon),
                     contentDescription = null,
-                    tint= colorResource(id = R.color.primary_text))
+                    tint=MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
 
@@ -130,10 +118,10 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
 }
 
 @Composable
-fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = colorResource(id = R.color.primary_background), lines: Int = 1, testTag: String=""){
+fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = MaterialTheme.colorScheme.primary, lines: Int = 1, testTag: String=""){
     val focusManager = LocalFocusManager.current
     Column{
-    androidx.compose.material3.Text(
+    Text(
         label,
         fontSize = 15.sp,
         fontWeight = FontWeight.Medium,
@@ -149,7 +137,7 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
         textStyle = TextStyle(
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium,
-            color = colorResource(id = R.color.primary)
+            color = MaterialTheme.colorScheme.primary
         ),
         visualTransformation = visualTransformation ?: VisualTransformation.None,
         keyboardOptions = keyboardOptions,
@@ -164,7 +152,7 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .background(
-                        color = colorResource(R.color.primary_background),
+                        color = MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(size = 10.dp)
                     )
                     .border(
@@ -172,7 +160,7 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
                         color = if (isError) {
                             Color.Red
                         } else {
-                            colorResource(id = R.color.primary)
+                            MaterialTheme.colorScheme.primary
                         },
                         shape = RoundedCornerShape(size = 10.dp)
 
@@ -183,7 +171,7 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = colorResource(id = R.color.primary)
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 Spacer(modifier = Modifier.width(width = 8.dp))
@@ -196,27 +184,28 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
 
 
 @Composable
-fun BlankTravelImage(imageModifier: Modifier, source: ImageSourceSelector = ImageSourceSelector.TRAVEL ){
+fun BlankTravelImage(imageModifier: Modifier, source: ImageSourceSelector = ImageSourceSelector.TRAVEL , alpha: Float = 1f){
     val image = if(source == ImageSourceSelector.PROFILE){R.drawable.blank_profile}else{R.drawable.blank_travel_image}
     Image(
         painterResource(id = image),
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = imageModifier
+        modifier = imageModifier,
+        alpha = alpha
     )
 }
 
 @Composable
 fun ListItemDivider(){
-    Divider(
+    HorizontalDivider(
         thickness = 1.dp,
-        color = colorResource(id = R.color.primary),
-        modifier = Modifier.padding(horizontal = 25.dp)
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(horizontal = 25.dp, vertical = 10.dp)
     )
 }
 
 @Composable
-fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSourceSelector = ImageSourceSelector.TRAVEL){
+fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSourceSelector = ImageSourceSelector.TRAVEL, alpha: Float = 1f){
     if(!filePath.isNullOrEmpty()){
         val fullPicturePath = when(imageSource){
             ImageSourceSelector.PROFILE -> profilePictureFilePath(LocalContext.current ,filePath)
@@ -227,10 +216,11 @@ fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSo
             model = fullPicturePath,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = imageModifier
+            modifier = imageModifier,
+            alpha = alpha
         )
     }else{
-        BlankTravelImage(imageModifier, imageSource)
+        BlankTravelImage(imageModifier, imageSource, alpha)
     }
 }
 
@@ -241,18 +231,14 @@ fun DatePickerForm(label: String, date: MutableState<Long>){
         generateDate(date.value)
     }
     Column(Modifier.padding(10.dp)) {
-        androidx.compose.material3.Text(
+        Text(
             text = label,
             modifier = Modifier.padding(bottom = 5.dp).align(Alignment.CenterHorizontally),
-            color = colorResource(id = R.color.primary)
         )
         Button(onClick = { showDatePicker.value = true },
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.primary_text),
-                contentColor = colorResource(id = R.color.primary),
-            )) {
-            androidx.compose.material3.Text(text = dateText)
+            ) {
+            Text(text = dateText)
         }
     }
 
@@ -278,20 +264,20 @@ fun MyDatePickerDialog(
     DatePickerDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
-            androidx.compose.material3.Button(onClick = {
+            Button(onClick = {
                 onDateSelected(selectedDate)
                 onDismiss()
             }
 
             ) {
-                androidx.compose.material3.Text(text = "OK")
+              Text(text = "OK")
             }
         },
         dismissButton = {
-            androidx.compose.material3.Button(onClick = {
+            Button(onClick = {
                 onDismiss()
             }) {
-                androidx.compose.material3.Text(text = "Cancel")
+                Text(text = "Cancel")
             }
         }
     ) {
@@ -401,16 +387,16 @@ fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Bool
             }
             Column {
                 Text(travel.name,
-                    fontSize = 18.sp)
+                    fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
                 Text("${travel.city}, ${travel.country}",
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(start=8.dp))
+                    modifier = Modifier.padding(start=8.dp), color = MaterialTheme.colorScheme.secondary)
                 Text("${travel.price} ${travel.currency}",
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(start=8.dp))
+                    modifier = Modifier.padding(start=8.dp), color = MaterialTheme.colorScheme.secondary)
                 Text(travel.tags?.joinToString(separator = ", ")?: "",
                     fontSize = 8.sp,
-                    modifier = Modifier.padding(start=10.dp, top= 10.dp))
+                    modifier = Modifier.padding(start=10.dp, top= 10.dp), color = MaterialTheme.colorScheme.secondary)
             }
         }
         Box {
@@ -444,10 +430,10 @@ fun UserListItem(navController: NavController, user: UserInfo){
             }
             Column(Modifier.align(Alignment.CenterVertically).padding(start=10.dp)) {
                 Text(user.username,
-                    fontSize = 18.sp)
+                    fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
                 Text(user.name,
                     fontSize = 12.sp,
-                    modifier = Modifier.padding(start=8.dp))
+                    modifier = Modifier.padding(start=8.dp), color = MaterialTheme.colorScheme.secondary)
             }
         }
         Box(Modifier.align(Alignment.CenterVertically).padding(end=20.dp)) {
@@ -455,19 +441,6 @@ fun UserListItem(navController: NavController, user: UserInfo){
             if(!ownProfile(user._id, context)){
                 Box {
                    val isFollower = isFollower(user.followerIds, context)
-//                    val liked  = if (!isFollower) {
-//                        ImageVector.vectorResource(R.drawable.baseline_favorite_border_24)
-//                    }else {
-//                        ImageVector.vectorResource(R.drawable.baseline_favorite_24)
-//                    }
-//                    androidx.compose.material.Icon(
-//                        imageVector = liked,
-//                        contentDescription = "like",
-//                        tint = colorResource(id = R.color.primary),
-//                        modifier = Modifier
-//                            .width(30.dp)
-//                            .height(30.dp)
-//                    )
                     LikeButton(!isFollower, {})
 
                 }
@@ -500,7 +473,7 @@ fun LikeButton(isLiked: Boolean, onClick: () -> Unit){
         Icon(
             imageVector = icon,
             contentDescription = "like",
-            tint = colorResource(id = R.color.primary),
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .width(30.dp)
                 .height(30.dp)

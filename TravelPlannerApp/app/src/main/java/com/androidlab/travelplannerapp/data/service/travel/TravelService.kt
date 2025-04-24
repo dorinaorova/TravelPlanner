@@ -36,8 +36,8 @@ interface TravelService {
     fun newTravel(@Path("id") id: String, @Body travel: Travel) : Call<Travel>?
 
     @Headers("Accept: application/json")
-    @PUT("travel/update")
-    fun updateTravel(@Body travel: Travel) : Call<Travel>?
+    @PUT("travel/update/{id}")
+    fun updateTravel(@Body travel: Travel, @Path("id") id: String) : Call<Travel>?
 
     @Headers("Accept: application/json")
     @GET("travel/filterValues")

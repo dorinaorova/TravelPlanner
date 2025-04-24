@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +33,7 @@ fun ListScreen(navController: NavController,type: String, userId: String, vm : L
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(colorResource(id = R.color.primary_background))) {
+                .background(MaterialTheme.colorScheme.background)) {
                 CustomList(navController, type)
             }
         },

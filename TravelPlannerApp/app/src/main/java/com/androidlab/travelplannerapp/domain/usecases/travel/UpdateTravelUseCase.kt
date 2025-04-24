@@ -7,5 +7,5 @@ import javax.inject.Inject
 class UpdateTravelUseCase @Inject constructor(
     private val travelService: TravelService
 ) {
-    operator fun invoke(travel: Travel) = travelService.updateTravel(travel)
+    operator fun invoke(travel: Travel, id: String) = travelService.updateTravel(travel, id)
 }

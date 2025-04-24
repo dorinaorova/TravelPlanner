@@ -30,22 +30,24 @@ class ActivitiesListViewModel @Inject constructor(
     private val _activities = mutableStateListOf<Activity>()
     var travelId: String = ""
     val activities: List<Activity> = _activities
-    var ownTravel= mutableStateOf(true)
+    var participant= mutableStateOf(true)
 
     fun fetchData(id: String, context: Context){
         viewModelScope.launch {
             travelId = id
-            ownTravel(context)
+            participateTravel(context)
             getActivities()
         }
     }
 
-    private fun ownTravel(context: Context){
+    private fun participateTravel(context: Context){
         viewModelScope.launch {
             val call = getTravelByIdUseCase(travelId)
             val response = call?.awaitResponse()
             if (response?.isSuccessful == true){
-                ownTravel.value = response.body()!!.ownerId == getOwnUserId(context)
+                val travel = response.body()!!
+                val ownId = getOwnUserId(context)
+                participant.value = travel.ownerId == ownId || travel.participantIds!!.contains(ownId)
             }
         }
     }

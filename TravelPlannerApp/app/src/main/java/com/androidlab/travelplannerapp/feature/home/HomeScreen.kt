@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,27 +28,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.data.model.Invitation
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
-import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
 import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryBackgroundCustom
-import com.example.compose.primaryCustom
-import com.example.compose.secondaryCustom
+
 
 @Composable
 fun HomeScreen(navController: NavController, vm: HomeViewModel = hiltViewModel()){
@@ -60,7 +52,7 @@ fun HomeScreen(navController: NavController, vm: HomeViewModel = hiltViewModel()
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues).background(primaryBackgroundCustom)) {
+                .padding(paddingValues).background(MaterialTheme.colorScheme.background)) {
                 Column{
                     CurrentVacation(navController)
                     Invitations(navController)
@@ -78,7 +70,7 @@ fun MyVacationList(navController: NavController, vm: HomeViewModel = hiltViewMod
     Text(
         "Upcoming vacations",
         fontSize = 24.sp,
-        color = primaryCustom,
+        color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)
     )
     LazyColumn {
@@ -102,13 +94,13 @@ fun MyVacationList(navController: NavController, vm: HomeViewModel = hiltViewMod
                         Text(
                             travel.name,
                             fontSize = 18.sp,
-                            color = Color.Black
+                            color = MaterialTheme.colorScheme.primary
                         )
                         Text(
                             "${ generateDate(travel.startDate) } - ${ generateDate(travel.endDate) }",
                                     fontSize = 12.sp,
                             modifier = Modifier.padding(start=8.dp),
-                            color = Color.Black)
+                            color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
@@ -125,31 +117,31 @@ fun CurrentVacation(navController: NavController, vm: HomeViewModel = hiltViewMo
             val imageModifier = Modifier
                 .fillMaxSize()
                 .blur(5.dp)
-            CustomImage(imageModifier, currentVacation.pictureFileName, ImageSourceSelector.TRAVEL)
+            CustomImage(imageModifier, currentVacation.pictureFileName, ImageSourceSelector.TRAVEL, 0.6F)
             Column(modifier = Modifier.padding(start = 20.dp)) {
                 Text(
                     "You are on vacation",
                     fontSize = 18.sp,
-                    color = colorResource(id = R.color.secondary_text),
+                    color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.padding(top = 50.dp)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)
+                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp).clickable {navController.navigate(route = Screen.VacationScreen.route+"?id=${currentVacation._id}")  }
                 ) {
                     Text(
                         currentVacation.name,
                         fontSize = 36.sp,
-                        color = colorResource(id = R.color.secondary_text),
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    IconButton(onClick = { navController.navigate(route = Screen.VacationScreen.route+"?id=${currentVacation._id}") }) {
+
                         Icon(
                             imageVector = Icons.Rounded.ArrowForward,
                             contentDescription = "details",
-                            tint = colorResource(id = R.color.secondary_text)
+                            tint = MaterialTheme.colorScheme.primary
                         )
-                    }
+
                 }
 
             }
@@ -163,7 +155,7 @@ fun Invitations(navController: NavController, vm: HomeViewModel = hiltViewModel(
   if(vm.invitations.isNotEmpty()){
       val context = LocalContext.current
       Column (Modifier.fillMaxWidth().heightIn(0.dp, 250.dp)){
-          Text("Invitations", color = primaryCustom, fontSize = 20.sp, modifier =Modifier.padding(horizontal=15.dp, vertical=10.dp))
+          Text("Invitations", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, modifier =Modifier.padding(horizontal=15.dp, vertical=10.dp))
           LazyColumn {
               items(vm.invitations) { inv ->
                   Row(
@@ -174,36 +166,30 @@ fun Invitations(navController: NavController, vm: HomeViewModel = hiltViewModel(
                       Text(
                           vm.findTravelNameById(inv.travelId) ?: "Not found",
                           fontSize = 16.sp,
-                          color = Color.Black,
+                          color = MaterialTheme.colorScheme.primary,
                           modifier = Modifier.clickable(onClick = { navController.navigate(Screen.TravelProfileScreen.route + "?id=${inv.travelId}") })
                       )
 
                       Row(verticalAlignment = Alignment.CenterVertically) {
                           TextButton(onClick = { vm.answerInvitation(inv._id!!, true, context)}) {
-                              Text("Accept", color = primaryCustom) }
-                          Text("/", color = primaryCustom)
+                              Text("Accept", color = MaterialTheme.colorScheme.primary) }
+                          Text("/", color= MaterialTheme.colorScheme.primary)
                           TextButton(onClick = { vm.answerInvitation(inv._id!!, false, context)}) {
-                              Text("Decline", color = secondaryCustom) }
+                              Text("Decline", color = MaterialTheme.colorScheme.primary) }
                       }
                   }
                   Divider(
                       thickness = 1.dp,
-                      color = colorResource(id = R.color.primary),
+                      color = MaterialTheme.colorScheme.primary,
                       modifier = Modifier.padding(horizontal = 25.dp, vertical = 3.dp)
                   )
               }
           }
           Divider(
               thickness = 2.dp,
-              color = secondaryCustom,
+              color = MaterialTheme.colorScheme.primary,
               modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
           )
   }
 }
-}
-
-@Composable
-@Preview(showBackground =  true)
-fun HomeScreenPreview(){
-    HomeScreen(navController = rememberNavController())
 }
