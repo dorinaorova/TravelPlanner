@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.material.icons.rounded.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +37,7 @@ import com.androidlab.travelplannerapp.feature.utils.InputField
 @Composable
 fun RegistrationScreen(navController: NavController, vm : RegistrationViewModel = hiltViewModel()){
     Box(modifier = Modifier
-        .fillMaxSize(), contentAlignment = Alignment.Center
+        .fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center
     ) {
         RegistrationForm(navController)
     }
@@ -55,37 +52,29 @@ private fun RegistrationForm(navController: NavController, vm: RegistrationViewM
     val context = LocalContext.current
     Box(Modifier
         .padding(bottom = 100.dp)
-        .background(color= colorResource(R.color.secondary), shape = RoundedCornerShape(size = 10.dp))){
+        .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(size = 10.dp))){
         Column(Modifier.padding(horizontal = 10.dp)){
             Text("Create new account",
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
-                color = colorResource(R.color.primary_background),
+                color =MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier =Modifier.padding(15.dp))
             Spacer(Modifier.height(20.dp))
-            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), label ="Username")
+            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), label ="Username", labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
             Spacer(Modifier.height(20.dp))
-            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), label="Full name")
+            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), label="Full name", labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
             Spacer(Modifier.height(20.dp))
-            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), label= "Email", isError = !vm.checkEmailFormat(email.value))
+            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), label= "Email", isError = !vm.checkEmailFormat(email.value), labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
             Spacer(Modifier.height(20.dp))
-            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password")
+            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
             Spacer(Modifier.height(20.dp))
             Button(onClick={
                 vm.signUp(username.value,password.value, name.value, email.value, context, navController)
             },
-                Modifier.align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary_background))){
-                Text("Ready to travel!", color= colorResource(R.color.secondary), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                Modifier.align(Alignment.CenterHorizontally)){
+                Text("Ready to travel!", fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
             Spacer(Modifier.height(30.dp))
         }
     }
-}
-
-
-@Composable
-@Preview(showBackground =  true)
-fun RegistrationScreenPreview(){
-    RegistrationScreen(navController = rememberNavController())
 }

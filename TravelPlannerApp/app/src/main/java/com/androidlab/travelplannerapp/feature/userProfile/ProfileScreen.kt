@@ -1,5 +1,6 @@
 package com.androidlab.travelplannerapp.feature.userProfile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -22,16 +23,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.TabRowDefaults.Divider
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MailOutline
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -44,23 +45,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageType
-import com.androidlab.travelplannerapp.feature.utils.CustomDivider
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
 import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.LikeButton
+import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
 import com.androidlab.travelplannerapp.feature.utils.isFollower
 import com.androidlab.travelplannerapp.feature.utils.ownProfile
 import com.androidlab.travelplannerapp.navigation.Screen
@@ -125,7 +123,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     .verticalScroll(scroll)
                     .fillMaxSize()
                     .background(
-                        colorResource(id = R.color.primary_background),
+                        MaterialTheme.colorScheme.background,
                         shape = RoundedCornerShape(size = 30.dp)
                     )
             ) {
@@ -139,17 +137,16 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                             IconButton(onClick = { menuExpanded.value= true }) {
                                 Icon(
                                     imageVector= Icons.Rounded.MoreVert,
-                                    contentDescription = null,
-                                    tint= colorResource(id = R.color.primary)
+                                    contentDescription = null
                                 )
                             }
                             DropdownMenu(
                                 expanded = menuExpanded.value,
                                 onDismissRequest = { menuExpanded.value = false },
-                                modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                             ){
                                 DropdownMenuItem(
-                                    text={ Text("Liked travels") },
+                                    text={ Text("Liked travels", color= MaterialTheme.colorScheme.onSecondaryContainer) },
                                     onClick = {
                                         menuExpanded.value = false
                                         navController.navigate(Screen.ListScreen.route+"?id=${vm.user._id}?type=likedTravels")
@@ -157,12 +154,13 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                                     leadingIcon = {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(R.drawable.baseline_favorite_24),
-                                            contentDescription = null
+                                            contentDescription = null,
+                                            tint= MaterialTheme.colorScheme.onSecondaryContainer
                                         )},
-                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Edit") },
+                                    text = { Text("Edit", color= MaterialTheme.colorScheme.onSecondaryContainer) },
                                     onClick = {
                                         menuExpanded.value = false
                                         navController.navigate(Screen.UserUpdateScreen.route)
@@ -170,12 +168,13 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                                     leadingIcon = {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(R.drawable.baseline_edit_24),
-                                            contentDescription = null
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
                                         )},
-                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                                 )
                                 DropdownMenuItem(
-                                    text={ Text("Upload background image") },
+                                    text={ Text("Upload background image", color= MaterialTheme.colorScheme.onSecondaryContainer) },
                                     onClick = {
                                         menuExpanded.value = false
                                         navController.navigate(Screen.UploadImageScreen.route+"?id=${vm.user._id}&uploadImageType=${UploadImageType.BACKGROUND}")
@@ -183,20 +182,21 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                                     leadingIcon = {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(R.drawable.baseline_image_24),
-                                            contentDescription = null
+                                            contentDescription = null,
+                                            tint= MaterialTheme.colorScheme.onSecondaryContainer
                                         )},
-                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Log out") },
+                                    text = { Text("Log out", color= MaterialTheme.colorScheme.onSecondaryContainer) },
                                     onClick = {
                                         menuExpanded.value = false
                                         vm.logout(context, navController)
                                     },
                                     leadingIcon = {
-                                        Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null)
+                                        Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_logout_24), contentDescription = null, tint = MaterialTheme.colorScheme.onSecondaryContainer)
                                     },
-                                    modifier = Modifier.background(colorResource(id = R.color.primary_text))
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
                                 )
                             }
                         }
@@ -218,28 +218,28 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     )
                     Text(vm.user.username,
                         fontSize = 12.sp,
-                        color = colorResource(id = R.color.secondary_text)
+                        color = MaterialTheme.colorScheme.secondary
                     )
                     Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
                         val email = if(vm.user.email==""){"-"} else{vm.user.email}
                         Row(verticalAlignment = Alignment.CenterVertically){
-                            Icon(imageVector = Icons.Rounded.MailOutline, contentDescription = null,tint= colorResource(id = R.color.primary))
+                            Icon(imageVector = Icons.Rounded.MailOutline, contentDescription = null,tint= MaterialTheme.colorScheme.primary)
                             Text(email,
                                 modifier = Modifier.padding(start=5.dp))
                         }
                         val livingLabel = (vm.user.city?: "-")+", "+(vm.user.country?: "-")
                         Row(verticalAlignment = Alignment.CenterVertically){
-                            Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_public_24), contentDescription = null,tint= colorResource(id = R.color.primary))
+                            Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_public_24), contentDescription = null,tint= MaterialTheme.colorScheme.primary)
                             Text(livingLabel,
                                 modifier = Modifier.padding(start=5.dp))
                         }
 
                     }
                     Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
-                        Text("About me", fontWeight = FontWeight.Thin, color = colorResource(id = R.color.primary))
+                        Text("About me", fontWeight = FontWeight.Thin)
                         Text(vm.user.description?:"...")
                     }
-                    CustomDivider()
+                    ListItemDivider()
                     Row(modifier = Modifier
                         .padding(horizontal = 25.dp)
                         .fillMaxWidth(),
@@ -261,7 +261,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                             }
                         }
                     }
-                    CustomDivider()
+                    ListItemDivider()
                     LazyRow(
                         Modifier
                             .fillMaxWidth()
@@ -275,9 +275,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                                 TravelItem(navController, it)
                             }
                     }
-                    Divider(thickness = 1.dp,
-                        color = colorResource(id = R.color.primary),
-                        modifier = Modifier.padding(horizontal=25.dp, vertical=20.dp))
+                    ListItemDivider()
                 }
             }
         }
@@ -318,10 +316,11 @@ private fun TravelItem(navController: NavController, travel: Travel?, vm: UserPr
             .width(120.dp)
             .padding(horizontal = 10.dp)
             .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.background)
             .clickable { navController.navigate(route) }) {
         if(travel != null){
             val imageModifier = Modifier.blur(3.dp).fillMaxSize()
-            CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL)
+            CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL, 0.6F)
 
             Column(
                 Modifier
@@ -332,38 +331,30 @@ private fun TravelItem(navController: NavController, travel: Travel?, vm: UserPr
                     if(travel.public && vm.ownProfile){
                         Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_remove_red_eye_24),
                             contentDescription = null,
-                            tint= colorResource(id = R.color.primary_text))
+                            tint= MaterialTheme.colorScheme.primary)
                     }
                 }
                 Column{
 
                 Text( travel.name,
-                    color= colorResource(id = R.color.primary_text),
                     fontWeight = FontWeight.Bold,
-                    fontSize=18.sp
+                    fontSize=18.sp,
+                    color=  MaterialTheme.colorScheme.primary
                 )
                 Text(travel.city+", "+travel.country,
-                    color= colorResource(id = R.color.primary_text),
-                    fontSize=10.sp)
+                    fontSize=10.sp, color= MaterialTheme.colorScheme.primary)
                 }
             }
         }else{
-            Box(Modifier.background(colorResource(id = R.color.secondary)).fillMaxSize()){
+            Box(Modifier.background(MaterialTheme.colorScheme.primaryContainer).fillMaxSize()){
                 Image(imageVector = ImageVector.vectorResource(R.drawable.baseline_add_24),
                     contentDescription = null,
-                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(colorResource(id = R.color.primary_text)),
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
                     modifier = Modifier.fillMaxSize(),
                     alignment = Alignment.Center)
             }
         }
     }
-}
-
-
-@Composable
-@Preview(showBackground =  true)
-fun ProfileScreenPreview(){
-    ProfileScreen(navController = rememberNavController(), null)
 }
 
 private data class Item(val value: Int, val label: String)

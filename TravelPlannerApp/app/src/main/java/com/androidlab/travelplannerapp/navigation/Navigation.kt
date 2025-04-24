@@ -1,17 +1,11 @@
 package com.androidlab.travelplannerapp.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
@@ -23,7 +17,7 @@ import com.androidlab.travelplannerapp.feature.list.ListScreen
 import com.androidlab.travelplannerapp.feature.login.LoginScreen
 import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
 import com.androidlab.travelplannerapp.feature.search.SearchScreen
-import com.androidlab.travelplannerapp.feature.ticket.ticketListView.TicketsScreen
+import com.androidlab.travelplannerapp.feature.vacation.tickets.TicketsScreen
 import com.androidlab.travelplannerapp.feature.travel.TravelProfileScreen
 import com.androidlab.travelplannerapp.feature.travel.travelCreate.TravelCreateUpdateScreen
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageScreen

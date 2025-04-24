@@ -1,6 +1,5 @@
 package com.androidlab.travelplannerapp.feature.vacation.activities.map
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,11 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -36,14 +33,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.ActivityType
+import com.androidlab.travelplannerapp.feature.utils.Map
 import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryBackgroundCustom
-import com.example.compose.primaryCustom
-import com.example.compose.primaryTextCustom
-import com.example.compose.secondaryCustom
 import com.google.android.gms.maps.model.LatLng
-import com.androidlab.travelplannerapp.feature.utils.Map
 
 
 @Composable
@@ -95,7 +88,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: MapViewModel = hiltV
     Dialog(onDismissRequest = { setShowDialog(false) }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = primaryBackgroundCustom,
+            color = MaterialTheme.colorScheme.background,
             modifier = Modifier.padding(10.dp)
         ){
             Column (Modifier.fillMaxWidth(0.8f).padding(vertical=15.dp), verticalArrangement = Arrangement.SpaceBetween){
@@ -107,45 +100,40 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: MapViewModel = hiltV
                     Text("Name",
                         modifier=Modifier.padding(end=10.dp),
                         fontWeight= FontWeight.Bold,
-                        color= colorResource(id = R.color.primary)
+                        color= MaterialTheme.colorScheme.primary
                     )
                     TextField(
                         value = name.value,
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = androidx.compose.ui.graphics.Color.Transparent,
-                            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-                            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent
-                        ),
                         singleLine = true,
                         onValueChange = {
                             name.value = it
                         },
-                        placeholder = { Text("Please enter the name") })
+                        placeholder = { Text("Please enter the name",color= MaterialTheme.colorScheme.primary) })
                 }
                 Box(Modifier.fillMaxWidth().padding(10.dp)){
-                    Row(Modifier.fillMaxWidth().border(1.dp, secondaryCustom).clickable(onClick = { expanded.value = true })){
+                    Row(Modifier.fillMaxWidth().border(1.dp, MaterialTheme.colorScheme.primary).clickable(onClick = { expanded.value = true })){
                         Text(text = type.value?.type?: "Select a type",
-                            color = colorResource(R.color.secondary_text),
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .padding(8.dp)
                         )
                     }
                     DropdownMenu(expanded = expanded.value,
                         onDismissRequest = { expanded.value = false },
-                        modifier = Modifier.background(colorResource(id = R.color.primary_text))) {
+                        modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)) {
                         typeList.forEach { i ->
                             DropdownMenuItem(
                                 text={
                                     Text(
                                         text = i.type,
-                                        color = colorResource(R.color.primary)
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                 },
                                 onClick = {
                                     expanded.value = false
                                     type.value = i
                                 },
-                                modifier = Modifier.fillMaxWidth().background(colorResource(id = R.color.primary_text))
+                                modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.secondaryContainer)
                             )
                         }
                     }
@@ -155,7 +143,6 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: MapViewModel = hiltV
                         vm.addActivity(name.value, type.value!!)
                         setShowDialog(false)
                     },
-                        colors = ButtonDefaults.buttonColors(containerColor = primaryCustom, contentColor = primaryTextCustom),
                         enabled = type.value != null){
                         Text("Add")
                     }

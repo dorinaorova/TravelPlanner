@@ -37,7 +37,7 @@ fun NavBar(navController: NavController){
     val backStackEntry = navController.currentBackStackEntryAsState()
 
 
-    NavigationBar(containerColor = colorResource(id = R.color.primary))
+    NavigationBar()
     {
         bottomNavItems.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
@@ -49,17 +49,9 @@ fun NavBar(navController: NavController){
                     Icon(
                         imageVector = item.icon,
                         contentDescription = "${item.name} Icon",
-                        tint = colorResource(id = R.color.primary_text)
                     )
                 }
             )
         }
     }
-
-}
-
-@Composable
-@Preview(showBackground =  true)
-fun NavBarPreview(){
-    NavBar(navController = rememberNavController())
 }

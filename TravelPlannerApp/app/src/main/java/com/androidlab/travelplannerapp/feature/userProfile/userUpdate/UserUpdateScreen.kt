@@ -18,6 +18,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -38,6 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.utils.InputField
+import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.navigation.Screen
 
 @Composable
@@ -57,36 +59,10 @@ fun UserUpdateScreen(navController: NavController, vm: UserUpdateViewModel = hil
             }
         },
         topBar = {
-            TopBar(navController)
+            TopBar("Update profile", navController, Screen.ProfileScreen.route)
         }
     )
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopBar(navController: NavController){
-    CenterAlignedTopAppBar(
-        navigationIcon = {
-            IconButton(onClick = {
-                navController.navigate(Screen.ProfileScreen.route)
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Navigate back",
-                    tint = colorResource(id = R.color.primary_text)
-                )
-            }
-        },
-        title = {
-            Text("Update profile")
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = colorResource(id = R.color.primary),
-            titleContentColor = colorResource(id = R.color.primary_text),
-        ),
-    )
-}
-
 
 @Composable
 private fun Form(vm: UserUpdateViewModel = hiltViewModel(), navController: NavController){
@@ -96,32 +72,22 @@ private fun Form(vm: UserUpdateViewModel = hiltViewModel(), navController: NavCo
     val city = remember(vm.user.city?: "") { mutableStateOf(vm.user.city?: "") }
     val country = remember(vm.user.country?: "") { mutableStateOf(vm.user.country?: "") }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)){
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
-            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = colorResource(R.color.primary))
+            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(20.dp))
-            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), null, "Email", labelColor = colorResource(R.color.primary))
+            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), null, "Email", labelColor = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(20.dp))
-            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = colorResource(R.color.primary), lines = 4)
+            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = MaterialTheme.colorScheme.primary, lines = 4)
             Spacer(Modifier.height(20.dp))
-            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City",labelColor = colorResource(R.color.primary))
+            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City",labelColor = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(20.dp))
-            InputField(country, KeyboardOptions(imeAction = ImeAction.Done), null, "Country",labelColor = colorResource(R.color.primary))
+            InputField(country, KeyboardOptions(imeAction = ImeAction.Done), null, "Country",labelColor = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(20.dp))
             Button(onClick = { vm.updateUser(name.value, email.value, description.value, city.value, country.value, navController) },
                 Modifier.align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.primary),
-                    contentColor = colorResource(id = R.color.primary_text)
-                )
             ) { Text("Save") }
         }
     }
-}
-
-@Composable
-@Preview(showBackground =  true)
-fun UserUpdateScreenPreview(){
-    UserUpdateScreen(navController = rememberNavController())
 }

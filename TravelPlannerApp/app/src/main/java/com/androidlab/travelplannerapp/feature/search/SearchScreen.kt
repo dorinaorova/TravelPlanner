@@ -19,26 +19,24 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -48,12 +46,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -66,18 +62,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
-import com.androidlab.travelplannerapp.data.model.Travel
-import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
-import com.androidlab.travelplannerapp.feature.utils.CustomImage
-import com.androidlab.travelplannerapp.feature.utils.ImageSourceSelector
 import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
 import com.androidlab.travelplannerapp.feature.utils.TravelListItem
 import com.androidlab.travelplannerapp.feature.utils.UserListItem
-import com.androidlab.travelplannerapp.feature.utils.isFollower
-import com.androidlab.travelplannerapp.feature.utils.ownProfile
-import com.androidlab.travelplannerapp.navigation.Screen
-import com.example.compose.primaryContainerLight
 
 
 val openFilterDialog =mutableStateOf(false)
@@ -103,7 +91,7 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(colorResource(id = R.color.primary_background))) {
+                .background(MaterialTheme.colorScheme.background)) {
                 Column{
                     SearchBar(travelPicked)
                     if(travelPicked.value){
@@ -123,7 +111,7 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
 
 @Composable
 fun SearchBar(travelPicked: MutableState<Boolean>, vm: SearchViewModel = hiltViewModel()){
-    Box(Modifier.background(colorResource(id = R.color.secondary))){
+    Box(Modifier.background(MaterialTheme.colorScheme.primaryContainer)){
         Column{
             Row (Modifier.padding(top=10.dp, end=15.dp, start=15.dp)){
                 val keyboardController = LocalSoftwareKeyboardController.current
@@ -133,7 +121,7 @@ fun SearchBar(travelPicked: MutableState<Boolean>, vm: SearchViewModel = hiltVie
                     textStyle = TextStyle(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
-                        color = colorResource(id = R.color.secondary)
+                        color = MaterialTheme.colorScheme.primary
                     ),
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -152,7 +140,7 @@ fun SearchBar(travelPicked: MutableState<Boolean>, vm: SearchViewModel = hiltVie
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(
-                                    color = colorResource(id = R.color.primary_background),
+                                    color = MaterialTheme.colorScheme.background,
                                     shape = RoundedCornerShape(size = 30.dp)
                                 )
                                 .padding(all = 16.dp),
@@ -161,7 +149,7 @@ fun SearchBar(travelPicked: MutableState<Boolean>, vm: SearchViewModel = hiltVie
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search icon",
-                                tint = colorResource(id = R.color.secondary)
+                                tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(width = 8.dp))
                             innerTextField()
@@ -179,12 +167,12 @@ fun TravelOrUserPicker(travelPicked: MutableState<Boolean>){
     val travelBtnColor: Color
     val userBtnColor : Color
     if(travelPicked.value){
-        travelBtnColor= colorResource(id = R.color.primary_background)
-        userBtnColor= colorResource(id = R.color.primary_text)
+        travelBtnColor= MaterialTheme.colorScheme.onPrimaryContainer
+        userBtnColor= MaterialTheme.colorScheme.background
     }
     else{
-        travelBtnColor= colorResource(id = R.color.primary_text)
-        userBtnColor= colorResource(id = R.color.primary_background)
+        travelBtnColor= MaterialTheme.colorScheme.background
+        userBtnColor= MaterialTheme.colorScheme.onPrimaryContainer
     }
 
     Row(Modifier.fillMaxWidth(),
@@ -205,18 +193,14 @@ private fun FilterBtn(){
         openFilterDialog.value = true
     },
         shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary_background)),
         modifier = Modifier.padding(8.dp),
-        border = BorderStroke(2.dp, colorResource(id = R.color.secondary))
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.baseline_filter_list_24),
-            contentDescription = "filter",
-            tint = colorResource(id = R.color.secondary)
+            contentDescription = "filter"
         )
         Text(
-            text="Filter",
-            color = colorResource(id = R.color.secondary)
+            text="Filter"
         )
     }
 }
@@ -257,13 +241,12 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
     Dialog(onDismissRequest = onDismissRequest) {
         Card(modifier = Modifier
             .wrapContentSize()
-            .padding(10.dp),
-            shape = RoundedCornerShape(16.dp),
-            backgroundColor = colorResource(id = R.color.primary_background)) {
+            .padding(10.dp).background(MaterialTheme.colorScheme.background),
+            shape = RoundedCornerShape(16.dp)) {
             Box{
             Column(Modifier.padding(10.dp)){
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
-                    Text("Cancel", modifier = Modifier.clickable { onDismissRequest() }, color = colorResource(id = R.color.secondary))
+                    Text("Cancel", modifier = Modifier.clickable { onDismissRequest() }, color = MaterialTheme.colorScheme.secondary)
                     Text("Clear", modifier = Modifier.clickable {
                         vm.country.value = ""
                         vm.city.value = ""
@@ -275,30 +258,30 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                         vm.daysSliderPosition.value= 0f..100f
                         onDismissRequest()
                         vm.filterTravel()
-                    }, color = colorResource(id = R.color.secondary))
+                    }, color = MaterialTheme.colorScheme.secondary)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
                     Column{
-                        Text("Country", modifier = Modifier.padding(start=5.dp), color = colorResource(id = R.color.primary))
+                        Text("Country", modifier = Modifier.padding(start=5.dp), color = MaterialTheme.colorScheme.primary)
                         BasicTextField(
                             value = vm.country.value,
                             onValueChange = { vm.country.value = it },
                             textStyle = TextStyle(
-                                color = colorResource(id = R.color.secondary)
+                                color = MaterialTheme.colorScheme.secondary
                             ),
                             maxLines = 1,
                             decorationBox = { innerTextField ->
                                 Row(
                                     modifier = Modifier
                                         .background(
-                                            color = colorResource(id = R.color.primary_background),
+                                            color =MaterialTheme.colorScheme.background,
                                             shape = RoundedCornerShape(size = 10.dp)
                                         )
                                         .padding(10.dp)
                                         .border(
                                             width = 1.dp,
-                                            color = colorResource(id = R.color.secondary),
+                                            color = MaterialTheme.colorScheme.secondary,
                                             shape = RoundedCornerShape(size = 10.dp)
 
                                         )
@@ -311,25 +294,24 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                         )
                     }
                     Column{
-                        Text("City",  modifier = Modifier.padding(start=5.dp), color = colorResource(id = R.color.primary))
+                        Text("City",  modifier = Modifier.padding(start=5.dp), color = MaterialTheme.colorScheme.primary)
                         BasicTextField(
                             value = vm.city.value,
                             onValueChange = { vm.city.value = it },
                             textStyle = TextStyle(
-                                color = colorResource(id = R.color.secondary)
+                                color = MaterialTheme.colorScheme.secondary
                             ),
                             maxLines = 1,
                             decorationBox = { innerTextField ->
                                 Row(
                                     modifier = Modifier
                                         .background(
-                                            color = colorResource(id = R.color.primary_background),
+                                            color = MaterialTheme.colorScheme.background,
                                             shape = RoundedCornerShape(size = 10.dp)
                                         )
-                                        .padding(10.dp)
                                         .border(
                                             width = 1.dp,
-                                            color = colorResource(id = R.color.secondary),
+                                            color = MaterialTheme.colorScheme.secondary,
                                             shape = RoundedCornerShape(size = 10.dp)
 
                                         )
@@ -343,47 +325,33 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                     }
                 }
 
-                Text("Price", color = colorResource(id = R.color.primary))
+                Text("Price", color = MaterialTheme.colorScheme.primary)
                 RangeSlider(
                     value = vm.priceSliderPosition.value,
                     onValueChange = { vm.priceSliderPosition.value = it },
                     valueRange = 0f..100f,
                     steps = vm.calculateSteps(false),
-                    colors = androidx.compose.material3.SliderDefaults.colors(
-                        thumbColor = colorResource(id = R.color.primary),
-                        activeTrackColor = colorResource(id = R.color.primary),
-                        activeTickColor = colorResource(id = R.color.primary),
-                        inactiveTrackColor = primaryContainerLight,
-                        inactiveTickColor = primaryContainerLight
-                    ),
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                 )
                 Text(text=vm.priceFilterValue())
                 Spacer(modifier = Modifier.height(15.dp))
-                Text("Days", color = colorResource(id = R.color.primary))
+                Text("Days", color = MaterialTheme.colorScheme.primary)
                 RangeSlider(
                     value = vm.daysSliderPosition.value,
                     onValueChange = { vm.daysSliderPosition.value = it },
                     valueRange = 0f..100f,
                     steps = vm.calculateSteps(true),
-                    colors = androidx.compose.material3.SliderDefaults.colors(
-                        thumbColor = colorResource(id = R.color.primary),
-                        activeTrackColor = colorResource(id = R.color.primary),
-                        activeTickColor = colorResource(id = R.color.primary),
-                        inactiveTrackColor = primaryContainerLight,
-                        inactiveTickColor = primaryContainerLight
-                    ),
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                 )
                 Text(text=vm.daysFilterValue())
                 Spacer(modifier = Modifier.height(15.dp))
-                Text("Tags", color = colorResource(id = R.color.primary))
+                Text("Tags", color= MaterialTheme.colorScheme.primary)
                 Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
                     BasicTextField(
                         value = tag,
                         onValueChange = { tag = it },
                         textStyle = TextStyle(
-                            color = colorResource(id = R.color.secondary),
+                            color = MaterialTheme.colorScheme.secondary,
                             fontSize = 12.sp
                         ),
                         maxLines = 1,
@@ -391,13 +359,13 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                             Row(
                                 modifier = Modifier
                                     .background(
-                                        color = colorResource(id = R.color.primary_background),
+                                        color = MaterialTheme.colorScheme.background,
                                         shape = RoundedCornerShape(size = 10.dp)
                                     )
                                     .padding(10.dp)
                                     .border(
                                         width = 1.dp,
-                                        color = colorResource(id = R.color.secondary),
+                                        color = MaterialTheme.colorScheme.secondary,
                                         shape = RoundedCornerShape(size = 10.dp)
 
                                     )
@@ -412,10 +380,9 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                         Button(
                             onClick = {vm.tagList.add(tag)
                                       tag = ""},
-                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(colorResource(id = R.color.primary)),
                             enabled = tag != ""
                             ) {
-                            Text("Add", color = colorResource(id = R.color.primary_text))
+                            Text("Add")
                         }
                     }
                 LazyRow{
@@ -424,17 +391,13 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                             onClick = {
                                 vm.tagList.remove(item)
                             },
-                            colors = InputChipDefaults.inputChipColors(
-                                containerColor = colorResource(id = R.color.primary)
-                            ),
-                            label = { Text(item, modifier = Modifier.padding(2.dp), color = colorResource(id = R.color.primary_text)) },
+                            label = { Text(item, modifier = Modifier.padding(2.dp)) },
                             selected = false,
                             trailingIcon = {
                                 Icon(
                                     Icons.Default.Close,
                                     contentDescription = "Localized description",
-                                    Modifier.size(InputChipDefaults.AvatarSize),
-                                    tint = colorResource(id = R.color.primary_text)
+                                    Modifier.size(InputChipDefaults.AvatarSize)
                                 )
                             },
                             modifier = Modifier.padding(end = 10.dp))
@@ -448,8 +411,8 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                         vm.filterTravel()
                         onDismissRequest()
                     },
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(colorResource(id = R.color.secondary)),) {
-                        Text("Apply", color = colorResource(id = R.color.primary_text))
+                        ) {
+                        Text("Apply")
                     }
                 }
                 }
