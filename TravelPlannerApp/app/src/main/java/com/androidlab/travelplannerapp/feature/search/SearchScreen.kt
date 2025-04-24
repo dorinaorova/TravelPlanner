@@ -167,8 +167,8 @@ fun TravelOrUserPicker(travelPicked: MutableState<Boolean>){
     val travelBtnColor: Color
     val userBtnColor : Color
     if(travelPicked.value){
-        travelBtnColor= MaterialTheme.colorScheme.background
-        userBtnColor= MaterialTheme.colorScheme.onPrimaryContainer
+        travelBtnColor= MaterialTheme.colorScheme.onPrimaryContainer
+        userBtnColor= MaterialTheme.colorScheme.background
     }
     else{
         travelBtnColor= MaterialTheme.colorScheme.background

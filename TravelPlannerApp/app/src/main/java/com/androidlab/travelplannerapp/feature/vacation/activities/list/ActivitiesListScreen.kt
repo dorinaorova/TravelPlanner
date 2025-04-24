@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -73,7 +72,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
             }
         },
         topBar = {
-            val route = if(vm.ownTravel.value) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
+            val route = if(vm.participant.value) Screen.VacationScreen.route + "?id=${travelId}" else Screen.TravelProfileScreen.route + "?id=${travelId}"
             TopBar(
                 "Activities",
                 navController,
@@ -83,7 +82,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
             )
         },
         floatingActionButton = {
-            if(vm.ownTravel.value){
+            if(vm.participant.value){
                 FloatingActionButton(onClick = { showDialog.value = true}) {
                     Icon(Icons.Default.Add, contentDescription = "Add")
                 }
@@ -178,7 +177,7 @@ private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = h
     val opacity = if(activity.visited) 0.5f else 1f
     Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 5.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
         Row(Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically){
-            if(vm.ownTravel.value){
+            if(vm.participant.value){
                 Checkbox(
                     checked = activity.visited,
                     onCheckedChange = { vm.visitActivity(activity.id!!) },
@@ -188,7 +187,7 @@ private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = h
             Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.padding(horizontal = 5.dp))
             Text(activity.name, color = MaterialTheme.colorScheme.primary)
         }
-        if(vm.ownTravel.value){
+        if(vm.participant.value){
             IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {
                 Icon(imageVector = ImageVector.vectorResource(id = R.drawable.cancel), contentDescription = "delete activity", tint = MaterialTheme.colorScheme.secondary)
             }
