@@ -10,14 +10,6 @@ import com.androidlab.travelplannerapp.data.service.ticket.TicketService
 import com.androidlab.travelplannerapp.data.service.travel.TravelService
 import com.androidlab.travelplannerapp.data.service.user.UserService
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
-import com.androidlab.travelplannerapp.testServices.MockActivityService
-import com.androidlab.travelplannerapp.testServices.MockAuthService
-import com.androidlab.travelplannerapp.testServices.MockImageService
-import com.androidlab.travelplannerapp.testServices.MockInvitationService
-import com.androidlab.travelplannerapp.testServices.MockPaymentService
-import com.androidlab.travelplannerapp.testServices.MockTicketService
-import com.androidlab.travelplannerapp.testServices.MockTravelService
-import com.androidlab.travelplannerapp.testServices.MockUserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,8 +45,8 @@ object TestApiModule {
 
     @Provides
     @Singleton
-    fun provideImageService(): ImageService {
-        return MockImageService()
+    fun provideImageService(retrofit: Retrofit): ImageService {
+        return retrofit.create(ImageService::class.java)
     }
 
 

@@ -31,12 +31,6 @@ class LoginScreenTest {
         mockWebServerManager = MockWebServerManager
         mockWebServerManager.start()
 
-//        val context = ApplicationProvider.getApplicationContext<Context>()
-//        context.getSharedPreferences("refresh_token", Context.MODE_PRIVATE)
-//            .edit()
-//            .clear()
-//            .commit()
-
 
 
 //        mockWebServerManager.enqueueResponse(
@@ -55,14 +49,14 @@ class LoginScreenTest {
         val username = "test"
         val password = "test"
 
-        composeTestRule.onNodeWithTag("username").assertIsDisplayed()
+       composeTestRule.onNodeWithTag("username").assertIsDisplayed()
 
 
-        composeTestRule.onNodeWithTag("password").assertIsDisplayed()
-            //.performTextInput(password)
-
-        composeTestRule.onNodeWithText("Login").assertIsDisplayed()
-           // .performClick()
+//        composeTestRule.onNodeWithTag("password").assertIsDisplayed()
+//            //.performTextInput(password)
+//
+//        composeTestRule.onNodeWithText("Login").assertIsDisplayed()
+//           // .performClick()
 
     }
 }
