@@ -18,25 +18,22 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Checkbox
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Surface
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -44,10 +41,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -59,10 +54,10 @@ import androidx.navigation.NavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.data.model.SpendType
 import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
-import com.androidlab.travelplannerapp.navigation.Screen
 import com.androidlab.travelplannerapp.feature.utils.SmallHeader
 import com.androidlab.travelplannerapp.feature.utils.TopBar
 import com.androidlab.travelplannerapp.feature.utils.generateDate
+import com.androidlab.travelplannerapp.navigation.Screen
 
 
 @Composable
@@ -104,7 +99,7 @@ fun PaymentsScreen(navController: NavController, travelId: String, vm: PaymentVi
 private fun Details(){
     Column(
         Modifier
-            .background(colorResource(id = R.color.primary_background))
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()){
         Payments()
         ListItemDivider()
@@ -264,7 +259,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                            .padding(horizontal = 10.dp, vertical = 10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -285,7 +280,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                     }
                     Row(
                         Modifier
-                            .padding(horizontal = 15.dp)
+                            .padding(horizontal = 15.dp, vertical = 5.dp)
                             .fillMaxWidth()){
                         val expanded = remember { mutableStateOf(false) }
                         Text("Who paid",
@@ -312,9 +307,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                                     DropdownMenuItem(onClick = {
                                         selectedIndex.value = index
                                         expanded.value = false
-                                    }) {
-                                        Text(item.username)
-                                    }
+                                    }, text = { item.username })
 
                                 }
 
@@ -323,7 +316,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                     }
                     Row(
                         Modifier
-                            .padding(horizontal = 15.dp)
+                            .padding(horizontal = 15.dp, vertical = 5.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically){
                         Text("Cost",
@@ -341,7 +334,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                     }
                     Row(
                         Modifier
-                            .padding(horizontal = 15.dp)
+                            .padding(horizontal = 15.dp, vertical = 5.dp)
                             .fillMaxWidth()){
                         val expanded = remember { mutableStateOf(false) }
                         Text("For what",
@@ -363,9 +356,9 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                                     DropdownMenuItem(onClick = {
                                         selectedReason.value = item
                                         expanded.value = false
-                                    }) {
+                                    }, text = {
                                         Text(item)
-                                    }
+                                    })
 
                                 }
 
@@ -374,7 +367,7 @@ private fun AddDialog(setShowDialog: (Boolean) -> Unit, vm: PaymentViewModel = h
                     }
                     Column(
                         Modifier
-                            .padding(horizontal = 15.dp)
+                            .padding(horizontal = 15.dp, vertical = 5.dp)
                             .fillMaxWidth()){
                         Text("For who",
                             modifier=Modifier.padding(end=10.dp),

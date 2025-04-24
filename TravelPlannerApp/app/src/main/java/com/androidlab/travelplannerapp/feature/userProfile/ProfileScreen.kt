@@ -315,10 +315,11 @@ private fun TravelItem(navController: NavController, travel: Travel?, vm: UserPr
             .width(120.dp)
             .padding(horizontal = 10.dp)
             .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.background)
             .clickable { navController.navigate(route) }) {
         if(travel != null){
             val imageModifier = Modifier.blur(3.dp).fillMaxSize()
-            CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL)
+            CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL, 0.6F)
 
             Column(
                 Modifier

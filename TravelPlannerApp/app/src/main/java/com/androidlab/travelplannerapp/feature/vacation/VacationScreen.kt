@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.CustomImage
@@ -92,12 +91,12 @@ private fun Details(navController: NavController){
 @Composable
 private fun Header(navController: NavController, vm: VacationViewModel = hiltViewModel()){
     Box(modifier = Modifier
-        .fillMaxSize()) {
+        .fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         val imageModifier =  Modifier
             .fillMaxWidth()
             .height(300.dp)
             .blur(5.dp)
-        CustomImage(imageModifier, vm.travel.pictureFileName, ImageSourceSelector.TRAVEL)
+        CustomImage(imageModifier, vm.travel.pictureFileName, ImageSourceSelector.TRAVEL, 0.6F)
         Column(Modifier.padding(top = 75.dp).clickable { navController.navigate(Screen.TravelProfileScreen.route) }) {
             Text(
                 vm.travel.name,
@@ -130,7 +129,8 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: Vacation
                         IconButton(onClick = { menuExpanded.value= true }) {
                             Icon(
                                 imageVector= Icons.Rounded.MoreVert,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                         DropdownMenu(
@@ -283,11 +283,4 @@ private fun Tickets(navController: NavController, vm: VacationViewModel = hiltVi
                 }
             }
 
-}
-
-
-@Composable
-@Preview(showBackground =  true)
-fun VacationScreenPreview(){
-    VacationScreen(navController = rememberNavController(), "")
 }

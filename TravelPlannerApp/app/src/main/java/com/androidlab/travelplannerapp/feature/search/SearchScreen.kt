@@ -23,21 +23,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -51,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -173,8 +171,8 @@ fun TravelOrUserPicker(travelPicked: MutableState<Boolean>){
         userBtnColor= MaterialTheme.colorScheme.onPrimaryContainer
     }
     else{
-        travelBtnColor= MaterialTheme.colorScheme.onPrimaryContainer
-        userBtnColor= MaterialTheme.colorScheme.background
+        travelBtnColor= MaterialTheme.colorScheme.background
+        userBtnColor= MaterialTheme.colorScheme.onPrimaryContainer
     }
 
     Row(Modifier.fillMaxWidth(),
@@ -243,9 +241,8 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
     Dialog(onDismissRequest = onDismissRequest) {
         Card(modifier = Modifier
             .wrapContentSize()
-            .padding(10.dp),
-            shape = RoundedCornerShape(16.dp),
-            backgroundColor = MaterialTheme.colorScheme.background) {
+            .padding(10.dp).background(MaterialTheme.colorScheme.background),
+            shape = RoundedCornerShape(16.dp)) {
             Box{
             Column(Modifier.padding(10.dp)){
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
@@ -312,7 +309,6 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                                             color = MaterialTheme.colorScheme.background,
                                             shape = RoundedCornerShape(size = 10.dp)
                                         )
-                                        .padding(10.dp)
                                         .border(
                                             width = 1.dp,
                                             color = MaterialTheme.colorScheme.secondary,

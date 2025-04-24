@@ -117,7 +117,7 @@ fun CurrentVacation(navController: NavController, vm: HomeViewModel = hiltViewMo
             val imageModifier = Modifier
                 .fillMaxSize()
                 .blur(5.dp)
-            CustomImage(imageModifier, currentVacation.pictureFileName, ImageSourceSelector.TRAVEL)
+            CustomImage(imageModifier, currentVacation.pictureFileName, ImageSourceSelector.TRAVEL, 0.6F)
             Column(modifier = Modifier.padding(start = 20.dp)) {
                 Text(
                     "You are on vacation",

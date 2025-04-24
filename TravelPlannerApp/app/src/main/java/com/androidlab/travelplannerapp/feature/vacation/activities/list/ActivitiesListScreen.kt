@@ -13,14 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Surface
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
@@ -28,7 +24,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -179,7 +176,7 @@ private fun ActivitiesList(navController: NavController, vm: ActivitiesListViewM
 @Composable
 private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = hiltViewModel()){
     val opacity = if(activity.visited) 0.5f else 1f
-    Row (Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
+    Row (Modifier.fillMaxWidth().padding(horizontal = 5.dp, vertical = 5.dp).alpha(opacity), horizontalArrangement = Arrangement.SpaceBetween){
         Row(Modifier.padding(10.dp), verticalAlignment = Alignment.CenterVertically){
             if(vm.ownTravel.value){
                 Checkbox(
@@ -188,8 +185,8 @@ private fun ActivityListItem(activity: Activity, vm: ActivitiesListViewModel = h
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
             }
-            Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = MaterialTheme.colorScheme.secondary)
-            Text(activity.name, color = colorResource(id = R.color.secondary_text))
+            Icon(imageVector = ImageVector.vectorResource(id = iconForActivityType(activity.type)), contentDescription = "activity type", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.padding(horizontal = 5.dp))
+            Text(activity.name, color = MaterialTheme.colorScheme.primary)
         }
         if(vm.ownTravel.value){
             IconButton(onClick = {vm.deleteActivity(activity.id!!)}) {

@@ -27,10 +27,8 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -96,7 +94,7 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primaryContainer),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
-        Row{
+        Row(verticalAlignment = Alignment.CenterVertically){
             IconButton(onClick = { navController.navigate(route) }) {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
                     contentDescription = null,
@@ -119,7 +117,7 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
 }
 
 @Composable
-fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = colorResource(id = R.color.primary_background), lines: Int = 1){
+fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = MaterialTheme.colorScheme.primary, lines: Int = 1){
     val focusManager = LocalFocusManager.current
     Column{
     Text(
@@ -184,13 +182,14 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
 
 
 @Composable
-fun BlankTravelImage(imageModifier: Modifier, source: ImageSourceSelector = ImageSourceSelector.TRAVEL ){
+fun BlankTravelImage(imageModifier: Modifier, source: ImageSourceSelector = ImageSourceSelector.TRAVEL , alpha: Float = 1f){
     val image = if(source == ImageSourceSelector.PROFILE){R.drawable.blank_profile}else{R.drawable.blank_travel_image}
     Image(
         painterResource(id = image),
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = imageModifier
+        modifier = imageModifier,
+        alpha = alpha
     )
 }
 
@@ -204,7 +203,7 @@ fun ListItemDivider(){
 }
 
 @Composable
-fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSourceSelector = ImageSourceSelector.TRAVEL){
+fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSourceSelector = ImageSourceSelector.TRAVEL, alpha: Float = 1f){
     if(!filePath.isNullOrEmpty()){
         val fullPicturePath = when(imageSource){
             ImageSourceSelector.PROFILE -> profilePictureFilePath(LocalContext.current ,filePath)
@@ -215,10 +214,11 @@ fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSo
             model = fullPicturePath,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = imageModifier
+            modifier = imageModifier,
+            alpha = alpha
         )
     }else{
-        BlankTravelImage(imageModifier, imageSource)
+        BlankTravelImage(imageModifier, imageSource, alpha)
     }
 }
 

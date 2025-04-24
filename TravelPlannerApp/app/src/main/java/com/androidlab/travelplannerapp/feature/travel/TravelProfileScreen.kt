@@ -1,10 +1,5 @@
 package com.androidlab.travelplannerapp.feature.travel
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -97,12 +92,12 @@ private fun Details(navController: NavController){
 @Composable
 private fun Header(vm: TravelViewModel = hiltViewModel()){
     Box(modifier = Modifier
-        .fillMaxSize()) {
+        .fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         val imageModifier = Modifier
             .fillMaxWidth()
             .height(300.dp)
             .blur(5.dp)
-        CustomImage(imageModifier, vm.travel.pictureFileName, ImageSourceSelector.TRAVEL)
+        CustomImage(imageModifier, vm.travel.pictureFileName, ImageSourceSelector.TRAVEL, 0.6F)
         Column(Modifier.padding(top = 75.dp)) {
             Text(
                 vm.travel.name,
@@ -156,7 +151,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(Modifier.padding(start = 25.dp, top = 15.dp, bottom = 15.dp)) {
-                        Row(Modifier.clickable { navController.navigate(Screen.ProfileScreen.route + "?id=${vm.user._id}" )}.padding(bottom=5.dp), verticalAlignment = Alignment.CenterVertically){
+                        Row(Modifier.clickable { navController.navigate(Screen.ProfileScreen.route + "?id=${vm.user._id}" )}.padding(bottom=10.dp), verticalAlignment = Alignment.CenterVertically){
                             val modifier = Modifier
                                 .width(40.dp)
                                 .height(40.dp)
@@ -166,7 +161,8 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                             Column(Modifier.padding(start=5.dp)){
                                 Text(
                                     vm.user.username,
-                                    fontSize = 14.sp)
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.primary)
                                 Text(vm.user.name, fontSize = 11.sp,modifier=Modifier.padding(start=5.dp), color = MaterialTheme.colorScheme.secondary )
                             }
                         }
@@ -198,7 +194,8 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                             IconButton(onClick = { menuExpanded.value = true }) {
                                 Icon(
                                     imageVector = Icons.Rounded.MoreVert,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
                             DropdownMenu(
@@ -261,7 +258,8 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                     Text(
                         vm.travel.description ?: "...",
                         fontSize = 12.sp,
-                        modifier = Modifier.padding(horizontal = 5.dp)
+                        modifier = Modifier.padding(horizontal = 5.dp),
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 Row(
@@ -281,8 +279,9 @@ private fun DataRow(text: String, icon: ImageVector){
         verticalAlignment = Alignment.CenterVertically){
         Icon(imageVector = icon,
             contentDescription = text,
-            Modifier.padding(end=6.dp))
-        Text(text)
+            Modifier.padding(end=6.dp),
+            tint = MaterialTheme.colorScheme.secondary)
+        Text(text, color = MaterialTheme.colorScheme.primary)
     }
 }
 

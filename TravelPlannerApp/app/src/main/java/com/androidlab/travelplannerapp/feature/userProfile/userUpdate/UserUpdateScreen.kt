@@ -59,7 +59,6 @@ fun UserUpdateScreen(navController: NavController, vm: UserUpdateViewModel = hil
             }
         },
         topBar = {
-
             TopBar("Update profile", navController, Screen.ProfileScreen.route)
         }
     )
@@ -73,7 +72,7 @@ private fun Form(vm: UserUpdateViewModel = hiltViewModel(), navController: NavCo
     val city = remember(vm.user.city?: "") { mutableStateOf(vm.user.city?: "") }
     val country = remember(vm.user.country?: "") { mutableStateOf(vm.user.country?: "") }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.White)){
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
             InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = MaterialTheme.colorScheme.primary)

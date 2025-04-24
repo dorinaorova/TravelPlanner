@@ -22,27 +22,17 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -68,10 +58,7 @@ import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.feature.utils.DatePickerForm
 import com.androidlab.travelplannerapp.feature.utils.InputField
 import com.androidlab.travelplannerapp.feature.utils.TopBar
-import com.androidlab.travelplannerapp.feature.utils.generateDate
 import com.androidlab.travelplannerapp.navigation.Screen
-import java.text.SimpleDateFormat
-import java.util.Date
 
 @Composable
 fun TravelCreateUpdateScreen(navController: NavController, id: String?,  vm: TravelCreateUpdateViewModel = hiltViewModel()){
@@ -129,7 +116,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
         ownerId = vm.travel.ownerId
     )
 
-    Column(modifier = Modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState())){
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).verticalScroll(rememberScrollState())){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
             InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name*", labelColor = MaterialTheme.colorScheme.primary)
@@ -199,7 +186,7 @@ private fun TagList(vm: TravelCreateUpdateViewModel = hiltViewModel()){
             "Tags",
             fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
-            color =colorResource(id = R.color.primary),
+            color =MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 10.dp)
         )
         Row(Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
@@ -209,7 +196,7 @@ private fun TagList(vm: TravelCreateUpdateViewModel = hiltViewModel()){
                 textStyle = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = colorResource(id = R.color.primary)
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 maxLines = 1,
                 decorationBox = { innerTextField ->
@@ -217,12 +204,12 @@ private fun TagList(vm: TravelCreateUpdateViewModel = hiltViewModel()){
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .background(
-                                color = colorResource(R.color.primary_background),
+                                color = MaterialTheme.colorScheme.background,
                                 shape = RoundedCornerShape(size = 10.dp)
                             )
                             .border(
                                 width = 2.dp,
-                                color = colorResource(id = R.color.primary),
+                                color = MaterialTheme.colorScheme.primary,
                                 shape = RoundedCornerShape(size = 10.dp)
 
                             ).padding(10.dp),
@@ -236,10 +223,10 @@ private fun TagList(vm: TravelCreateUpdateViewModel = hiltViewModel()){
             Button(
                 onClick = {vm.tagList.add(tag)
                     tag = ""},
-                colors = ButtonDefaults.buttonColors(colorResource(id = R.color.primary)),
+//                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                 enabled = tag != ""
             ) {
-                androidx.compose.material.Text("Add", color = colorResource(id = R.color.primary_text))
+                Text("Add", color = colorResource(id = R.color.primary_text))
             }
         }
         LazyRow{
@@ -249,16 +236,16 @@ private fun TagList(vm: TravelCreateUpdateViewModel = hiltViewModel()){
                         vm.tagList.remove(item)
                     },
                     colors = InputChipDefaults.inputChipColors(
-                        containerColor = colorResource(id = R.color.primary)
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
-                    label = { androidx.compose.material.Text(item, modifier = Modifier.padding(2.dp), color = colorResource(id = R.color.primary_text)) },
+                    label = { Text(item, modifier = Modifier.padding(2.dp), color = MaterialTheme.colorScheme.onPrimaryContainer) },
                     selected = false,
                     trailingIcon = {
                         androidx.compose.material.Icon(
                             Icons.Default.Close,
                             contentDescription = "Localized description",
                             Modifier.size(InputChipDefaults.AvatarSize),
-                            tint = colorResource(id = R.color.primary_text)
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     },
                     modifier = Modifier.padding(end = 10.dp))
@@ -278,7 +265,7 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
             "Price",
             fontSize = 15.sp,
             fontWeight = FontWeight.Medium,
-            color = if(isError){Color.Red}else{colorResource(id = R.color.primary)},
+            color = if(isError){MaterialTheme.colorScheme.error}else{MaterialTheme.colorScheme.primary},
             modifier = Modifier.padding(start = 50.dp)
         )
         Spacer(Modifier.height(5.dp))
@@ -290,7 +277,7 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
                 textStyle = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    color = colorResource(id = R.color.primary)
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 decorationBox = { innerTextField ->
@@ -298,15 +285,15 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .background(
-                                color = colorResource(R.color.primary_background),
+                                color = MaterialTheme.colorScheme.background,
                                 shape = RoundedCornerShape(size = 10.dp)
                             )
                             .border(
                                 width = 2.dp,
                                 color = if (isError) {
-                                    Color.Red
+                                    MaterialTheme.colorScheme.error
                                 } else {
-                                    colorResource(id = R.color.primary)
+                                    MaterialTheme.colorScheme.primary
                                 },
                                 shape = RoundedCornerShape(size = 10.dp)
 
@@ -349,26 +336,3 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
         }
     }
 }
-
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//private fun TopBar(navController: NavController, id: String?){
-//    val title = if(id == null){"New travel"} else "Update travel"
-//    val route = if(id == null){Screen.ProfileScreen.route} else {Screen.TravelProfileScreen.route+"?id=$id"}
-//    CenterAlignedTopAppBar(
-//        navigationIcon = {
-//            IconButton(onClick = {
-//                navController.navigate(route)
-//            }) {
-//                Icon(
-//                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                    contentDescription = "Navigate back"
-//                )
-//            }
-//        },
-//        title = {
-//            Text(title)
-//        },
-//    )
-//}

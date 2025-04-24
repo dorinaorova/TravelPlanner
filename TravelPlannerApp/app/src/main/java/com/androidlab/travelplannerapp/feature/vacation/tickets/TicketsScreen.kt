@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp.feature.ticket.ticketListView
+package com.androidlab.travelplannerapp.feature.vacation.tickets
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,17 +20,17 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
@@ -109,7 +109,8 @@ private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewM
                         Text(
                             text = "Add new ticket",
                             fontSize=16.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
                         )
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.cancel),
@@ -137,7 +138,7 @@ private fun CreateTicketDialog(setShowDialog: (Boolean) -> Unit, vm: TicketViewM
                             onValueChange = {
                                 ticketTxtField.value = it
                             },
-                            placeholder = { Text("Please enter the occasion") })
+                            placeholder = { Text("Please enter the occasion", color= MaterialTheme.colorScheme.primary) })
                     }
                     Row(
                         Modifier

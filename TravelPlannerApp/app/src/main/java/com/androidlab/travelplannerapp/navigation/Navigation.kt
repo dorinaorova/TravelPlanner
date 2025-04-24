@@ -17,7 +17,7 @@ import com.androidlab.travelplannerapp.feature.list.ListScreen
 import com.androidlab.travelplannerapp.feature.login.LoginScreen
 import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
 import com.androidlab.travelplannerapp.feature.search.SearchScreen
-import com.androidlab.travelplannerapp.feature.ticket.ticketListView.TicketsScreen
+import com.androidlab.travelplannerapp.feature.vacation.tickets.TicketsScreen
 import com.androidlab.travelplannerapp.feature.travel.TravelProfileScreen
 import com.androidlab.travelplannerapp.feature.travel.travelCreate.TravelCreateUpdateScreen
 import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageScreen
