@@ -27,16 +27,12 @@ import javax.inject.Singleton
     replaces = [ApiUseCaseModule::class] // real module you want to override
 )
 object TestApiModule {
-    @Provides
-    @Singleton
-    fun provideBaseUrl(@ApplicationContext context: Context): String {
-        return  context.getString(R.string.BASE_URL)
-    }
 
     @Provides
     @Singleton
     fun provideRetrofit(@ApplicationContext context: Context): Retrofit {
-        val baseUrl = context.getString(R.string.BASE_URL)
+        val baseUrl = TestConfig.mockBaseUrl
+//        val baseUrl = context.getString(R.string.BASE_URL)
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
@@ -95,4 +91,8 @@ object TestApiModule {
     fun provideActivityService(retrofit: Retrofit): ActivityService {
         return retrofit.create(ActivityService::class.java)
     }
+}
+
+object TestConfig {
+    var mockBaseUrl: String = "http://localhost:8080"
 }

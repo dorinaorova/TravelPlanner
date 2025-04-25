@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -80,7 +81,7 @@ private fun LoginForm(navController: NavController, vm : LoginViewModel = hiltVi
             Button(onClick={
                 vm.login(username.value,password.value, context, navController)
             },
-                Modifier.align(Alignment.CenterHorizontally)){
+                Modifier.align(Alignment.CenterHorizontally).testTag("loginBtn")){
                 Text("Login", fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
             Spacer(Modifier.height(30.dp))

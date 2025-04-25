@@ -7,7 +7,7 @@ object MockWebServerManager {
     private val mockWebServer = MockWebServer()
 
     fun start() {
-        mockWebServer.start()
+        mockWebServer.start(8080)
     }
 
     fun shutdown() {

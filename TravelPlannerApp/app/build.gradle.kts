@@ -29,6 +29,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "clear_text_config","true")
         }
     }
     compileOptions {
