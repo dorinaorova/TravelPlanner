@@ -78,24 +78,22 @@ class LoginScreenTest {
         composeTestRule.onNodeWithTag("password").assertIsDisplayed()
         composeTestRule.onNodeWithTag("loginBtn").assertIsDisplayed()
     }
-//    @Test
-//    fun testRegistrationScreen(){
-//        composeTestRule.onNodeWithText("Sign up here").assertIsDisplayed().performClick()
-//        composeTestRule.onNodeWithTag("username").assertIsDisplayed()
-//        composeTestRule.onNodeWithTag("name").assertIsDisplayed()
-//        composeTestRule.onNodeWithTag("email").assertIsDisplayed()
-//        composeTestRule.onNodeWithTag("password").assertIsDisplayed()
-//        composeTestRule.onNodeWithTag("registerBtn").assertIsDisplayed()
-//
-//    }
-//    @Test
-//    fun testLoginFunction() {
-//        val username = "test"
-//        val password = "test"
-//        composeTestRule.onNodeWithTag("username").performTextInput(username)
-//        composeTestRule.onNodeWithTag("password").performTextInput(password)
-//        composeTestRule.onNodeWithTag("loginBtn").performClick()
-//
-//
-//    }
+    @Test
+    fun testRegistrationScreen(){
+        composeTestRule.onNodeWithText("Sign up here").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithTag("username").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("name").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("email").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("password").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("registerBtn").assertIsDisplayed()
+
+    }
+    @Test
+    fun testLoginFunction() {
+        val username = "test"
+        val password = "test"
+        composeTestRule.onNodeWithTag("username").performTextInput(username)
+        composeTestRule.onNodeWithTag("password").performTextInput(password)
+        composeTestRule.onNodeWithTag("loginBtn").performClick()
+    }
 }
