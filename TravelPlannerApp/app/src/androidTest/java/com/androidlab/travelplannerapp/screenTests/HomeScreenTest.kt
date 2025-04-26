@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp
+package com.androidlab.travelplannerapp.screenTests
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
@@ -6,6 +6,9 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.core.app.ApplicationProvider
+import com.androidlab.travelplannerapp.MainActivity
+import com.androidlab.travelplannerapp.MockWebServerManager
+import com.androidlab.travelplannerapp.TestConfig
 import com.androidlab.travelplannerapp.data.model.Invitation
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
@@ -13,7 +16,9 @@ import com.google.gson.Gson
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
+import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.RecordedRequest
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
@@ -38,14 +43,14 @@ class HomeScreenTest {
         @JvmStatic
         fun startServer() {
             mockWebServerManager = MockWebServerManager
-            mockWebServerManager.start()
-            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
+            MockWebServerManager.start()
+            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            mockWebServerManager.shutdown()
+            MockWebServerManager.shutdown()
         }
     }
 
@@ -60,45 +65,57 @@ class HomeScreenTest {
             .putString("refresh_token_key", "your_token_value")
             .apply()
 
-        mockWebServerManager.enqueueResponse(
+        MockWebServerManager.enqueueResponse(
             MockResponse()
                 .setResponseCode(200)
                 .setBody("true")
         )
+
+        val travels = listOf(Travel("id", "test vacation", 1767225600000, 1767225600000, "test", "test"))
+        val invitations = listOf(Invitation("id", "test", "test"))
+        val customDispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                return when {
+                    request.path?.startsWith("/travel/user/") == true -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(travels))
+                    }
+                    request.path?.startsWith("/travel/all") == true  -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(travels))
+                    }
+                    request.path?.startsWith("/travel/participate/") == true  -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(emptyList<Travel>()))
+                    }
+                    request.path?.startsWith("/invitation/user/") == true -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(invitations))
+                    }
+                    else -> {
+                        MockResponse().setResponseCode(404)
+                    }
+                }
+            }
+        }
+        MockWebServerManager.setDispatcher(customDispatcher)
     }
 
     @Test
     fun homeScreenAutomaticallyAppearsIfUserPreviouslyLoggedIn(){
         composeTestRule.onNodeWithTag("homeScreen").assertIsDisplayed()
         composeTestRule.onNodeWithTag("profile_navItem").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("home_navItem").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("search_navItem").assertIsDisplayed()
     }
 
     @Test
     fun theUpcomingVacationsAndInvitationsAppearOnHomeScreen(){
-        val travels = listOf(Travel("id", "test vacation", 1767225600000, 1767225600000, "test", "test"))
-        mockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(Gson().toJson(travels))
-        )
-        mockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(Gson().toJson(travels))
-        )
-
-        val invitations = listOf(Invitation("id", "test", "test"))
-        mockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(Gson().toJson(invitations))
-        )
-        mockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(Gson().toJson(travels))
-        )
-
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("upcomingVacation").assertIsDisplayed()
         composeTestRule.onNodeWithText("You are on vacation").assertIsDisplayed()
 

@@ -1,7 +1,6 @@
-package com.androidlab.travelplannerapp
+package com.androidlab.travelplannerapp.screenTests
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -9,6 +8,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
+import com.androidlab.travelplannerapp.MainActivity
+import com.androidlab.travelplannerapp.MockWebServerManager
+import com.androidlab.travelplannerapp.TestConfig
 import com.androidlab.travelplannerapp.data.model.LoginResponse
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
 import com.google.gson.Gson
@@ -16,7 +18,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import okhttp3.mockwebserver.MockResponse
-import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
@@ -40,14 +41,14 @@ class LoginScreenTest {
         @BeforeClass @JvmStatic
         fun startServer() {
             mockWebServerManager = MockWebServerManager
-            mockWebServerManager.start()
-            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
+            MockWebServerManager.start()
+            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            mockWebServerManager.shutdown()
+            MockWebServerManager.shutdown()
         }
     }
 
@@ -63,7 +64,7 @@ class LoginScreenTest {
 
 
 
-        mockWebServerManager.enqueueResponse(
+        MockWebServerManager.enqueueResponse(
             MockResponse()
                 .setResponseCode(200)
                 .setBody("false")
@@ -90,7 +91,7 @@ class LoginScreenTest {
         val username = "test"
         val password = "test"
         val response = LoginResponse("1", "test", "test")
-        mockWebServerManager.enqueueResponse(
+        MockWebServerManager.enqueueResponse(
             MockResponse()
                 .setResponseCode(200)
                 .setBody(Gson().toJson(response))

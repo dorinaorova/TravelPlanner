@@ -1,4 +1,4 @@
-package com.androidlab.travelplannerapp
+package com.androidlab.travelplannerapp.screenTests
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
@@ -7,7 +7,9 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
-import com.androidlab.travelplannerapp.HomeScreenTest.Companion
+import com.androidlab.travelplannerapp.MainActivity
+import com.androidlab.travelplannerapp.MockWebServerManager
+import com.androidlab.travelplannerapp.TestConfig
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
@@ -19,7 +21,6 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.RecordedRequest
 import org.junit.AfterClass
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -45,14 +46,14 @@ class ProfileScreenTest {
         @JvmStatic
         fun startServer() {
             mockWebServerManager = MockWebServerManager
-            mockWebServerManager.start()
-            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
+            MockWebServerManager.start()
+            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            mockWebServerManager.shutdown()
+            MockWebServerManager.shutdown()
         }
     }
 
@@ -67,7 +68,7 @@ class ProfileScreenTest {
             .putString("refresh_token_key", "your_token_value")
             .apply()
 
-        mockWebServerManager.enqueueResponse(
+        MockWebServerManager.enqueueResponse(
             MockResponse()
                 .setResponseCode(200)
                 .setBody("true")
@@ -98,7 +99,7 @@ class ProfileScreenTest {
                 }
             }
         }
-        mockWebServerManager.setDispatcher(customDispatcher)
+        MockWebServerManager.setDispatcher(customDispatcher)
     }
     @Test
     fun profileScreenDisplayed(){
