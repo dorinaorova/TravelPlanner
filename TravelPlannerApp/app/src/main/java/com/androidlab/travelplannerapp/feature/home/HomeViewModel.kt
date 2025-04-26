@@ -66,7 +66,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val userId = getOwnUserId(context)
             if (!userId.isNullOrEmpty()) {
-
                 val call = getInvitationsByUserIdUseCase(userId)
                 val response = call?.awaitResponse()
                 if (response?.isSuccessful == true) {

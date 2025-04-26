@@ -9,7 +9,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
+import com.androidlab.travelplannerapp.data.model.LoginResponse
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
+import com.google.gson.Gson
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -67,11 +69,6 @@ class LoginScreenTest {
                 .setBody("false")
         )
     }
-//
-//    @After
-//    fun teardown() {
-//        mockWebServerManager.shutdown()
-//    }
     @Test
     fun testLoginScreen() {
         composeTestRule.onNodeWithTag("username").assertIsDisplayed()
@@ -92,8 +89,16 @@ class LoginScreenTest {
     fun testLoginFunction() {
         val username = "test"
         val password = "test"
+        val response = LoginResponse("1", "test", "test")
+        mockWebServerManager.enqueueResponse(
+            MockResponse()
+                .setResponseCode(200)
+                .setBody(Gson().toJson(response))
+        )
         composeTestRule.onNodeWithTag("username").performTextInput(username)
         composeTestRule.onNodeWithTag("password").performTextInput(password)
         composeTestRule.onNodeWithTag("loginBtn").performClick()
+
+        composeTestRule.onNodeWithTag("homeScreen").assertIsDisplayed()
     }
 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,7 +53,7 @@ fun UserUpdateScreen(navController: NavController, vm: UserUpdateViewModel = hil
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)) {
+                .padding(paddingValues).testTag("user_update_screen")) {
                 Column{
                     Form(navController= navController)
                 }
@@ -75,18 +76,18 @@ private fun Form(vm: UserUpdateViewModel = hiltViewModel(), navController: NavCo
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
-            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = MaterialTheme.colorScheme.primary)
+            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name", labelColor = MaterialTheme.colorScheme.primary, testTag = "user_update_name")
             Spacer(Modifier.height(20.dp))
-            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), null, "Email", labelColor = MaterialTheme.colorScheme.primary)
+            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), null, "Email", labelColor = MaterialTheme.colorScheme.primary, testTag = "user_update_email")
             Spacer(Modifier.height(20.dp))
-            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = MaterialTheme.colorScheme.primary, lines = 4)
+            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = MaterialTheme.colorScheme.primary, lines = 4,testTag = "user_update_description")
             Spacer(Modifier.height(20.dp))
-            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City",labelColor = MaterialTheme.colorScheme.primary)
+            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City",labelColor = MaterialTheme.colorScheme.primary, testTag = "user_update_city")
             Spacer(Modifier.height(20.dp))
-            InputField(country, KeyboardOptions(imeAction = ImeAction.Done), null, "Country",labelColor = MaterialTheme.colorScheme.primary)
+            InputField(country, KeyboardOptions(imeAction = ImeAction.Done), null, "Country",labelColor = MaterialTheme.colorScheme.primary, testTag = "user_update_country")
             Spacer(Modifier.height(20.dp))
             Button(onClick = { vm.updateUser(name.value, email.value, description.value, city.value, country.value, navController) },
-                Modifier.align(Alignment.CenterHorizontally),
+                Modifier.align(Alignment.CenterHorizontally).testTag("user_update_save"),
             ) { Text("Save") }
         }
     }

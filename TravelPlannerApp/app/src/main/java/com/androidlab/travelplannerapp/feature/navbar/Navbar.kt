@@ -6,6 +6,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -50,7 +52,8 @@ fun NavBar(navController: NavController){
                         imageVector = item.icon,
                         contentDescription = "${item.name} Icon",
                     )
-                }
+                },
+                modifier = Modifier.testTag("${item.route}_navItem")
             )
         }
     }
