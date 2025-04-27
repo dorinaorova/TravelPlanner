@@ -115,21 +115,13 @@ class ProfileScreenTest {
         composeTestRule.onNodeWithTag("profile_screen").assertIsDisplayed()
 
         composeTestRule.onNodeWithTag("profile_name").assertTextEquals(userData.name)
-
         composeTestRule.onNodeWithTag("profile_username").assertTextEquals(userData.username)
-
         composeTestRule.onNodeWithTag("profile_email").assertTextEquals(userData.email)
-
         composeTestRule.onNodeWithTag("profile_livingLabel").assertTextEquals("${userData.city}, ${userData.country}")
-
         composeTestRule.onNodeWithTag("profile_description").assertTextEquals(userData.description?:"...")
-
         composeTestRule.onNodeWithTag("profile_follower", useUnmergedTree = true).assertTextEquals("1")
-
         composeTestRule.onNodeWithTag("profile_following", useUnmergedTree = true).assertTextEquals("1")
-
         composeTestRule.onNodeWithTag("profile_travel", useUnmergedTree = true).assertTextEquals("1")
-
         composeTestRule.onNodeWithTag("profile_travelitem_add").assertIsDisplayed()
         composeTestRule.onNodeWithTag("profile_travelitem_id").assertIsDisplayed()
     }
@@ -150,7 +142,6 @@ class ProfileScreenTest {
         composeTestRule.onNodeWithTag("user_update_save").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("profile_screen").assertIsDisplayed()
-
     }
 
 }

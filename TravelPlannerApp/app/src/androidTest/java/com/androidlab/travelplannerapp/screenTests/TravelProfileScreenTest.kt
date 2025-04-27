@@ -2,6 +2,7 @@ package com.androidlab.travelplannerapp.screenTests
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -44,7 +45,7 @@ class TravelProfileScreenTest  {
     val userData = UserInfo("test", "test_user", "test_name", "test_email", "test", null, null,
         listOf("id"),"test_city","test_country",listOf("1"),listOf("2"), null)
 
-        val travel =Travel("id", "test vacation", 1767225600000, 1767225600000, "test", "test", ownerId = "test")
+        val travel =Travel("id", "test vacation", 1767225600000, 1767225600000, "test", "test", ownerId = "test",public = true,description = "test",)
 
     companion object {
         lateinit var mockWebServerManager: MockWebServerManager
@@ -107,6 +108,11 @@ class TravelProfileScreenTest  {
                     request.path?.startsWith("/activity/travel/") == true -> {
                         MockResponse().setResponseCode(200).setBody(Gson().toJson(emptyList<Activity>()))
                     }
+                    request.path?.startsWith("/travel/update/") == true && request.method == "PUT" -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(travel))
+                    }
                     else -> {
                         MockResponse().setResponseCode(404)
                     }
@@ -143,5 +149,35 @@ class TravelProfileScreenTest  {
             )
         } days (${generateDate(travel.startDate)} - ${generateDate(travel.endDate)})")
         composeTestRule.onNodeWithTag("travel_description").assertTextEquals(travel.description?:"...")
+    }
+
+    @Test
+    fun travelUpdateFormDisplayed(){
+        composeTestRule.onNodeWithTag("profile_navItem").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("profile_travelitem_id").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("travel_profile_dropdown").performClick()
+        composeTestRule.onNodeWithTag("travel_profile_edit").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("edit_travel_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("topbar_title").assertTextEquals("Update travel")
+        composeTestRule.onNodeWithTag("edit_travel_name").assertTextEquals(travel.name)
+        composeTestRule.onNodeWithTag("edit_travel_description").assertTextEquals(travel.description?:"")
+        composeTestRule.onNodeWithTag("edit_travel_city").assertTextEquals(travel.city)
+        composeTestRule.onNodeWithTag("edit_travel_country").assertTextEquals(travel.country)
+        composeTestRule.onNodeWithTag("edit_travel_price").assertTextEquals(travel.price.toString())
+        composeTestRule.onNodeWithTag("edit_travel_currency").assertTextEquals(travel.currency)
+        composeTestRule.onNodeWithTag("private_checkbox").assertIsOn()
+    }
+
+    @Test
+    fun navigateToNewTravelForm(){
+        composeTestRule.onNodeWithTag("profile_navItem").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("profile_travelitem_add").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("edit_travel_screen").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("topbar_title").assertTextEquals("New travel")
     }
 }

@@ -196,7 +196,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                     } else {
                         val menuExpanded = remember { mutableStateOf(false) }
                         Box {
-                            IconButton(onClick = { menuExpanded.value = true }) {
+                            IconButton(onClick = { menuExpanded.value = true }, modifier = Modifier.testTag("travel_profile_dropdown")) {
                                 Icon(
                                     imageVector = Icons.Rounded.MoreVert,
                                     contentDescription = null,
@@ -229,7 +229,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                                             tint= MaterialTheme.colorScheme.onSecondaryContainer
                                         )
                                     },
-                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).testTag("travel_profile_edit")
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Upload background image", color= MaterialTheme.colorScheme.onSecondaryContainer) },

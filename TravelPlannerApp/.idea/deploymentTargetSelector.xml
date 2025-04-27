@@ -8,16 +8,16 @@
       <SelectionState runConfigName="theUpcomingVacationsAndInvitationsAppearOnHomeScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="profileDataDisplayedCorrectly()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="profileUpdateScreenDisplayed()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="navigateToTravelProfile()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="travelInfoDisplayedCorrectly()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="travelUpdateFormDisplayed()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="navigateToNewTravelForm()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

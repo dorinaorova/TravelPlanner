@@ -104,7 +104,7 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
             Text(label,
                 fontSize=22.sp,
                 fontWeight = FontWeight.Bold,
-                modifier= Modifier.padding(vertical = 20.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
+                modifier= Modifier.padding(vertical = 20.dp).testTag("topbar_title"), color = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         if(secondaryIcon != null && secondaryRoute != null){
             IconButton(onClick = { navController.navigate(secondaryRoute) }) {
