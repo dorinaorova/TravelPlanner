@@ -11,9 +11,12 @@ import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.androidlab.travelplannerapp.MainActivity
 import com.androidlab.travelplannerapp.MockWebServerManager
 import com.androidlab.travelplannerapp.TestConfig
+import com.androidlab.travelplannerapp.data.model.LoginResponse
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
@@ -69,21 +72,17 @@ class SearchScreenTest {
     fun setup() {
         hiltRule.inject()
 
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        val sharedPrefsRefreshToken = context.getSharedPreferences("refresh_token", Context.MODE_PRIVATE)
-        val sharedPrefsUserId = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
+        val context = getInstrumentation().targetContext
+        val sharedPrefs = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
 
-        sharedPrefsRefreshToken.edit()
-            .putString("refresh_token_key", "your_token_value")
-            .apply()
-
-        sharedPrefsUserId.edit()
+        sharedPrefs.edit()
+            .putString("refresh_token", "test-refresh-token")
             .putString("id", "test")
             .apply()
 
         val customDispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
-                Log.d("MockWebServer", "Dispatching request to ${request.path}")
+                println(request.path)
                 return when {
                     request.path?.startsWith("/travel/filterValues") == true -> {
                         MockResponse()
@@ -108,7 +107,12 @@ class SearchScreenTest {
                     request.path?.startsWith("/auth/refresh-token/") == true -> {
                         MockResponse()
                             .setResponseCode(200)
-                            .setBody("true")
+                            .setBody("false")
+                    }
+                    request.path?.startsWith("/auth/login") == true -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(LoginResponse("test", "test", "test")))
                     }
                     else -> {
                         MockResponse().setResponseCode(404)
@@ -117,14 +121,11 @@ class SearchScreenTest {
             }
         }
         MockWebServerManager.setDispatcher(customDispatcher)
+        composeTestRule.onNodeWithTag("loginBtn").performClick()
     }
 
     @Test
     fun navigateToSearchScreen(){
-        composeTestRule.waitUntil(timeoutMillis = 5_000L) {
-            composeTestRule.onAllNodesWithTag("homeScreen").fetchSemanticsNodes().isNotEmpty()
-        }
-        composeTestRule.onNodeWithTag("homeScreen").assertIsDisplayed()
         composeTestRule.onNodeWithTag("search_navItem").performClick()
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("search_screen").assertIsDisplayed()
@@ -149,6 +150,14 @@ class SearchScreenTest {
         composeTestRule.onNodeWithTag("user_listitem_test2").assertIsDisplayed()
         composeTestRule.onNodeWithTag("user_listitem_test2").onChildren()
             .filter(hasTestTag("like_button"))
+    }
 
+    @Test
+    fun filterDialogDisplayed(){
+        composeTestRule.onNodeWithTag("search_navItem").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("filter_btn").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag("filter_dialog").assertIsDisplayed()
     }
 }

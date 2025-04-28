@@ -7,9 +7,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.androidlab.travelplannerapp.MainActivity
 import com.androidlab.travelplannerapp.MockWebServerManager
 import com.androidlab.travelplannerapp.TestConfig
+import com.androidlab.travelplannerapp.data.model.LoginResponse
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
@@ -61,18 +63,13 @@ class ProfileScreenTest {
     fun setup() {
         hiltRule.inject()
 
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        val sharedPrefs = context.getSharedPreferences("refresh_token", Context.MODE_PRIVATE)
+        val context = getInstrumentation().targetContext
+        val sharedPrefs = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
 
         sharedPrefs.edit()
-            .putString("refresh_token_key", "your_token_value")
+            .putString("refresh_token", "test-refresh-token")
+            .putString("id", "test")
             .apply()
-
-        MockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody("true")
-        )
 
 
         val customDispatcher = object : Dispatcher() {
@@ -93,6 +90,16 @@ class ProfileScreenTest {
                             .setResponseCode(200)
                             .setBody(Gson().toJson(userData))
                     }
+                    request.path?.startsWith("/auth/refresh-token/") == true -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody("false")
+                    }
+                    request.path?.startsWith("/auth/login") == true -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(LoginResponse("test", "test", "test")))
+                    }
                     else -> {
                         MockResponse().setResponseCode(404)
                     }
@@ -100,6 +107,7 @@ class ProfileScreenTest {
             }
         }
         MockWebServerManager.setDispatcher(customDispatcher)
+        composeTestRule.onNodeWithTag("loginBtn").performClick()
     }
     @Test
     fun profileScreenDisplayed(){

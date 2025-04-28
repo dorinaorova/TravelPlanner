@@ -239,7 +239,7 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
     Dialog(onDismissRequest = onDismissRequest) {
         Card(modifier = Modifier
             .wrapContentSize()
-            .padding(10.dp).background(MaterialTheme.colorScheme.background),
+            .padding(10.dp).background(MaterialTheme.colorScheme.background).testTag("filter_dialog"),
             shape = RoundedCornerShape(16.dp)) {
             Box{
             Column(Modifier.padding(10.dp)){
