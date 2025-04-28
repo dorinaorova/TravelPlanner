@@ -3,6 +3,7 @@ package com.androidlab.travelplannerapp.feature.login
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,6 +27,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
 
             val refreshToken = getRefreshToken(context)
+            Log.d("refreshToken", refreshToken?:"NINCS")
            if(refreshToken != null){
                val call = checkRefreshTokenUseCase(refreshToken)
                val isRefreshTokenValid = call?.awaitResponse()!!.body() as Boolean

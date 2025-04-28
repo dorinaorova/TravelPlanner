@@ -373,7 +373,7 @@ fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Bool
     Row(
         Modifier
             .padding(16.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth().testTag("travel_listitem_${travel._id}"),
         horizontalArrangement = Arrangement.SpaceBetween){
         Row(Modifier.clickable { navController.navigate(Screen.TravelProfileScreen.route+"?id=${travel._id}") }) {
             Box(
@@ -415,7 +415,7 @@ fun UserListItem(navController: NavController, user: UserInfo){
             .fillMaxWidth()
             .clickable {
                 navController.navigate(Screen.ProfileScreen.route+"?id=${user._id}")
-            },
+            }.testTag("user_listitem_${user._id}"),
         horizontalArrangement = Arrangement.SpaceBetween){
         Row {
             Box(
@@ -469,7 +469,7 @@ fun LikeButton(isLiked: Boolean, onClick: () -> Unit){
         )
     }
 
-    IconButton(onClick = { onClick() }, modifier = Modifier.padding(5.dp)) {
+    IconButton(onClick = { onClick() }, modifier = Modifier.padding(5.dp).testTag("like_button")) {
         Icon(
             imageVector = icon,
             contentDescription = "like",

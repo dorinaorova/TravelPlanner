@@ -1,6 +1,5 @@
 package com.androidlab.travelplannerapp.feature.search
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,17 +49,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.androidlab.travelplannerapp.R
 import com.androidlab.travelplannerapp.feature.navbar.NavBar
 import com.androidlab.travelplannerapp.feature.utils.ListItemDivider
@@ -91,7 +89,7 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)) {
+                .background(MaterialTheme.colorScheme.background).testTag("search_screen")) {
                 Column{
                     SearchBar(travelPicked)
                     if(travelPicked.value){
@@ -177,11 +175,11 @@ fun TravelOrUserPicker(travelPicked: MutableState<Boolean>){
 
     Row(Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly){
-        TextButton(onClick = { travelPicked.value=true }) {
+        TextButton(onClick = { travelPicked.value=true },modifier = Modifier.testTag("travel_picker")) {
             Text(text = "Travel",
                 color = travelBtnColor)
         }
-        TextButton(onClick = { travelPicked.value=false }) {
+        TextButton(onClick = { travelPicked.value=false }, modifier = Modifier.testTag("user_picker")) {
             Text(text = "User",
                 color = userBtnColor)
         }
@@ -193,7 +191,7 @@ private fun FilterBtn(){
         openFilterDialog.value = true
     },
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(8.dp).testTag("filter_btn"),
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.baseline_filter_list_24),
@@ -420,11 +418,4 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
 
         }
     }
-}
-
-
-@Composable
-@Preview(showBackground =  true)
-fun SearchScreenPreview(){
-    SearchScreen(navController = rememberNavController())
 }

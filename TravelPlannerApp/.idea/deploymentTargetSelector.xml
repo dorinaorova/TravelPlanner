@@ -5,19 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="theUpcomingVacationsAndInvitationsAppearOnHomeScreen()">
+      <SelectionState runConfigName="navigateToSearchScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="navigateToTravelProfile()">
+      <SelectionState runConfigName="LoginScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="travelInfoDisplayedCorrectly()">
+      <SelectionState runConfigName="travelsDisplayedOnSearchScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="travelUpdateFormDisplayed()">
+      <SelectionState runConfigName="SearchScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="navigateToNewTravelForm()">
+      <SelectionState runConfigName="usersDisplayedOnUserSearchScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
