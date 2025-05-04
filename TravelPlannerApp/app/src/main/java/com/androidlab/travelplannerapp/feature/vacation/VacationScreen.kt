@@ -43,7 +43,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,7 +72,7 @@ fun VacationScreen(navController: NavController, id: String, vm: VacationViewMod
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)) {
+                .padding(paddingValues).testTag("vacationScreen")) {
                 Details(navController)
             }
         },
@@ -102,7 +105,8 @@ private fun Header(navController: NavController, vm: VacationViewModel = hiltVie
                 vm.travel.name,
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 36.sp,
-                modifier = Modifier.padding(start = 25.dp)
+                modifier = Modifier.padding(start = 25.dp).testTag("vacationName"),
+                fontFamily = FontFamily(Font(R.font.itim))
             )
         }
     }
@@ -170,7 +174,7 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
             items(vm.participants) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(horizontal = 10.dp)
-                            .clickable { navController.navigate(Screen.ProfileScreen.route+"?id=${it._id}") }) {
+                            .clickable { navController.navigate(Screen.ProfileScreen.route+"?id=${it._id}") }.testTag("vacation_participant_${it._id}")) {
                     Box(Modifier.height(50.dp).width(50.dp).clip(CircleShape)
                         .border(2.dp, Color.White, CircleShape).padding(bottom = 3.dp)){
                         val imageModifier = Modifier
@@ -184,7 +188,7 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
             }
         }
     }
-    TextButton(onClick = { navController.navigate(Screen.InvitationScreen.route+"?id=${vm.travel._id}")}) {
+    TextButton(onClick = { navController.navigate(Screen.InvitationScreen.route+"?id=${vm.travel._id}")}, modifier = Modifier.testTag("addMember")) {
         Text("Add new member",
             color= MaterialTheme.colorScheme.secondary,
             modifier=Modifier.padding(end=25.dp, start=25.dp))
@@ -193,19 +197,20 @@ private fun TravelBuddies(navController: NavController, vm: VacationViewModel = 
 
 @Composable
 private fun Payments(navController: NavController, vm: VacationViewModel = hiltViewModel()){
-    Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route+"?id=${vm.travel._id}")  }){
+    Column(Modifier.clickable { navController.navigate(Screen.PaymentsScreen.route+"?id=${vm.travel._id}")  }.testTag("payments")){
         SmallHeader("Payments")
         if(vm.ownTransaction.isNotEmpty()){
             val transaction = vm.ownTransaction[0]
             val context= LocalContext.current
             Row(verticalAlignment = Alignment.Top,
-                modifier=Modifier.padding(horizontal=30.dp)){
+                modifier=Modifier.padding(horizontal=30.dp).testTag("transaction")){
                 Column(horizontalAlignment = Alignment.CenterHorizontally){
                     Text(vm.findUserName(transaction.fromUser, context),
-                        fontSize=14.sp, color= MaterialTheme.colorScheme.secondary)
+                        fontSize=14.sp, color= MaterialTheme.colorScheme.secondary, modifier = Modifier.testTag("transaction_fromUser"))
                     Text(transaction.amount.toString(),
                         color= MaterialTheme.colorScheme.primary,
-                        fontWeight= FontWeight.Bold)
+                        fontWeight= FontWeight.Bold,
+                        modifier = Modifier.testTag("transaction_amount"))
                 }
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_forward),
                     contentDescription = null,
@@ -214,13 +219,13 @@ private fun Payments(navController: NavController, vm: VacationViewModel = hiltV
                         .height(30.dp)
                         .width(30.dp))
                 Text(vm.findUserName(transaction.toUser, context),
-                    fontSize=14.sp, color= MaterialTheme.colorScheme.primary)
+                    fontSize=14.sp, color= MaterialTheme.colorScheme.primary, modifier = Modifier.testTag("transaction_toUser"))
             }
         }
         Row(Modifier.padding(horizontal=30.dp)){
             Text("You are in: ", color= MaterialTheme.colorScheme.secondary)
             Text(vm.ownDebt.toString(),
-                color= MaterialTheme.colorScheme.primary)
+                color= MaterialTheme.colorScheme.primary, modifier = Modifier.testTag("ownDept"))
         }
     }
 }
@@ -228,7 +233,7 @@ private fun Payments(navController: NavController, vm: VacationViewModel = hiltV
 @Composable
 private fun Plan(navController: NavController, vm: VacationViewModel = hiltViewModel() ){
     Column{
-        Row(Modifier.fillMaxWidth().clickable { navController.navigate(Screen.ActivityListScreen.route+"?id=${vm.travel._id}") }){
+        Row(Modifier.fillMaxWidth().clickable { navController.navigate(Screen.ActivityListScreen.route+"?id=${vm.travel._id}") }.testTag("plan")){
             SmallHeader("What's the plan?")
         }
         val boxModifier = Modifier
@@ -243,17 +248,13 @@ private fun Plan(navController: NavController, vm: VacationViewModel = hiltViewM
 
 @Composable
 private fun Tickets(navController: NavController, vm: VacationViewModel = hiltViewModel()){
-    Box(Modifier.clickable { navController.navigate(Screen.TicketsScreen.route+"?id=${vm.travel._id}") }) {
+    Box(Modifier.clickable { navController.navigate(Screen.TicketsScreen.route+"?id=${vm.travel._id}") }.testTag("tickets")) {
         SmallHeader("Tickets")
     }
-
             if(vm.tickets.isEmpty()){
-
-                TextButton(onClick = { navController.navigate(Screen.TicketsScreen.route+"?id=${vm.travel._id}")}) {
                     Text("Add new ticket",
                         color=MaterialTheme.colorScheme.secondary,
                         modifier=Modifier.padding(end=25.dp, start=25.dp, bottom=25.dp))
-                }
             }
             else{
                 LazyRow(

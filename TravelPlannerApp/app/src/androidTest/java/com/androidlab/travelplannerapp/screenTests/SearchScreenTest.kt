@@ -56,15 +56,15 @@ class SearchScreenTest {
         @BeforeClass
         @JvmStatic
         fun startServer() {
-            mockWebServerManager = MockWebServerManager
-            MockWebServerManager.start()
-            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
+            mockWebServerManager = MockWebServerManager()
+            mockWebServerManager.start()
+            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            MockWebServerManager.shutdown()
+            mockWebServerManager.shutdown()
         }
     }
 
@@ -76,7 +76,6 @@ class SearchScreenTest {
         val sharedPrefs = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
 
         sharedPrefs.edit()
-            .putString("refresh_token", "test-refresh-token")
             .putString("id", "test")
             .apply()
 
@@ -120,7 +119,7 @@ class SearchScreenTest {
                 }
             }
         }
-        MockWebServerManager.setDispatcher(customDispatcher)
+        mockWebServerManager.setDispatcher(customDispatcher)
         composeTestRule.onNodeWithTag("loginBtn").performClick()
     }
 

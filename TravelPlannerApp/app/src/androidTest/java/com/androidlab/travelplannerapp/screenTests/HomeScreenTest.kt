@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.androidlab.travelplannerapp.MainActivity
 import com.androidlab.travelplannerapp.MockWebServerManager
 import com.androidlab.travelplannerapp.TestConfig
@@ -44,15 +45,15 @@ class HomeScreenTest {
         @BeforeClass
         @JvmStatic
         fun startServer() {
-            mockWebServerManager = MockWebServerManager
-            MockWebServerManager.start()
-            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
+            mockWebServerManager = MockWebServerManager()
+            mockWebServerManager.start()
+            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            MockWebServerManager.shutdown()
+            mockWebServerManager.shutdown()
         }
     }
 
@@ -60,20 +61,14 @@ class HomeScreenTest {
     fun setup() {
         hiltRule.inject()
 
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        val sharedPrefs = context.getSharedPreferences("refresh_token", Context.MODE_PRIVATE)
+        val context = getInstrumentation().targetContext
+        val sharedPrefs = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
 
         sharedPrefs.edit()
-            .putString("refresh_token_key", "your_token_value")
+            .putString("id", "test")
             .apply()
 
-        MockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody("true")
-        )
-
-        val travels = listOf(Travel("id", "test vacation", 1767225600000, 1767225600000, "test", "test"))
+        val travel = Travel("id", "test vacation", 1767225600000, 1767225600000, "test", "test", ownerId = "test",public = true,description = "test",participantIds = listOf("test2"))
         val invitations = listOf(Invitation("id", "test", "test"))
         val customDispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
@@ -81,12 +76,12 @@ class HomeScreenTest {
                     request.path?.startsWith("/travel/user/") == true -> {
                         MockResponse()
                             .setResponseCode(200)
-                            .setBody(Gson().toJson(travels))
+                            .setBody(Gson().toJson(listOf(travel)))
                     }
                     request.path?.startsWith("/travel/all") == true  -> {
                         MockResponse()
                             .setResponseCode(200)
-                            .setBody(Gson().toJson(travels))
+                            .setBody(Gson().toJson(listOf(travel)))
                     }
                     request.path?.startsWith("/travel/participate/") == true  -> {
                         MockResponse()
@@ -98,15 +93,15 @@ class HomeScreenTest {
                             .setResponseCode(200)
                             .setBody(Gson().toJson(invitations))
                     }
-                    request.path?.startsWith("/auth/refresh-token/") == true -> {
-                        MockResponse()
-                            .setResponseCode(200)
-                            .setBody("false")
-                    }
                     request.path?.startsWith("/auth/login") == true -> {
                         MockResponse()
                             .setResponseCode(200)
                             .setBody(Gson().toJson(LoginResponse("test", "test", "test")))
+                    }
+                    request.path?.startsWith("/auth/refresh-token/") == true -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(false))
                     }
                     else -> {
                         MockResponse().setResponseCode(404)
@@ -114,7 +109,7 @@ class HomeScreenTest {
                 }
             }
         }
-        MockWebServerManager.setDispatcher(customDispatcher)
+        mockWebServerManager.setDispatcher(customDispatcher)
         composeTestRule.onNodeWithTag("loginBtn").performClick()
     }
 
@@ -128,7 +123,6 @@ class HomeScreenTest {
 
     @Test
     fun theUpcomingVacationsAndInvitationsAppearOnHomeScreen(){
-        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithTag("upcomingVacation").assertIsDisplayed()
         composeTestRule.onNodeWithText("You are on vacation").assertIsDisplayed()
 

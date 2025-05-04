@@ -17,7 +17,9 @@ import com.google.gson.Gson
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
+import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.RecordedRequest
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
@@ -40,35 +42,43 @@ class LoginScreenTest {
 
         @BeforeClass @JvmStatic
         fun startServer() {
-            mockWebServerManager = MockWebServerManager
-            MockWebServerManager.start()
-            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
+            mockWebServerManager=MockWebServerManager()
+            mockWebServerManager.start()
+            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            MockWebServerManager.shutdown()
+            mockWebServerManager.shutdown()
         }
     }
 
     @Before
     fun setup() {
         hiltRule.inject()
+        val response = LoginResponse("1", "test", "test")
 
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        context.getSharedPreferences("refresh_token", Context.MODE_PRIVATE)
-            .edit()
-            .clear()
-            .commit()
-
-
-
-        MockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody("false")
-        )
+        val customDispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                return when {
+                    request.path?.startsWith("/auth/refresh-token/") == true -> {
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(false))
+                    }
+                    request.path?.startsWith("/auth/login") == true ->{
+                        MockResponse()
+                            .setResponseCode(200)
+                            .setBody(Gson().toJson(response))
+                    }
+                    else -> {
+                        MockResponse().setResponseCode(404)
+                    }
+                }
+            }
+        }
+        mockWebServerManager.setDispatcher(customDispatcher)
     }
     @Test
     fun testLoginScreen() {
@@ -90,12 +100,7 @@ class LoginScreenTest {
     fun testLoginFunction() {
         val username = "test"
         val password = "test"
-        val response = LoginResponse("1", "test", "test")
-        MockWebServerManager.enqueueResponse(
-            MockResponse()
-                .setResponseCode(200)
-                .setBody(Gson().toJson(response))
-        )
+
         composeTestRule.onNodeWithTag("username").performTextInput(username)
         composeTestRule.onNodeWithTag("password").performTextInput(password)
         composeTestRule.onNodeWithTag("loginBtn").performClick()

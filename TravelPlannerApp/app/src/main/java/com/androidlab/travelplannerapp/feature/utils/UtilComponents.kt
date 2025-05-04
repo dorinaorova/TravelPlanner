@@ -96,7 +96,14 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
             .background(MaterialTheme.colorScheme.primaryContainer),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
         Row(verticalAlignment = Alignment.CenterVertically){
-            IconButton(onClick = { navController.navigate(route) }) {
+            IconButton(onClick = {
+                navController.navigate(route) {
+                    popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                        inclusive = true
+                    }
+                }
+            }
+            ) {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
                     contentDescription = null,
                     tint= MaterialTheme.colorScheme.onPrimaryContainer)

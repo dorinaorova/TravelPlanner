@@ -114,7 +114,7 @@ fun MyVacationList(navController: NavController, vm: HomeViewModel = hiltViewMod
 fun CurrentVacation(navController: NavController, vm: HomeViewModel = hiltViewModel()){
     val currentVacation = vm.getCurrentVacation()
     if(currentVacation != null) {
-        Box(Modifier.height(300.dp).fillMaxWidth().testTag("upcomingVacation")) {
+        Box(Modifier.height(300.dp).fillMaxWidth().testTag("upcomingVacation").clickable { navController.navigate(Screen.VacationScreen.route+"?id=${currentVacation._id}") }) {
             val imageModifier = Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -128,7 +128,7 @@ fun CurrentVacation(navController: NavController, vm: HomeViewModel = hiltViewMo
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp).clickable {navController.navigate(route = Screen.VacationScreen.route+"?id=${currentVacation._id}")  }
+                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)
                 ) {
                     Text(
                         currentVacation.name,

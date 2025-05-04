@@ -26,7 +26,7 @@ class SearchViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val likeTravelUseCase: LikeTravelUseCase
 )  : ViewModel() {
-    private val baseFilterValues = mutableStateListOf<Int>()
+    private val baseFilterValues = mutableStateListOf<Int>(0,0,0,0)
     var country = mutableStateOf("")
     var city = mutableStateOf("")
     var priceSliderPosition = mutableStateOf(0f..100f)
@@ -157,10 +157,13 @@ class SearchViewModel @Inject constructor(
     }
 
     fun calculateSteps(days: Boolean) : Int{
-        return if(days){
-            baseFilterValues[1]-1
+        return if(baseFilterValues.isEmpty()){
+            1
+        }
+        else if(days){
+            maxOf(baseFilterValues[1] - 1, 1)
         }else{
-            baseFilterValues[3]-1
+            maxOf(baseFilterValues[3] - 1, 1)
         }
     }
 

@@ -15,6 +15,7 @@ import com.androidlab.travelplannerapp.data.model.LoginResponse
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
 import com.androidlab.travelplannerapp.domain.module.api.ApiUseCaseModule
+import com.androidlab.travelplannerapp.screenTests.HomeScreenTest.Companion
 import com.google.gson.Gson
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -47,15 +48,15 @@ class ProfileScreenTest {
         @BeforeClass
         @JvmStatic
         fun startServer() {
-            mockWebServerManager = MockWebServerManager
-            MockWebServerManager.start()
-            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
+            mockWebServerManager = MockWebServerManager()
+            mockWebServerManager.start()
+            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            MockWebServerManager.shutdown()
+            mockWebServerManager.shutdown()
         }
     }
 
@@ -67,7 +68,6 @@ class ProfileScreenTest {
         val sharedPrefs = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
 
         sharedPrefs.edit()
-            .putString("refresh_token", "test-refresh-token")
             .putString("id", "test")
             .apply()
 
@@ -106,7 +106,7 @@ class ProfileScreenTest {
                 }
             }
         }
-        MockWebServerManager.setDispatcher(customDispatcher)
+        mockWebServerManager.setDispatcher(customDispatcher)
         composeTestRule.onNodeWithTag("loginBtn").performClick()
     }
     @Test

@@ -55,15 +55,15 @@ class TravelProfileScreenTest  {
         @BeforeClass
         @JvmStatic
         fun startServer() {
-            mockWebServerManager = MockWebServerManager
-            MockWebServerManager.start()
-            TestConfig.mockBaseUrl = MockWebServerManager.getBaseUrl()
+            mockWebServerManager = MockWebServerManager()
+            mockWebServerManager.start()
+            TestConfig.mockBaseUrl = mockWebServerManager.getBaseUrl()
         }
 
         @AfterClass
         @JvmStatic
         fun stopServer() {
-            MockWebServerManager.shutdown()
+            mockWebServerManager.shutdown()
         }
     }
 
@@ -75,7 +75,6 @@ class TravelProfileScreenTest  {
         val sharedPrefs = context.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
 
         sharedPrefs.edit()
-            .putString("refresh_token", "test-refresh-token")
             .putString("id", "test")
             .apply()
 
@@ -108,11 +107,6 @@ class TravelProfileScreenTest  {
                     request.path?.startsWith("/auth/refresh-token/") == true -> {
                         MockResponse()
                             .setResponseCode(200)
-                            .setBody("true")
-                    }
-                    request.path?.startsWith("/auth/refresh-token/") == true -> {
-                        MockResponse()
-                            .setResponseCode(200)
                             .setBody("false")
                     }
                     request.path?.startsWith("/auth/login") == true -> {
@@ -126,7 +120,7 @@ class TravelProfileScreenTest  {
                 }
             }
         }
-        MockWebServerManager.setDispatcher(customDispatcher)
+        mockWebServerManager.setDispatcher(customDispatcher)
         composeTestRule.onNodeWithTag("loginBtn").performClick()
     }
 

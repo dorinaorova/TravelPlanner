@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -70,7 +71,7 @@ fun InvitationScreen(navController: NavController, travelId: String, vm : Invita
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues).background(MaterialTheme.colorScheme.background)) {
+                .padding(paddingValues).background(MaterialTheme.colorScheme.background).testTag("invitationScreen")) {
                 InvitationList(navController)
             }
         },

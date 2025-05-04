@@ -5,19 +5,19 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="navigateToSearchScreen()">
+      <SelectionState runConfigName="VacationScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="travelsDisplayedOnSearchScreen()">
+      <SelectionState runConfigName="vacationDataDisplayedCorrectly()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="SearchScreenTest">
+      <SelectionState runConfigName="navigateToPaymentsScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="usersDisplayedOnUserSearchScreen()">
+      <SelectionState runConfigName="Tests in 'com.androidlab.travelplannerapp.screenTests'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="travelsDisplayedOnTravelSearchScreen()">
+      <SelectionState runConfigName="Tests in 'com.androidlab.travelplannerapp'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
