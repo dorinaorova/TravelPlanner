@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -71,7 +72,7 @@ fun TravelCreateUpdateScreen(navController: NavController, id: String?,  vm: Tra
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)) {
+                .padding(paddingValues).testTag("edit_travel_screen")) {
                 Column{
                     Form(navController= navController, isUpdateAction = id != null)
                 }
@@ -119,11 +120,11 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).verticalScroll(rememberScrollState())){
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
             Spacer(Modifier.height(20.dp))
-            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name*", labelColor = MaterialTheme.colorScheme.primary)
+            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), null, "Name*", labelColor = MaterialTheme.colorScheme.primary, testTag = "edit_travel_name")
             Spacer(Modifier.height(20.dp))
-            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City*", labelColor = MaterialTheme.colorScheme.primary)
+            InputField(city, KeyboardOptions(imeAction = ImeAction.Next), null, "City*", labelColor = MaterialTheme.colorScheme.primary, testTag = "edit_travel_city")
             Spacer(Modifier.height(20.dp))
-            InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country*", labelColor = MaterialTheme.colorScheme.primary)
+            InputField(country, KeyboardOptions(imeAction = ImeAction.Next), null, "Country*", labelColor = MaterialTheme.colorScheme.primary, testTag = "edit_travel_country")
             Spacer(Modifier.height(20.dp))
             PrivateCheckBox(isPublic)
             Spacer(Modifier.height(20.dp))
@@ -136,7 +137,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
             Spacer(Modifier.height(20.dp))
             PriceCurrencyForm(price,currency )
             Spacer(Modifier.height(20.dp))
-            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = MaterialTheme.colorScheme.primary, lines = 4)
+            InputField(description, KeyboardOptions(imeAction = ImeAction.Next), null, "Description",labelColor = MaterialTheme.colorScheme.primary, lines = 4, testTag = "edit_travel_description")
             Spacer(Modifier.height(20.dp))
             Button(onClick = {
                 if(isUpdateAction){
@@ -146,7 +147,7 @@ private fun Form(navController: NavController, isUpdateAction: Boolean, vm: Trav
                 }
 
             },
-                Modifier.align(Alignment.CenterHorizontally),
+                Modifier.align(Alignment.CenterHorizontally).testTag("edit_travel_save"),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.primary),
                     contentColor = colorResource(id = R.color.primary_text)
@@ -173,7 +174,8 @@ private fun PrivateCheckBox(isPublic: MutableState<Boolean>){
             colors = androidx.compose.material3.CheckboxDefaults.colors(
                 checkedColor = MaterialTheme.colorScheme.primary,
                 uncheckedColor = MaterialTheme.colorScheme.primary
-            )
+            ),
+            modifier=Modifier.testTag("private_checkbox")
         )
     }
 }
@@ -223,7 +225,6 @@ private fun TagList(vm: TravelCreateUpdateViewModel = hiltViewModel()){
             Button(
                 onClick = {vm.tagList.add(tag)
                     tag = ""},
-//                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                 enabled = tag != ""
             ) {
                 Text("Add", color = colorResource(id = R.color.primary_text))
@@ -279,6 +280,7 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary
                 ),
+                modifier=Modifier.testTag("edit_travel_price"),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 decorationBox = { innerTextField ->
                     Row(
@@ -311,7 +313,7 @@ private fun PriceCurrencyForm(price:MutableState<Int>, currency: MutableState<St
                     color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier
                         .padding(8.dp)
-                        .clickable(onClick = { expanded.value = true })
+                        .clickable(onClick = { expanded.value = true }).testTag("edit_travel_currency")
                 )
                 DropdownMenu(expanded = expanded.value,
                     onDismissRequest = { expanded.value = false },

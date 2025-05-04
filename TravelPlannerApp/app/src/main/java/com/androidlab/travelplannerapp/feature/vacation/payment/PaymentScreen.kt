@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -75,7 +76,7 @@ fun PaymentsScreen(navController: NavController, travelId: String, vm: PaymentVi
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)) {
+                .padding(paddingValues).testTag("paymentsScreen")) {
                 Column{
                     Details()
                 }

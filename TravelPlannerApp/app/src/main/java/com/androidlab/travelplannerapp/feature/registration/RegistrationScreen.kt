@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -60,18 +61,18 @@ private fun RegistrationForm(navController: NavController, vm: RegistrationViewM
                 color =MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier =Modifier.padding(15.dp))
             Spacer(Modifier.height(20.dp))
-            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), label ="Username", labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
+            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), label ="Username", labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag = "username")
             Spacer(Modifier.height(20.dp))
-            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), label="Full name", labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
+            InputField(name, KeyboardOptions(imeAction = ImeAction.Next), label="Full name", labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag = "name")
             Spacer(Modifier.height(20.dp))
-            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), label= "Email", isError = !vm.checkEmailFormat(email.value), labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
+            InputField(email, KeyboardOptions(imeAction = ImeAction.Next), label= "Email", isError = !vm.checkEmailFormat(email.value), labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag="email")
             Spacer(Modifier.height(20.dp))
-            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
+            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag = "password")
             Spacer(Modifier.height(20.dp))
             Button(onClick={
                 vm.signUp(username.value,password.value, name.value, email.value, context, navController)
             },
-                Modifier.align(Alignment.CenterHorizontally)){
+                Modifier.align(Alignment.CenterHorizontally).testTag("registerBtn")){
                 Text("Ready to travel!", fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
             Spacer(Modifier.height(30.dp))

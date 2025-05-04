@@ -45,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -75,7 +76,7 @@ fun ProfileScreen(navController: NavController, id: String?, vm: UserProfileView
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)) {
+                .padding(paddingValues).testTag("profile_screen")) {
                 Column{
                     Details(navController, ownProfile)
                 }
@@ -134,7 +135,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     val context = LocalContext.current
                     if(ownProfile.value){
                         Box{
-                            IconButton(onClick = { menuExpanded.value= true }) {
+                            IconButton(onClick = { menuExpanded.value= true }, modifier = Modifier.testTag("profile_dropdownMenu")) {
                                 Icon(
                                     imageVector= Icons.Rounded.MoreVert,
                                     contentDescription = null
@@ -171,7 +172,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.onSecondaryContainer
                                         )},
-                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).testTag("profile_dropdownMenu_edit")
                                 )
                                 DropdownMenuItem(
                                     text={ Text("Upload background image", color= MaterialTheme.colorScheme.onSecondaryContainer) },
@@ -214,30 +215,32 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     val name = if(vm.user.name==""){"-"} else{vm.user.name}
                     Text(name,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
+                        fontSize = 24.sp,
+                        modifier = Modifier.testTag("profile_name"),
                     )
                     Text(vm.user.username,
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.secondary
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.testTag("profile_username")
                     )
                     Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
                         val email = if(vm.user.email==""){"-"} else{vm.user.email}
                         Row(verticalAlignment = Alignment.CenterVertically){
                             Icon(imageVector = Icons.Rounded.MailOutline, contentDescription = null,tint= MaterialTheme.colorScheme.primary)
                             Text(email,
-                                modifier = Modifier.padding(start=5.dp))
+                                modifier = Modifier.padding(start=5.dp).testTag("profile_email"))
                         }
                         val livingLabel = (vm.user.city?: "-")+", "+(vm.user.country?: "-")
                         Row(verticalAlignment = Alignment.CenterVertically){
                             Icon(imageVector = ImageVector.vectorResource(R.drawable.baseline_public_24), contentDescription = null,tint= MaterialTheme.colorScheme.primary)
                             Text(livingLabel,
-                                modifier = Modifier.padding(start=5.dp))
+                                modifier = Modifier.padding(start=5.dp).testTag("profile_livingLabel"))
                         }
 
                     }
                     Column(Modifier.fillMaxWidth().padding(horizontal = 25.dp, vertical = 10.dp)){
                         Text("About me", fontWeight = FontWeight.Thin)
-                        Text(vm.user.description?:"...")
+                        Text(vm.user.description?:"...", modifier = Modifier.testTag("profile_description"))
                     }
                     ListItemDivider()
                     Row(modifier = Modifier
@@ -254,7 +257,8 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.clickable {navController.navigate(Screen.ListScreen.route+"?id=${vm.user._id}?type=${it.label}")  }){
                                 Text(it.value.toString(),
                                     fontSize=18.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.testTag("profile_${it.label}")
                                 )
                                 Text(it.label,
                                     fontSize = 10.sp)
@@ -317,7 +321,8 @@ private fun TravelItem(navController: NavController, travel: Travel?, vm: UserPr
             .padding(horizontal = 10.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(MaterialTheme.colorScheme.background)
-            .clickable { navController.navigate(route) }) {
+            .clickable { navController.navigate(route) }
+            .testTag("profile_travelitem_${travel?._id?:"add"}")) {
         if(travel != null){
             val imageModifier = Modifier.blur(3.dp).fillMaxSize()
             CustomImage(imageModifier, travel.pictureFileName, ImageSourceSelector.TRAVEL, 0.6F)

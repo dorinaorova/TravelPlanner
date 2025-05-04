@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -95,7 +96,14 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
             .background(MaterialTheme.colorScheme.primaryContainer),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween){
         Row(verticalAlignment = Alignment.CenterVertically){
-            IconButton(onClick = { navController.navigate(route) }) {
+            IconButton(onClick = {
+                navController.navigate(route) {
+                    popUpTo(navController.currentDestination?.id ?: return@navigate) {
+                        inclusive = true
+                    }
+                }
+            }
+            ) {
                 Icon(imageVector = ImageVector.vectorResource(R.drawable.arrow_back),
                     contentDescription = null,
                     tint= MaterialTheme.colorScheme.onPrimaryContainer)
@@ -103,7 +111,7 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
             Text(label,
                 fontSize=22.sp,
                 fontWeight = FontWeight.Bold,
-                modifier= Modifier.padding(vertical = 20.dp), color = MaterialTheme.colorScheme.onPrimaryContainer)
+                modifier= Modifier.padding(vertical = 20.dp).testTag("topbar_title"), color = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         if(secondaryIcon != null && secondaryRoute != null){
             IconButton(onClick = { navController.navigate(secondaryRoute) }) {
@@ -117,7 +125,7 @@ fun TopBar(label: String, navController: NavController, route: String, secondary
 }
 
 @Composable
-fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = MaterialTheme.colorScheme.primary, lines: Int = 1){
+fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, visualTransformation: VisualTransformation? = null, label:String, icon: ImageVector? = null, isError: Boolean = false, labelColor: Color = MaterialTheme.colorScheme.primary, lines: Int = 1, testTag: String=""){
     val focusManager = LocalFocusManager.current
     Column{
     Text(
@@ -145,6 +153,7 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
                 focusManager.moveFocus(FocusDirection.Down)
             }
         ),
+        modifier=Modifier.testTag(testTag),
         decorationBox = { innerTextField ->
             Row(
                 modifier = Modifier
@@ -371,7 +380,7 @@ fun TravelListItem(navController: NavController, travel: Travel, ownTravel: Bool
     Row(
         Modifier
             .padding(16.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth().testTag("travel_listitem_${travel._id}"),
         horizontalArrangement = Arrangement.SpaceBetween){
         Row(Modifier.clickable { navController.navigate(Screen.TravelProfileScreen.route+"?id=${travel._id}") }) {
             Box(
@@ -413,7 +422,7 @@ fun UserListItem(navController: NavController, user: UserInfo){
             .fillMaxWidth()
             .clickable {
                 navController.navigate(Screen.ProfileScreen.route+"?id=${user._id}")
-            },
+            }.testTag("user_listitem_${user._id}"),
         horizontalArrangement = Arrangement.SpaceBetween){
         Row {
             Box(
@@ -467,7 +476,7 @@ fun LikeButton(isLiked: Boolean, onClick: () -> Unit){
         )
     }
 
-    IconButton(onClick = { onClick() }, modifier = Modifier.padding(5.dp)) {
+    IconButton(onClick = { onClick() }, modifier = Modifier.padding(5.dp).testTag("like_button")) {
         Icon(
             imageVector = icon,
             contentDescription = "like",

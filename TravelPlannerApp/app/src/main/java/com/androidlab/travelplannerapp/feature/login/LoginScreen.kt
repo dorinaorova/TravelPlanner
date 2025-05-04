@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -32,7 +33,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,17 +71,17 @@ private fun LoginForm(navController: NavController, vm : LoginViewModel = hiltVi
                 modifier =Modifier.padding(15.dp).align(Alignment.CenterHorizontally))
             Spacer(Modifier.height(20.dp))
 
-            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), null, "Username", Icons.Rounded.AccountCircle, labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
+            InputField(username, KeyboardOptions(imeAction = ImeAction.Next), null, "Username", Icons.Rounded.AccountCircle, labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag= "username")
 
             Spacer(Modifier.height(20.dp))
 
-            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", icon = Icons.Rounded.Lock, labelColor = MaterialTheme.colorScheme.onPrimaryContainer)
+            InputField(password,keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done), PasswordVisualTransformation(), label="Password", icon = Icons.Rounded.Lock, labelColor = MaterialTheme.colorScheme.onPrimaryContainer, testTag="password")
 
             Spacer(Modifier.height(10.dp))
             Button(onClick={
                 vm.login(username.value,password.value, context, navController)
             },
-                Modifier.align(Alignment.CenterHorizontally)){
+                Modifier.align(Alignment.CenterHorizontally).testTag("loginBtn")){
                 Text("Login", fontWeight = FontWeight.Bold, fontSize = 15.sp)
             }
             Spacer(Modifier.height(30.dp))

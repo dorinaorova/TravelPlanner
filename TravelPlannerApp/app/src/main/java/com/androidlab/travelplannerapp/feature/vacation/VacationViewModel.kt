@@ -1,6 +1,7 @@
 package com.androidlab.travelplannerapp.feature.vacation
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -84,13 +85,13 @@ class VacationViewModel @Inject constructor(
                         }
                     }
                 }
-                if(!ownProfile(_travel.value.ownerId!!, context)) {
-                    val ownerCall = getUserByIdUseCase(_travel.value.ownerId!!)
-                    val owner = ownerCall?.awaitResponse()
-                    if (owner?.isSuccessful == true) {
-                        _participants.value += owner.body()!!
-                    }
+
+                val ownerCall = getUserByIdUseCase(_travel.value.ownerId!!)
+                val owner = ownerCall?.awaitResponse()
+                if (owner?.isSuccessful == true) {
+                    _participants.value += owner.body()!!
                 }
+
                 getTransactionForUser(context)
                 getDebtForUser(context)
                 getTickets()

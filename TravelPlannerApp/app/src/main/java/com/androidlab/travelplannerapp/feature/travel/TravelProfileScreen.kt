@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
@@ -70,7 +71,7 @@ fun TravelProfileScreen(navController: NavController, id: String, vm: TravelView
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)) {
+                .padding(paddingValues).testTag("travel_profile_screen")) {
                 Details(navController)
             }
         },
@@ -103,7 +104,7 @@ private fun Header(vm: TravelViewModel = hiltViewModel()){
                 vm.travel.name,
                 color = MaterialTheme.colorScheme.secondary,
                 fontSize = 36.sp,
-                modifier = Modifier.padding(start = 25.dp),
+                modifier = Modifier.padding(start = 25.dp).testTag("travel_name"),
                 fontFamily = FontFamily(Font(R.font.itim))
             )
             Row(Modifier.padding(horizontal = 25.dp, vertical = 10.dp)) {
@@ -124,7 +125,8 @@ private fun TagItem(text: String){
         .padding(horizontal=5.dp, vertical=3.dp)
     ){
         Text(text,
-            color= MaterialTheme.colorScheme.onPrimaryContainer)
+            color= MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.testTag("travel_tag_$text"))
+
     }
 }
 @Composable
@@ -168,11 +170,13 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                         }
                         DataRow(
                             vm.travel.city + ", " + vm.travel.country,
-                            ImageVector.vectorResource(R.drawable.baseline_map_24)
+                            ImageVector.vectorResource(R.drawable.baseline_map_24),
+                            testTag = "travel_location"
                         )
                         DataRow(
                             vm.travel.price.toString() + " " + vm.travel.currency,
-                            ImageVector.vectorResource(R.drawable.baseline_attach_money_24)
+                            ImageVector.vectorResource(R.drawable.baseline_attach_money_24),
+                            testTag = "travel_price"
                         )
                         DataRow(
                             "${
@@ -181,7 +185,8 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                                     vm.travel.endDate
                                 )
                             } days (${generateDate(vm.travel.startDate)} - ${generateDate(vm.travel.endDate)})",
-                            ImageVector.vectorResource(R.drawable.baseline_calendar_month_24)
+                            ImageVector.vectorResource(R.drawable.baseline_calendar_month_24),
+                            testTag = "travel_date"
                         )
                     }
                     if (!vm.ownTravel(context)) {
@@ -191,7 +196,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                     } else {
                         val menuExpanded = remember { mutableStateOf(false) }
                         Box {
-                            IconButton(onClick = { menuExpanded.value = true }) {
+                            IconButton(onClick = { menuExpanded.value = true }, modifier = Modifier.testTag("travel_profile_dropdown")) {
                                 Icon(
                                     imageVector = Icons.Rounded.MoreVert,
                                     contentDescription = null,
@@ -224,7 +229,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                                             tint= MaterialTheme.colorScheme.onSecondaryContainer
                                         )
                                     },
-                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+                                    modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer).testTag("travel_profile_edit")
                                 )
                                 DropdownMenuItem(
                                     text = { Text("Upload background image", color= MaterialTheme.colorScheme.onSecondaryContainer) },
@@ -258,7 +263,7 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
                     Text(
                         vm.travel.description ?: "...",
                         fontSize = 12.sp,
-                        modifier = Modifier.padding(horizontal = 5.dp),
+                        modifier = Modifier.padding(horizontal = 5.dp).testTag("travel_description"),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -274,14 +279,14 @@ private fun Body(scroll: ScrollState, navController: NavController, vm: TravelVi
 }
 
 @Composable
-private fun DataRow(text: String, icon: ImageVector){
+private fun DataRow(text: String, icon: ImageVector, testTag: String = ""){
     Row(Modifier.padding(bottom=8.dp),
         verticalAlignment = Alignment.CenterVertically){
         Icon(imageVector = icon,
             contentDescription = text,
             Modifier.padding(end=6.dp),
             tint = MaterialTheme.colorScheme.secondary)
-        Text(text, color = MaterialTheme.colorScheme.primary)
+        Text(text, color = MaterialTheme.colorScheme.primary, modifier = Modifier.testTag(testTag))
     }
 }
 

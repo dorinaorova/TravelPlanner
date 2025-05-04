@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -67,7 +68,7 @@ fun ActivityListScreen(navController: NavController, travelId: String,vm: Activi
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues).background(MaterialTheme.colorScheme.background)) {
+                .padding(paddingValues).background(MaterialTheme.colorScheme.background).testTag("activityListScreen")) {
                 ActivitiesList(navController)
             }
         },

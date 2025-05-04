@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,7 +53,7 @@ fun HomeScreen(navController: NavController, vm: HomeViewModel = hiltViewModel()
         content = { paddingValues ->
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues).background(MaterialTheme.colorScheme.background)) {
+                .padding(paddingValues).background(MaterialTheme.colorScheme.background).testTag("homeScreen")) {
                 Column{
                     CurrentVacation(navController)
                     Invitations(navController)
@@ -113,7 +114,7 @@ fun MyVacationList(navController: NavController, vm: HomeViewModel = hiltViewMod
 fun CurrentVacation(navController: NavController, vm: HomeViewModel = hiltViewModel()){
     val currentVacation = vm.getCurrentVacation()
     if(currentVacation != null) {
-        Box(Modifier.height(300.dp).fillMaxWidth()) {
+        Box(Modifier.height(300.dp).fillMaxWidth().testTag("upcomingVacation").clickable { navController.navigate(Screen.VacationScreen.route+"?id=${currentVacation._id}") }) {
             val imageModifier = Modifier
                 .fillMaxSize()
                 .blur(5.dp)
@@ -127,7 +128,7 @@ fun CurrentVacation(navController: NavController, vm: HomeViewModel = hiltViewMo
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp).clickable {navController.navigate(route = Screen.VacationScreen.route+"?id=${currentVacation._id}")  }
+                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)
                 ) {
                     Text(
                         currentVacation.name,
@@ -154,12 +155,12 @@ fun CurrentVacation(navController: NavController, vm: HomeViewModel = hiltViewMo
 fun Invitations(navController: NavController, vm: HomeViewModel = hiltViewModel()){
   if(vm.invitations.isNotEmpty()){
       val context = LocalContext.current
-      Column (Modifier.fillMaxWidth().heightIn(0.dp, 250.dp)){
+      Column (Modifier.fillMaxWidth().heightIn(0.dp, 250.dp).testTag("invitations")){
           Text("Invitations", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, modifier =Modifier.padding(horizontal=15.dp, vertical=10.dp))
           LazyColumn {
               items(vm.invitations) { inv ->
                   Row(
-                      Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 3.dp),
+                      Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 3.dp).testTag("${inv._id}_invitation"),
                       horizontalArrangement = Arrangement.SpaceBetween,
                       verticalAlignment = Alignment.CenterVertically
                   ) {

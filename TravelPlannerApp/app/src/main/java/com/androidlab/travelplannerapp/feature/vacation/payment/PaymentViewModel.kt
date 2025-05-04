@@ -70,7 +70,7 @@ class PaymentViewModel@Inject constructor(
                 _transactions.value = transactionResponse.body()!!
             }
 
-            val call = searchUserUseCase("")
+            val call = searchUserUseCase()
             val response = call?.awaitResponse()
             if (response?.isSuccessful == true) {
                 _users.value = response.body()!!
@@ -80,7 +80,9 @@ class PaymentViewModel@Inject constructor(
             val travelResponse = travelCall?.awaitResponse()
             if(travelResponse?.isSuccessful == true){
                 val travel = travelResponse.body()!!
-                _participants.value= _users.value.filter { user -> user._id in travel.participantIds!! || user._id == travel.ownerId }
+                if( _users.value.isNotEmpty() && travel.participantIds != null){
+                    _participants.value= _users.value.filter { user -> user._id in travel.participantIds!! || user._id == travel.ownerId }
+                }
             }
         }
     }

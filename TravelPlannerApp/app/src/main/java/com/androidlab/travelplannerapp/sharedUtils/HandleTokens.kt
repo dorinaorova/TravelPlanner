@@ -8,8 +8,6 @@ import android.util.Log
 fun getRefreshToken(context: Context): String? {
     val sharedPreferences = context.applicationContext.getSharedPreferences("AUTH_PREF", Context.MODE_PRIVATE)
     val token = sharedPreferences.getString("refresh_token", null)
-    Log.d("TOKEN", token.toString())
-    Log.d("Context", context.applicationContext.toString())
     return token
 }
 
