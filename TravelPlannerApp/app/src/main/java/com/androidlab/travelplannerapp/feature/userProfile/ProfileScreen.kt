@@ -205,7 +205,7 @@ private fun Body(scroll: ScrollState, navController: NavController, ownProfile: 
                     else{
                         Box {
                             val isFollower = isFollower(vm.user.followerIds, context)
-                            LikeButton(!isFollower,{ vm.followAction(context) } )
+                            LikeButton(isFollower,{ vm.followAction(context) } )
                         }
                     }
                 }
