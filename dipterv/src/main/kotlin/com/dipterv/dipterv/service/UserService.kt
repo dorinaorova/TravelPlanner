@@ -5,15 +5,12 @@ import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.*
-import com.dipterv.dipterv.model.requestModel.LoginRequest
 import com.dipterv.dipterv.model.requestModel.RegisterRequest
-import com.dipterv.dipterv.repository.TravelRepository
+import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
 import com.dipterv.dipterv.repository.UserRepository
-import org.springframework.boot.autoconfigure.security.oauth2.server.servlet.OAuth2AuthorizationServerProperties.Registration
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
-import kotlin.math.log
 
 @Service
 class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : UserDetailsService {
@@ -36,6 +33,10 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
             registration.email,
             "",
             "",
+            "",
+            "",
+            "",
+            emptyList(),
             emptyList(),
             emptyList(),
             emptyList(),
@@ -50,14 +51,11 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         }
     }
 
-    fun findUserDTOById(id: String): UserDTO{
-        return mapper.userToUserDTO(findById(id))
-    }
-
     fun findUserInfoDTOById(id: String) : UserInfoDTO{
         return mapper.userToUserInfoDTO(findById(id))
     }
 
+    @Throws(NotFoundException::class)
     private fun findById(id: String) : User{
         try {
             return userRepository.findById(id).get()
@@ -71,15 +69,19 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
     }
 
     fun nameFilter(name: String, users: List<UserInfoDTO>) : List<UserInfoDTO>{
-        return users.filter{it.name.contains(name, true) }
+        return users.filter{it.username.contains(name, true) }
     }
 
-    fun updateUser(id:String, user : User) : UserInfoDTO{
+
+    @Throws(NotFoundException::class)
+    fun updateUser(id:String, user : UserUpdateRequest) : UserInfoDTO{
         try{
             val findUser = findById(id)
-            findUser.name= user.name
-            findUser.email = user.email
+            findUser.name= user.name?: findUser.name
+            findUser.email = user.email?: findUser.email
             findUser.description = user.description
+            findUser.city = user.city
+            findUser.country=user.country
             val savedUser = userRepository.save(findUser)
             return mapper.userToUserInfoDTO(savedUser)
         }catch (e: Exception){
@@ -87,59 +89,91 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         }
     }
 
-    fun followUser(follow: FollowDTO) : UserDTO{
+    fun followUser(follow: FollowDTO) : UserInfoDTO{
+        if(follow.followedId != follow.followerId ){
             var followerUser = findById(follow.followerId)
             var followedUser = findById(follow.followedId)
             val updatedFollowingList = followerUser.followingIds.toMutableList().apply { add(followedUser._id!!) }
-            followerUser = followedUser.copy(followingIds = updatedFollowingList)
+            followerUser = followerUser.copy(followingIds = updatedFollowingList)
 
             val updatedFollowersList = followedUser.followerIds.toMutableList().apply { add(followerUser._id!!) }
             followedUser = followedUser.copy(followerIds = updatedFollowersList)
 
-            val updated = userRepository.save(followerUser)
-            userRepository.save(followedUser)
+            userRepository.save(followerUser)
+            val updated = userRepository.save(followedUser)
 
-            return mapper.userToUserDTO(updated)
+            return mapper.userToUserInfoDTO(updated)
+        }else{
+            throw  Exception("The follow and follower ids can not be the same!")
+        }
     }
 
-    fun unfollowUser(follow: FollowDTO) : UserDTO{
+    fun unfollowUser(follow: FollowDTO) : UserInfoDTO{
         var followerUser = findById(follow.followerId)
         var unfollowedUser = findById(follow.followedId)
-        val updateFollowingList = followerUser.followingIds.toMutableList().apply { remove(followerUser._id!!) }
+        val updateFollowingList = followerUser.followingIds.toMutableList().apply { remove(unfollowedUser._id!!) }
         followerUser = followerUser.copy(followingIds = updateFollowingList)
 
         val updatedFollowersList = unfollowedUser.followerIds.toMutableList().apply { remove(followerUser._id!!) }
         unfollowedUser = unfollowedUser.copy(followerIds = updatedFollowersList)
-        val updated = userRepository.save(followerUser)
-        userRepository.save(unfollowedUser)
-        return UserDTO(
-            updated._id,
-            mapper.userToUserInfoDTO(updated),
-            updated.followingIds,
-            updated.followerIds)
+        userRepository.save(followerUser)
+        val updated = userRepository.save(unfollowedUser)
+        return mapper.userToUserInfoDTO(updated)
     }
 
-    fun add(user: UserInfoDTO): User? {
-        return null
-//        val newUser = User(
-//            null,
-//            user.username,
-//            user.name,
-//            user.email,
-//            user.description,
-//            user.profilePictureFilePath,
-//            emptyList(),
-//            emptyList(),
-//            emptyList(),
-//            emptyList()
-//        )
-//        return userRepository.save(newUser)
-    }
 
     fun addTravel(id: String, travel: Travel){
         var user = findById(id)
         val updatedTravelList = user.travelIds.toMutableList().apply { add(travel._id!!) }
         user = user.copy(travelIds = updatedTravelList)
         userRepository.save(user)
+    }
+
+    fun uploadProfilePicture(id: String, profilePictureFilePath: String) : UserInfoDTO{
+        try {
+            val findUser = findById(id)
+            findUser.profilePictureFilePath = profilePictureFilePath
+            val savedUser = userRepository.save(findUser)
+            return mapper.userToUserInfoDTO(savedUser)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
+    }
+
+    fun uploadBackgroundPicture(id: String, backgroundPictureFilePath: String) : UserInfoDTO{
+        try {
+            val findUser = findById(id)
+            findUser.backgroundPictureFilePath = backgroundPictureFilePath
+            val savedUser = userRepository.save(findUser)
+            return mapper.userToUserInfoDTO(savedUser)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
+    }
+
+
+    fun likeTravel(id: String, travelId: String): UserInfoDTO{
+        try {
+            var user = findById(id)
+            val updatedLikedTravelList = if(user.likedTravelIds.contains(travelId)){
+                user.likedTravelIds.toMutableList().apply { remove(travelId) }
+            }else{
+                user.likedTravelIds.toMutableList().apply { add(travelId) }
+            }
+            user =user.copy(likedTravelIds = updatedLikedTravelList)
+            val savedUser = userRepository.save(user)
+            return mapper.userToUserInfoDTO(savedUser)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
+    }
+
+    fun isTravelLiked(id: String, travelId: String): Boolean{
+        try {
+            val user = findById(id)
+            return user.likedTravelIds.contains(travelId)
+        }catch (e: Exception){
+            throw NotFoundException("User not found with id: $id")
+        }
     }
 }

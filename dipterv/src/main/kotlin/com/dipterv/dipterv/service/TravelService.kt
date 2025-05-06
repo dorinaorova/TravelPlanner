@@ -1,11 +1,8 @@
 package com.dipterv.dipterv.service
 
 import com.dipterv.dipterv.exception.NotFoundException
-import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.documentModel.spend.Spend
-import com.dipterv.dipterv.model.dto.TravelDTO
-import com.dipterv.dipterv.model.dto.TravelInfoDTO
+import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
 import com.dipterv.dipterv.repository.TravelRepository
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
@@ -13,123 +10,138 @@ import java.util.concurrent.TimeUnit
 @Service
 class TravelService (
     val travelRepository: TravelRepository,
-    val mapper: DTOMapper,
     val userService: UserService
 ) {
-    fun getById(id: String): Travel{
+    fun findById(id: String): Travel{
         try{
             return travelRepository.findById(id).get()
         }catch(e:Exception){
-            throw NotFoundException("User not found with id: $id")
+            throw NotFoundException("Travel not found with id: $id")
         }
     }
 
-    fun getAllTravels(): List<TravelInfoDTO> {
+    fun findAllPublicTravels(): List<Travel> {
         val allTravels = travelRepository.findAll().filter { it.public }
-        return allTravels.map { travel-> mapper.travelToTravelInfoDto(travel) }
+        return allTravels
     }
 
-    fun getTravelInfoById(id: String): TravelInfoDTO{
-        return mapper.travelToTravelInfoDto(getById(id))
+    fun cityFilter(city: String, travels: List<Travel>) : List<Travel>{
+        return travels.filter { it.city!!.contains(city, true) }
     }
 
-    fun locationFilter(location: String, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
-        return travels.filter { it.country.contains(location, true) || it.city!!.contains(location, true) }
+    fun countryFilter(country: String, travels: List<Travel>) : List<Travel>{
+        return travels.filter { it.country.contains(country, true) }
     }
 
-    fun nameFilter(name: String, travels: List<TravelInfoDTO>): List<TravelInfoDTO>{
+    fun nameFilter(name: String, travels: List<Travel>): List<Travel>{
         return travels.filter { it.name.contains(name,true) }
     }
 
-    fun minCostFilter(cost: Int, travels: List<TravelInfoDTO>):List<TravelInfoDTO>{
+    fun minCostFilter(cost: Int, travels: List<Travel>):List<Travel>{
         return travels.filter { it.price>=cost }
     }
 
-    fun maxCostFiler(cost: Int, travels: List<TravelInfoDTO>): List<TravelInfoDTO>{
+    fun maxCostFiler(cost: Int, travels: List<Travel>): List<Travel>{
         return travels.filter { it.price<=cost }
     }
 
-    fun tagFilter(tags: List<String>, travels : List<TravelInfoDTO>): List<TravelInfoDTO>{
+    fun tagFilter(tags: List<String>, travels : List<Travel>): List<Travel>{
         return travels.filter { containsAllTags(it.tags ,tags) }
     }
 
-    fun minDaysFilter(days: Int, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
+    fun minDaysFilter(days: Int, travels: List<Travel>) : List<Travel>{
         return travels.filter{ calculateDurationInDays(it.endDate, it.startDate) >= days}
     }
 
-    fun maxDaysFilter(days: Int, travels: List<TravelInfoDTO>) : List<TravelInfoDTO>{
+    fun maxDaysFilter(days: Int, travels: List<Travel>) : List<Travel>{
         return travels.filter{ calculateDurationInDays(it.endDate, it.startDate) <= days}
     }
 
-    fun createNew(id: String, travelDTO: TravelDTO): TravelDTO{
+    fun getFilterValues() : List<Int>{
+        val travels = findAllPublicTravels()
+        val minDaysTravel = travels.minWithOrNull(compareBy { calculateDurationInDays(it.endDate, it.startDate)})
+        val minDays =if(minDaysTravel!= null){calculateDurationInDays(minDaysTravel.endDate, minDaysTravel.startDate)}else{null}
+        val maxDaysTravel = travels.maxWithOrNull(compareBy {calculateDurationInDays(it.endDate, it.startDate)})
+        val maxDays =if(maxDaysTravel!= null){calculateDurationInDays(maxDaysTravel.endDate, maxDaysTravel.startDate)}else{null}
+        val minPrice = travels.minByOrNull { it.price }?.price
+        val maxPrice = travels.maxByOrNull {it.price}?.price
+        return listOf(minDays?: 0, maxDays?: 0, minPrice?: 0, maxPrice?:0)
+    }
+
+    fun createNew(id: String, travelDTO: Travel): Travel{
         val travel = Travel(
             null,
-            travelDTO.travelInfo.name,
-            travelDTO.travelInfo.startDate,
-            travelDTO.travelInfo.endDate,
-            travelDTO.travelInfo.country,
-            travelDTO.travelInfo.city,
-            travelDTO.travelInfo.price,
-            travelDTO.travelInfo.description,
-            travelDTO.travelInfo.tags,
+            travelDTO.name,
+            travelDTO.startDate,
+            travelDTO.endDate,
+            travelDTO.country,
+            travelDTO.city,
+            travelDTO.price,
+            travelDTO.currency,
+            travelDTO.description,
+            travelDTO.tags,
             null,
             emptyList(),
-            emptyList(),
-            emptyList(),
             travelDTO.public,
-            id
+            id,
         )
         val newTravel = travelRepository.save(travel)
         userService.addTravel(id, newTravel)
-        return mapper.travelToTravelDTO(travel)
+        return newTravel
     }
 
-    fun update(travelDTO: TravelDTO) : TravelDTO{
+    fun update(id: String, travelRequest: TravelUpdateRequest) : Travel{
         try{
-            val travel = getById(travelDTO._id!!)
-            travel.name= travelDTO.travelInfo.name
-            travel.startDate= travelDTO.travelInfo.startDate
-            travel.endDate= travelDTO.travelInfo.endDate
-            travel.country= travelDTO.travelInfo.country
-            travel.city = travelDTO.travelInfo.city
-            travel.price = travelDTO.travelInfo.price
-            travel.description = travelDTO.travelInfo.description
-            travel.tags= travelDTO.travelInfo.tags
-            val updatedTravel = travelRepository.save(travel)
-            return mapper.travelToTravelDTO(updatedTravel)
+            val travel = findById(id)
+            travelRequest.name?.let { travel.name = it }
+            travelRequest.startDate?.let { travel.startDate = it }
+            travelRequest.endDate?.let { travel.endDate = it }
+            travelRequest.country?.let { travel.country = it }
+            travelRequest.city?.let { travel.city = it }
+            travelRequest.price?.let { travel.price = it }
+            travelRequest.currency?.let { travel.currency = it }
+            travelRequest.description?.let { travel.description = it }
+            travelRequest.tags?.let { travel.tags = it }
+            travelRequest.public?.let { travel.public = it }
+            return travelRepository.save(travel)
         }catch (e: NullPointerException){
-            throw NotFoundException("User not found with id: ${travelDTO._id}")
+            throw NotFoundException("Travel not found with id: ${id}")
         }
     }
 
-    fun findMyTravels(id: String): List<TravelDTO>? {
+    fun findMyTravels(id: String): List<Travel>? {
         val user = userService.findUserInfoDTOById(id)
-        val travels = mutableListOf<TravelDTO>()
-        user.travelIds?.forEach { travelId -> travels.add(mapper.travelToTravelDTO(getById(travelId))) }
+        val travels = mutableListOf<Travel>()
+        user.travelIds?.forEach { travelId -> travels.add(findById(travelId)) }
         return travels.toList()
     }
 
-//    fun updateParticipant(travelDTO: TravelDTO) : TravelDTO{
-//        try{
-//            val travel = getById(travelDTO._id!!)
-//            travel.participants = travelDTO.participants
-//            val updatedTravel = travelRepository.save(travel)
-//            return TravelDTO(
-//                updatedTravel._id,
-//                travelToTravelInfoDto(updatedTravel),
-//                updatedTravel.participants,
-//                updatedTravel.public
-//            )
-//        }catch (e: NullPointerException){
-//            throw NotFoundException("User not found with id: ${travelDTO._id}")
-//        }
-//    }
+    fun findParticipatedTravels(userId: String): List<Travel>?{
+        val travels = travelRepository.findAll()
+        val partTravels = travels.filter { !it.participantIds.isNullOrEmpty() }
+        val result = partTravels.filter { it.participantIds!!.contains(userId) }
+        return result
+    }
 
-    fun uploadImage(imageName: String, id: String) : TravelInfoDTO{
-        val travel = getById(id)
+    fun addParticipant(userId: String, travelId: String) : Travel{
+        try{
+            val travel = findById(travelId)
+            if(travel.participantIds == null){
+                travel.participantIds= emptyList()
+            }
+            val updatedParticipantIds = travel.participantIds!!.toMutableList().apply { add(userId)}
+            travel.participantIds = updatedParticipantIds
+            val updatedTravel = travelRepository.save(travel)
+            return updatedTravel
+        }catch (e: NullPointerException){
+            throw NotFoundException("Travel not found with id: ${travelId}")
+        }
+    }
+
+    fun uploadImage(imageName: String, id: String) : Travel{
+        val travel = findById(id)
         travel.pictureFileName=imageName
-        val updatedTravel = travelRepository.save(travel)
-        return mapper.travelToTravelInfoDto(updatedTravel)
+        return travelRepository.save(travel)
     }
 
     private fun containsAllTags(base: List<String>?, tags: List<String>) : Boolean{
@@ -141,22 +153,9 @@ class TravelService (
         }
     }
 
-    private fun calculateDurationInDays(endDate: Long, startDate: Long) : Int{
+    fun calculateDurationInDays(endDate: Long, startDate: Long) : Int{
         val differenceInMillis = endDate - startDate
-        return TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()
+        return TimeUnit.MILLISECONDS.toDays(differenceInMillis).toInt()+1
     }
 
-    fun addSpend(spend: Spend, id: String){
-        val travel = getById(id)
-        val updatedSpendList = travel.spendIds.toMutableList().apply { add(spend._id) }
-        travel.spendIds=updatedSpendList.toList()
-        travelRepository.save(travel)
-    }
-
-    fun uploadTicket(id: String, ticketId: String){
-        val travel = getById(id)
-        val updatedTicketIds = travel.ticketIds.toMutableList().apply { add(ticketId)}
-        travel.ticketIds=updatedTicketIds.toList()
-        travelRepository.save(travel)
-    }
 }

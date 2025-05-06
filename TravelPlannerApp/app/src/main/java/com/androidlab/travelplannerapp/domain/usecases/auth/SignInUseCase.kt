@@ -1,6 +1,6 @@
 package com.androidlab.travelplannerapp.domain.usecases.auth
 
-import com.androidlab.travelplannerapp.data.auth.AuthService
+import com.androidlab.travelplannerapp.data.service.auth.AuthService
 import com.androidlab.travelplannerapp.data.model.LoginRequest
 import com.androidlab.travelplannerapp.data.model.LoginResponse
 import retrofit2.Call

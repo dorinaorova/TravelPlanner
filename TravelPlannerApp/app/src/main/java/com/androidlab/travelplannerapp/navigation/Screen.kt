@@ -10,4 +10,11 @@ sealed class Screen(val route: String) {
     object ProfileScreen: Screen("profile")
     object TicketsScreen: Screen("tickets")
     object RegistrationScreen: Screen("registration")
+    object UserUpdateScreen: Screen("user_update")
+    object UploadImageScreen: Screen("upload_image")
+    object NewTravelScreen: Screen("new_travel")
+    object InvitationScreen: Screen("invitation")
+    object ActivityListScreen: Screen("activity_list")
+    object MapScreen: Screen("map")
+    object ListScreen: Screen("list")
 }

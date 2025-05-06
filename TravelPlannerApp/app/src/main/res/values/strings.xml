@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TravelPlannerApp</string>
-    <string name="BASE_URL">https://7539-2001-4c4e-1e18-a600-9843-8533-dbb6-7f7f.ngrok-free.app/</string>
+    <string name="BASE_URL">http://192.168.1.136:8080/</string>
+    <string name="clear_text_config">true</string>
 </resources>

@@ -7,5 +7,11 @@ data class UserInfo(
     val email: String,
     val description: String?,
     val profilePictureFilePath: String?,
-    val travelIds: List<String>?
+    val backgroundPictureFilePath: String?,
+    val travelIds: List<String>?,
+    val city: String?,
+    val country: String?,
+    val followingIds: List<String>?,
+    val followerIds: List<String>?,
+    val likedTravelIds: List<String>?
 )

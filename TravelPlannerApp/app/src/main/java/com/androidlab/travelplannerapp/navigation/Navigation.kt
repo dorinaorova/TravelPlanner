@@ -1,44 +1,78 @@
 package com.androidlab.travelplannerapp.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.androidlab.travelplannerapp.feature.HomeScreen
+import com.androidlab.travelplannerapp.feature.home.HomeScreen
+import com.androidlab.travelplannerapp.feature.list.ListScreen
 import com.androidlab.travelplannerapp.feature.login.LoginScreen
-import com.androidlab.travelplannerapp.feature.PaymentsScreen
-import com.androidlab.travelplannerapp.feature.ProfileScreen
-import com.androidlab.travelplannerapp.feature.search.SearchScreen
-import com.androidlab.travelplannerapp.feature.TravelProfileScreen
-import com.androidlab.travelplannerapp.feature.VacationScreen
 import com.androidlab.travelplannerapp.feature.registration.RegistrationScreen
-import com.androidlab.travelplannerapp.feature.ticket.TicketsScreen
+import com.androidlab.travelplannerapp.feature.search.SearchScreen
+import com.androidlab.travelplannerapp.feature.vacation.tickets.TicketsScreen
+import com.androidlab.travelplannerapp.feature.travel.TravelProfileScreen
+import com.androidlab.travelplannerapp.feature.travel.travelCreate.TravelCreateUpdateScreen
+import com.androidlab.travelplannerapp.feature.uploadImage.UploadImageScreen
+import com.androidlab.travelplannerapp.feature.userProfile.ProfileScreen
+import com.androidlab.travelplannerapp.feature.userProfile.userUpdate.UserUpdateScreen
+import com.androidlab.travelplannerapp.feature.vacation.VacationScreen
+import com.androidlab.travelplannerapp.feature.vacation.activities.list.ActivityListScreen
+import com.androidlab.travelplannerapp.feature.vacation.activities.map.MapScreen
+import com.androidlab.travelplannerapp.feature.vacation.invitation.InvitationScreen
+import com.androidlab.travelplannerapp.feature.vacation.payment.PaymentsScreen
 
 @Composable
 fun Navigation(navController: NavHostController){
     NavHost(navController = navController,
         startDestination = Screen.LoginScreen.route)
     {
-        composable(route = Screen.HomeScreen.route){
+        composable(route = Screen.HomeScreen.route,
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){
             HomeScreen(navController =navController)
         }
-        composable(route = Screen.VacationScreen.route){
-            VacationScreen(navController = navController)
+        composable(route = Screen.VacationScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            VacationScreen(navController = navController, id = id!!)
         }
-        composable(route = Screen.SearchScreen.route){
+        composable(route = Screen.SearchScreen.route,
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){
             SearchScreen(navController = navController)
         }
-        composable(route = Screen.TravelProfileScreen.route){
-            TravelProfileScreen(navController = navController)
+        composable(route = Screen.TravelProfileScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            TravelProfileScreen(navController = navController, id = id!!)
         }
-        composable(route = Screen.PaymentsScreen.route){
-            PaymentsScreen(navController = navController)
+        composable(route = Screen.PaymentsScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            PaymentsScreen(navController = navController, travelId = id!!)
         }
-        composable(route = Screen.ProfileScreen.route){
-            ProfileScreen(navController = navController)
+        composable(route = Screen.ProfileScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            ProfileScreen(navController = navController, id = id)
         }
-        composable(route= Screen.TicketsScreen.route){
-            TicketsScreen(navController = navController)
+        composable(route= Screen.TicketsScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")!!
+            TicketsScreen(navController = navController, id = id)
         }
         composable(route =Screen.LoginScreen.route){
             LoginScreen(navController=navController)
@@ -46,5 +80,55 @@ fun Navigation(navController: NavHostController){
         composable(route=Screen.RegistrationScreen.route){
             RegistrationScreen(navController = navController)
         }
+        composable(route=Screen.UserUpdateScreen.route){
+            UserUpdateScreen(navController = navController)
+        }
+        composable(route = Screen.UploadImageScreen.route+"?id={id}&uploadImageType={uploadImageType}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            val uploadImageType = backStackEntry.arguments?.getString("uploadImageType")
+            UploadImageScreen(navController = navController, id = id, uploadImageTypeString = uploadImageType!!)
+        }
+        composable(route = Screen.NewTravelScreen.route+"?id={id}"){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            TravelCreateUpdateScreen(navController = navController, id = id)
+        }
+        composable(route = Screen.InvitationScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            InvitationScreen(navController = navController, travelId = id!!)
+        }
+        composable(route = Screen.ActivityListScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            ActivityListScreen(navController = navController, travelId = id!!)
+        }
+
+        composable(route = Screen.MapScreen.route+"?id={id}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            MapScreen(navController = navController, travelId = id!!)
+        }
+
+        composable(route = Screen.ListScreen.route+"?id={id}?type={type}",
+            enterTransition = { enterTransition() },
+            exitTransition = { exitTransition() }){backStackEntry ->
+            val type = backStackEntry.arguments?.getString("type")
+            val id = backStackEntry.arguments?.getString("id")
+            ListScreen(navController = navController, type = type!!, userId = id!!)
+        }
     }
+}
+private fun enterTransition(): EnterTransition {
+    return slideInHorizontally(animationSpec = tween(durationMillis = 300, easing = LinearEasing)) { fullWidth ->
+        -fullWidth / 3
+    } + fadeIn(animationSpec = tween(220, delayMillis = 90))
+}
+
+private fun exitTransition(): ExitTransition {
+    return         slideOutHorizontally(animationSpec = tween(300, easing = LinearEasing)) {
+        200
+    } + fadeOut()
 }

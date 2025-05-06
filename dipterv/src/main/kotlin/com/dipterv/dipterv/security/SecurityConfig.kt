@@ -50,7 +50,9 @@ class SecurityConfig(private val jwtRequestFilter: JwtRequestFilter){
                         "/webjars/**"
                     ).permitAll()
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/user/image/**", "travel/image/**").permitAll()
                     .anyRequest().authenticated()
+//                    .anyRequest().permitAll()
             }
             .anonymous { it.disable() }
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)

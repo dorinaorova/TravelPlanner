@@ -3,21 +3,20 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("com.google.dagger.hilt.android")
     kotlin("kapt") version "1.9.0"
-
 }
 
 android {
     namespace = "com.androidlab.travelplannerapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.androidlab.travelplannerapp"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.androidlab.travelplannerapp.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -30,6 +29,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "clear_text_config","true")
         }
     }
     compileOptions {
@@ -64,6 +64,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,6 +74,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation ("androidx.compose.animation:animation:1.6.0" )
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation(libs.androidx.material)
     implementation("androidx.compose.material3:material3:1.2.0-alpha10")
@@ -84,5 +87,22 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+
+    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+
+    implementation("androidx.compose.material3:material3:1.2.0-alpha02")
+
+    implementation("com.google.maps.android:maps-compose:6.4.1")
+
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.6.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.6.1")
+    implementation ("androidx.test.espresso:espresso-idling-resource:3.6.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-idling-resource:3.6.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.48")
+    kaptAndroidTest("com.google.dagger:hilt-compiler:2.48")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
+    androidTestImplementation ("androidx.navigation:navigation-testing:$nav_version")
 
 }

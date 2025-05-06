@@ -1,9 +1,8 @@
 package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
-import com.dipterv.dipterv.model.documentModel.Ticket
-import com.dipterv.dipterv.model.dto.TravelDTO
-import com.dipterv.dipterv.model.dto.TravelInfoDTO
+import com.dipterv.dipterv.model.documentModel.Travel
+import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TicketService
 import com.dipterv.dipterv.service.TravelService
@@ -33,9 +32,10 @@ class TravelController(
         @RequestParam(required = false) minDays: Int?,
         @RequestParam(required = false) maxDays: Int?,
         @RequestParam(required = false) name: String?,
-        @RequestParam(required = false) location: String?,
-    ) : ResponseEntity<List<TravelInfoDTO>> {
-        var travels = travelService.getAllTravels()
+        @RequestParam(required = false) city: String?,
+        @RequestParam(required = false) country: String?,
+    ) : ResponseEntity<List<Travel>> {
+        var travels = travelService.findAllPublicTravels()
         maxPrice?.let {
             travels= travelService.maxCostFiler(it, travels)
         }
@@ -54,10 +54,18 @@ class TravelController(
         name?.let {
             travels= travelService.nameFilter(it, travels)
         }
-        location?.let{
-            travels = travelService.locationFilter(it, travels)
+        city?.let{
+            travels = travelService.cityFilter(it, travels)
+        }
+        country?.let{
+            travels = travelService.countryFilter(it, travels)
         }
         return ResponseEntity.ok(travels)
+    }
+
+    @GetMapping("/filterValues")
+    fun getFilterValues(): ResponseEntity<*>{
+        return ResponseEntity.ok(travelService.getFilterValues())
     }
 
     @GetMapping("/user/{id}")
@@ -72,10 +80,23 @@ class TravelController(
         }
     }
 
+
+    @GetMapping("/participate/{id}")
+    fun getParticipatedTravels(@PathVariable("id") id: String) : ResponseEntity<*>{
+        try{
+            val travels = travelService.findParticipatedTravels(id)
+            return ResponseEntity(travels, HttpStatus.OK)
+        }catch (e: NotFoundException){
+            return ResponseEntity(e, HttpStatus.NOT_FOUND)
+        }catch (e: Exception){
+            return ResponseEntity(e, HttpStatus.BAD_REQUEST)
+        }
+    }
+
     @GetMapping("/{id}")
     fun getTravelById(@PathVariable("id") id: String) : ResponseEntity<*> {
         try {
-            val travel = travelService.getTravelInfoById(id)
+            val travel = travelService.findById(id)
             return ResponseEntity.ok(travel)
         }catch (e: NotFoundException){
             return ResponseEntity(e, HttpStatus.NOT_FOUND)
@@ -85,7 +106,7 @@ class TravelController(
     }
 
     @PostMapping("/user/{id}")
-    fun postNewTravel(@PathVariable("id") userId: String, @RequestBody travel: TravelDTO): ResponseEntity<*> {
+    fun postNewTravel(@PathVariable("id") userId: String, @RequestBody travel: Travel): ResponseEntity<*> {
         try {
             val newTravel = travelService.createNew(userId, travel)
             return ResponseEntity(newTravel, HttpStatus.CREATED)
@@ -96,10 +117,10 @@ class TravelController(
         }
     }
 
-    @PutMapping("/update")
-    fun updateTravel(@RequestBody travel: TravelDTO): ResponseEntity<*> {
+    @PutMapping("/update/{id}")
+    fun updateTravel(@RequestBody travel: TravelUpdateRequest, @PathVariable("id") id: String): ResponseEntity<*> {
         try{
-            val updatedTravel = travelService.update(travel)
+            val updatedTravel = travelService.update(id, travel)
             return ResponseEntity(updatedTravel, HttpStatus.OK)
         }catch (e: NotFoundException){
             return ResponseEntity(e, HttpStatus.NOT_FOUND)
@@ -121,24 +142,6 @@ class TravelController(
         val headers = HttpHeaders()
         headers.contentType = MediaType.IMAGE_JPEG
         return ResponseEntity.ok().headers(headers).body(image)
-    }
-
-    @PostMapping("/ticket/upload/{id}")
-    fun uploadTicket(@RequestPart("file") file: MultipartFile, @RequestBody ticket: Ticket, @PathVariable("id") id: String): ResponseEntity<*>{
-        val newTicket = ticketService.saveTicket(ticket, file, id)
-        return ResponseEntity(newTicket, HttpStatus.CREATED)
-    }
-
-    @GetMapping("/ticket/{id}")
-    fun getTicketById(@PathVariable("id") id: String) : ResponseEntity<*> {
-        val file = ticketService.findTicketById(id)
-        return ResponseEntity(file, HttpStatus.OK)
-    }
-
-    @GetMapping("/ticket/travel/{id}")
-    fun getTicketByTravelId(@PathVariable("id") id: String) : ResponseEntity<*> {
-        val tickets = ticketService.ticketsForTravel(id)
-        return ResponseEntity(tickets, HttpStatus.OK)
     }
 
 }

@@ -16,6 +16,8 @@
         android:theme="@style/Theme.TravelPlannerApp"
         tools:targetApi="31">
 
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDA55mvXPCAXBQPQ3cA8QwAKcQxUGqnVz8"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -28,7 +30,18 @@
 
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.androidlab.travelplannerapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

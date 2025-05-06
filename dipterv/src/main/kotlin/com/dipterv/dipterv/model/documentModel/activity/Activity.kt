@@ -1,11 +1,14 @@
 package com.dipterv.dipterv.model.documentModel.activity
 
-import com.dipterv.dipterv.model.documentModel.activity.Coordinate
+import org.springframework.data.mongodb.core.mapping.Document
 
-class Activity (
-    val id: String,
-    val location: Coordinate,
+@Document(collection = "activity")
+data class Activity (
+    var id: String?,
     val name: String,
-    val type: ActivityType
-        ){
-}
+    val type: ActivityType,
+    var travelId: String,
+    var visited: Boolean = false,
+    val latitude: Double? = null,
+    val longitude: Double? = null
+        ) 

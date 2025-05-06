@@ -6,6 +6,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -37,7 +39,7 @@ fun NavBar(navController: NavController){
     val backStackEntry = navController.currentBackStackEntryAsState()
 
 
-    NavigationBar(containerColor = colorResource(id = R.color.primary))
+    NavigationBar()
     {
         bottomNavItems.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
@@ -49,17 +51,10 @@ fun NavBar(navController: NavController){
                     Icon(
                         imageVector = item.icon,
                         contentDescription = "${item.name} Icon",
-                        tint = colorResource(id = R.color.primary_text)
                     )
-                }
+                },
+                modifier = Modifier.testTag("${item.route}_navItem")
             )
         }
     }
-
-}
-
-@Composable
-@Preview(showBackground =  true)
-fun NavBarPreview(){
-    NavBar(navController = rememberNavController())
 }
