@@ -21,12 +21,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -86,11 +88,8 @@ fun PaymentsScreen(navController: NavController, travelId: String, vm: PaymentVi
             TopBar("Payments", navController, Screen.VacationScreen.route+"?id=${travelId}")
         },
         floatingActionButton = {
-            IconButton(onClick = { showDialog.value = true},) {
-                Icon(imageVector = Icons.Rounded.Add,
-                    contentDescription = null,
-                    modifier=Modifier.size(40.dp)
-                    )
+            FloatingActionButton(onClick = { showDialog.value = true}) {
+                Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
     )

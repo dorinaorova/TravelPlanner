@@ -53,7 +53,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -191,7 +190,7 @@ fun InputField(_value: MutableState<String>, keyboardOptions: KeyboardOptions, v
 
 
 @Composable
-fun BlankTravelImage(imageModifier: Modifier, source: ImageSourceSelector = ImageSourceSelector.TRAVEL , alpha: Float = 1f){
+fun BlankImage(imageModifier: Modifier, source: ImageSourceSelector = ImageSourceSelector.TRAVEL, alpha: Float = 1f){
     val image = if(source == ImageSourceSelector.PROFILE){R.drawable.blank_profile}else{R.drawable.blank_travel_image}
     Image(
         painterResource(id = image),
@@ -227,7 +226,7 @@ fun CustomImage(imageModifier: Modifier, filePath: String?, imageSource: ImageSo
             alpha = alpha
         )
     }else{
-        BlankTravelImage(imageModifier, imageSource, alpha)
+        BlankImage(imageModifier, imageSource, alpha)
     }
 }
 
@@ -448,7 +447,7 @@ fun UserListItem(navController: NavController, user: UserInfo){
             if(!ownProfile(user._id, context)){
                 Box {
                    val isFollower = isFollower(user.followerIds, context)
-                    LikeButton(!isFollower, {})
+                    LikeButton(isFollower, {})
 
                 }
             }
