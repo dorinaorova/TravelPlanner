@@ -81,7 +81,6 @@ fun SearchScreen(navController: NavController, vm: SearchViewModel = hiltViewMod
         }
     }
     LaunchedEffect(Unit, block ={
-        vm.getFilterValues()
         vm.getOwnUserData(context)
     })
     Scaffold(
