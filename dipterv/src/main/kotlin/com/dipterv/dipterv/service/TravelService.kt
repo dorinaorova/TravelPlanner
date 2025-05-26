@@ -2,7 +2,7 @@ package com.dipterv.dipterv.service
 
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.TravelUpdateDTO
 import com.dipterv.dipterv.repository.TravelRepository
 import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
@@ -57,17 +57,6 @@ class TravelService (
         return travels.filter{ calculateDurationInDays(it.endDate, it.startDate) <= days}
     }
 
-    fun getFilterValues() : List<Int>{
-        val travels = findAllPublicTravels()
-        val minDaysTravel = travels.minWithOrNull(compareBy { calculateDurationInDays(it.endDate, it.startDate)})
-        val minDays =if(minDaysTravel!= null){calculateDurationInDays(minDaysTravel.endDate, minDaysTravel.startDate)}else{null}
-        val maxDaysTravel = travels.maxWithOrNull(compareBy {calculateDurationInDays(it.endDate, it.startDate)})
-        val maxDays =if(maxDaysTravel!= null){calculateDurationInDays(maxDaysTravel.endDate, maxDaysTravel.startDate)}else{null}
-        val minPrice = travels.minByOrNull { it.price }?.price
-        val maxPrice = travels.maxByOrNull {it.price}?.price
-        return listOf(minDays?: 0, maxDays?: 0, minPrice?: 0, maxPrice?:0)
-    }
-
     fun createNew(id: String, travelDTO: Travel): Travel{
         val travel = Travel(
             null,
@@ -90,7 +79,7 @@ class TravelService (
         return newTravel
     }
 
-    fun update(id: String, travelRequest: TravelUpdateRequest) : Travel{
+    fun update(id: String, travelRequest: TravelUpdateDTO) : Travel{
         try{
             val travel = findById(id)
             travelRequest.name?.let { travel.name = it }

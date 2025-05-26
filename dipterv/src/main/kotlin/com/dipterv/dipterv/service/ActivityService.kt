@@ -18,14 +18,6 @@ class ActivityService(val repository: ActivityRepository) {
         return this. repository.save(activity)
     }
 
-//    fun copyActivity(id: String, travelId: String): Activity{
-//        val activity = this.repository.findById(id).get()
-//        activity.travelId=travelId
-//        activity.id = null
-//        activity.visited = false
-//        return this.repository.save(activity)
-//    }
-
     fun activityVisited(id: String): Activity{
         val activity = this.repository.findById(id).get()
         activity.visited = !activity.visited

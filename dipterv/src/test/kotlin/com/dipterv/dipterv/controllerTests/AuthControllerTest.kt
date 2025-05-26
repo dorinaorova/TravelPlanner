@@ -3,8 +3,8 @@ package com.dipterv.dipterv.controllerTests
 import com.dipterv.dipterv.controller.AuthController
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.UserInfoDTO
-import com.dipterv.dipterv.model.requestModel.RefreshTokenRequest
-import com.dipterv.dipterv.model.requestModel.RegisterRequest
+import com.dipterv.dipterv.model.dto.requestModel.RefreshTokenDTO
+import com.dipterv.dipterv.model.dto.requestModel.RegisterDTO
 import com.dipterv.dipterv.security.JwtRequestFilter
 import com.dipterv.dipterv.security.JwtUtil
 import com.dipterv.dipterv.service.UserService
@@ -46,8 +46,8 @@ class AuthControllerTest(@Autowired val mockMvc: MockMvc)  {
 
     private val objectMapper = ObjectMapper()
 
-    private val refreshTokenRequest = RefreshTokenRequest("refresh")
-    private val registerRequest = RegisterRequest("username", "password", "email", "name")
+    private val refreshTokenRequest = RefreshTokenDTO("refresh")
+    private val registerRequest = RegisterDTO("username", "password", "email", "name")
     private val userInfoDTO =  UserInfoDTO("1", "name1", "name1","email1", null, null, null, emptyList(), null, null,  emptyList(), emptyList(), emptyList())
     private val user = User("1", "name1","psw1", "name1","email1", null, null, null, null, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
 

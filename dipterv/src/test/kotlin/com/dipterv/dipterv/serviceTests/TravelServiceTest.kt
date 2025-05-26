@@ -2,7 +2,7 @@ package com.dipterv.dipterv.serviceTests
 
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.dto.UserInfoDTO
-import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.TravelUpdateDTO
 import com.dipterv.dipterv.repository.TravelRepository
 import com.dipterv.dipterv.service.TravelService
 import com.dipterv.dipterv.service.UserService
@@ -46,7 +46,7 @@ class TravelServiceTest {
         every { travelRepository.findById("1") } returns Optional.of(travels[0])
         every { travelRepository.save(updatedTravel) } returns updatedTravel
 
-        val result = travelService.update("1", TravelUpdateRequest(null, null, null, "updatedCountry", null, null, null, null, null, null))
+        val result = travelService.update("1", TravelUpdateDTO(null, null, null, "updatedCountry", null, null, null, null, null, null))
 
         verify { travelRepository.save(updatedTravel) }
         assertEquals(updatedTravel, result)

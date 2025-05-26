@@ -5,8 +5,8 @@ import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.*
-import com.dipterv.dipterv.model.requestModel.RegisterRequest
-import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.RegisterDTO
+import com.dipterv.dipterv.model.dto.requestModel.UserUpdateDTO
 import com.dipterv.dipterv.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -24,7 +24,11 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
         )
     }
 
-    fun register(registration: RegisterRequest, password: String): UserInfoDTO{
+    fun register(registration: RegisterDTO, password: String): UserInfoDTO{
+        val existingUser = this.findByUsername(registration.userName)
+        if(existingUser !== null){
+            throw Exception("User already exist with name: ${registration.userName}")
+        }
         val newUser = User(
             null,
             registration.userName,
@@ -74,7 +78,7 @@ class UserService(val userRepository: UserRepository, val mapper: DTOMapper) : U
 
 
     @Throws(NotFoundException::class)
-    fun updateUser(id:String, user : UserUpdateRequest) : UserInfoDTO{
+    fun updateUser(id:String, user : UserUpdateDTO) : UserInfoDTO{
         try{
             val findUser = findById(id)
             findUser.name= user.name?: findUser.name

@@ -1,13 +1,12 @@
 package com.dipterv.dipterv.serviceTests
 
-import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.DTOMapper
 import com.dipterv.dipterv.model.documentModel.Travel
 import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.FollowDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
-import com.dipterv.dipterv.model.requestModel.RegisterRequest
-import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.RegisterDTO
+import com.dipterv.dipterv.model.dto.requestModel.UserUpdateDTO
 import com.dipterv.dipterv.repository.UserRepository
 import com.dipterv.dipterv.service.UserService
 import io.mockk.every
@@ -16,7 +15,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 
@@ -63,7 +61,7 @@ class UserServiceTest {
 
         every { userRepository.save(savedUser) } returns savedUser
 
-        userService.register(RegisterRequest("username", "psw", "email", "name"), "psw")
+        userService.register(RegisterDTO("username", "psw", "email", "name"), "psw")
 
         verify { userRepository.save(savedUser) }
     }
@@ -82,7 +80,7 @@ class UserServiceTest {
         every { userRepository.findById("1") } returns  Optional.of(user)
         every { userRepository.save(updatedUser) } returns  updatedUser
 
-        val result = userService.updateUser("1", UserUpdateRequest(null, null, null, null, "test"))
+        val result = userService.updateUser("1", UserUpdateDTO(null, null, null, null, "test"))
 
         verify { userRepository.save(updatedUser) }
         assertEquals(dtoMapper.userToUserInfoDTO(updatedUser), result)
