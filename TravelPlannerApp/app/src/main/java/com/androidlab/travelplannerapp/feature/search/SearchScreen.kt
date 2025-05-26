@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -236,11 +237,11 @@ private fun UserSearchResultList(navController: NavController, vm: SearchViewMod
 private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hiltViewModel()){
     var tag by remember {mutableStateOf("")}
     Dialog(onDismissRequest = onDismissRequest) {
-        Card(modifier = Modifier
-            .wrapContentSize()
-            .padding(10.dp).background(MaterialTheme.colorScheme.background).testTag("filter_dialog"),
-            shape = RoundedCornerShape(16.dp)) {
-            Box{
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.background,
+            modifier = Modifier.padding(10.dp)
+        ){
             Column(Modifier.padding(10.dp)){
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
                     Text("Cancel", modifier = Modifier.clickable { onDismissRequest() }, color = MaterialTheme.colorScheme.secondary)
@@ -272,10 +273,9 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                                 Row(
                                     modifier = Modifier
                                         .background(
-                                            color =MaterialTheme.colorScheme.background,
+                                            color = MaterialTheme.colorScheme.background,
                                             shape = RoundedCornerShape(size = 10.dp)
                                         )
-                                        .padding(10.dp)
                                         .border(
                                             width = 1.dp,
                                             color = MaterialTheme.colorScheme.secondary,
@@ -359,7 +359,6 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
                                         color = MaterialTheme.colorScheme.background,
                                         shape = RoundedCornerShape(size = 10.dp)
                                     )
-                                    .padding(10.dp)
                                     .border(
                                         width = 1.dp,
                                         color = MaterialTheme.colorScheme.secondary,
@@ -416,5 +415,4 @@ private fun FilterDialog(onDismissRequest: () -> Unit, vm: SearchViewModel = hil
             }
 
         }
-    }
 }

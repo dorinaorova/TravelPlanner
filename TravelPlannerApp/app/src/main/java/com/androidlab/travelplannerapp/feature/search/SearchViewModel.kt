@@ -11,6 +11,7 @@ import com.androidlab.travelplannerapp.domain.usecases.search.SearchTravelUseCas
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchUserUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.LikeTravelUseCase
+import com.androidlab.travelplannerapp.feature.utils.calculateDays
 import com.androidlab.travelplannerapp.feature.utils.getOwnUserId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,7 +25,12 @@ class SearchViewModel @Inject constructor(
     private val getUserDataUseCase: GetUserDataUseCase,
     private val likeTravelUseCase: LikeTravelUseCase
 )  : ViewModel() {
-    private val baseFilterValues = mutableStateListOf<Int>(0,0,0,0)
+    private var baseFilterValues = mapOf(
+        "minDays" to 0,
+        "maxDays" to 0,
+        "minPrice" to 0,
+        "maxPrice" to 0
+    )
     var country = mutableStateOf("")
     var city = mutableStateOf("")
     var priceSliderPosition = mutableStateOf(0f..100f)
@@ -42,7 +48,7 @@ class SearchViewModel @Inject constructor(
     private var _users = mutableStateListOf<UserInfo>()
     val users : List<UserInfo>
         get() = _users
-
+  
     fun getOwnUserData(context: Context){
         viewModelScope.launch {
             val userId = getOwnUserId(context)
@@ -131,6 +137,16 @@ class SearchViewModel @Inject constructor(
             if(response?.isSuccessful == true){
                 _travels.clear()
                 _travels.addAll(response.body()!!)
+                val minDays = _travels.minOf { calculateDays(it.startDate, it.endDate) }
+                val maxDays = _travels.maxOf { calculateDays(it.startDate, it.endDate) }
+                val minPrice = _travels.minOf { it.price }
+                val maxPrice = _travels.maxOf { it.price }
+                baseFilterValues = mapOf(
+                    "minDays" to minDays,
+                    "maxDays" to maxDays,
+                    "minPrice" to minPrice,
+                    "maxPrice" to maxPrice
+                )
             }
         }
     }
@@ -149,26 +165,26 @@ class SearchViewModel @Inject constructor(
             1
         }
         else if(days){
-            maxOf(baseFilterValues[1] - 1, 1)
+            maxOf(baseFilterValues["maxDays"]!! - 1, 1)
         }else{
-            maxOf(baseFilterValues[3] - 1, 1)
+            maxOf(baseFilterValues["maxPrice"]!! - 1, 1)
         }
     }
 
     private fun calculateMinDays() : Int{
-        return (baseFilterValues[1] * (daysSliderPosition.value.start)/100).toInt()
+        return (baseFilterValues["maxDays"]!! * (daysSliderPosition.value.start)/100).toInt()
     }
 
     private fun calculateMaxDays() : Int{
-        return (baseFilterValues[1] *daysSliderPosition.value.endInclusive/100).toInt()
+        return (baseFilterValues["maxDays"]!! *daysSliderPosition.value.endInclusive/100).toInt()
     }
 
     private fun calculateMinPrice() : Int{
-        return (baseFilterValues[3] *priceSliderPosition.value.start/100).toInt()
+        return (baseFilterValues["maxPrice"]!! *priceSliderPosition.value.start/100).toInt()
     }
 
     private fun calculateMaxPrice() : Int{
-        return (baseFilterValues[3] *priceSliderPosition.value.endInclusive/100).toInt()
+        return (baseFilterValues["maxPrice"]!! *priceSliderPosition.value.endInclusive/100).toInt()
 
     }
 }
