@@ -1,42 +1,42 @@
 package com.androidlab.travelplannerapp.domain.usecases.invitation
 
-import com.androidlab.travelplannerapp.data.service.invitation.InvitationService
 import com.androidlab.travelplannerapp.data.model.Invitation
+import com.androidlab.travelplannerapp.data.repository.InvitationRepository
 import retrofit2.Call
 import javax.inject.Inject
 
-class GetInvitationsByTravelIdUseCase @Inject constructor(private val invitationService: InvitationService) {
+class GetInvitationsByTravelIdUseCase @Inject constructor(private val invitationRepository: InvitationRepository) {
     operator fun invoke(id: String): Call<List<Invitation>>? {
-        return invitationService.getByTravelId(id)
+        return invitationRepository.getByTravelId(id)
     }
 }
 
-class GetInvitationsByUserIdUseCase @Inject constructor(private val invitationService: InvitationService) {
+class GetInvitationsByUserIdUseCase @Inject constructor(private val invitationRepository: InvitationRepository) {
     operator fun invoke(id: String): Call<List<Invitation>>? {
-        return invitationService.getByUserId(id)
+        return invitationRepository.getByUserId(id)
     }
 }
 
-class CreateInvitationUseCase @Inject constructor(private val invitationService: InvitationService) {
+class CreateInvitationUseCase @Inject constructor(private val invitationRepository: InvitationRepository) {
     operator fun invoke(invitation: Invitation): Call<Invitation>? {
-        return invitationService.createInvitation(invitation)
+        return invitationRepository.createInvitation(invitation)
     }
 }
 
-class DeleteInvitationUseCase @Inject constructor(private val invitationService: InvitationService) {
+class DeleteInvitationUseCase @Inject constructor(private val invitationRepository: InvitationRepository) {
     operator fun invoke(id: String): Call<Void> {
-        return invitationService.delete(id)
+        return invitationRepository.delete(id)
     }
 }
 
-class AcceptInvitationUseCase @Inject constructor(private val invitationService: InvitationService) {
+class AcceptInvitationUseCase @Inject constructor(private val invitationRepository: InvitationRepository) {
     operator fun invoke(id: String): Call<Void> {
-        return invitationService.accept(id)
+        return invitationRepository.accept(id)
     }
 }
 
-class RejectInvitationUseCase @Inject constructor(private val invitationService: InvitationService) {
+class RejectInvitationUseCase @Inject constructor(private val invitationRepository: InvitationRepository) {
     operator fun invoke(id: String): Call<Void> {
-        return invitationService.reject(id)
+        return invitationRepository.reject(id)
     }
 }

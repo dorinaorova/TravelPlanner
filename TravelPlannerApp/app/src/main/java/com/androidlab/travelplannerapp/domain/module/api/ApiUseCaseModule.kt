@@ -6,12 +6,20 @@ import com.androidlab.travelplannerapp.data.service.auth.AuthService
 import com.androidlab.travelplannerapp.data.service.image.ImageService
 import com.androidlab.travelplannerapp.data.interceptor.AuthInterceptor
 import com.androidlab.travelplannerapp.data.interceptor.TokenInterceptor
+import com.androidlab.travelplannerapp.data.repository.ActivityRepository
+import com.androidlab.travelplannerapp.data.repository.AuthRepository
+import com.androidlab.travelplannerapp.data.repository.ImageRepository
+import com.androidlab.travelplannerapp.data.repository.InvitationRepository
+import com.androidlab.travelplannerapp.data.repository.PaymentRepository
+import com.androidlab.travelplannerapp.data.repository.TicketRepository
+import com.androidlab.travelplannerapp.data.repository.TravelRepository
+import com.androidlab.travelplannerapp.data.repository.UserRepository
 import com.androidlab.travelplannerapp.data.service.invitation.InvitationService
 import com.androidlab.travelplannerapp.data.service.payment.PaymentService
 import com.androidlab.travelplannerapp.data.service.ticket.TicketService
 import com.androidlab.travelplannerapp.data.service.travel.TravelService
 import com.androidlab.travelplannerapp.data.service.user.UserService
-import com.androidlab.travelplannerapp.data.activities.ActivityService
+import com.androidlab.travelplannerapp.data.service.activities.ActivityService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,47 +61,49 @@ class ApiUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideAuthService(retrofit: Retrofit): AuthService {
+    fun provideAuthRepository(retrofit: Retrofit): AuthRepository {
         return retrofit.create(AuthService::class.java)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideTravelRepository(retrofit: Retrofit): TravelRepository {
+        return retrofit.create(TravelService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideTravelService(retrofit: Retrofit): TravelService {
-        return retrofit.create(TravelService::class.java)
-    }
-    @Provides
-    @Singleton
-    fun provideUserService(retrofit: Retrofit): UserService {
+    fun provideUserRepository(retrofit: Retrofit): UserRepository {
         return retrofit.create(UserService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideImageService(retrofit: Retrofit): ImageService {
+    fun provideImageRepository(retrofit: Retrofit): ImageRepository {
         return retrofit.create(ImageService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideInvitationService(retrofit: Retrofit) : InvitationService {
+    fun provideInvitationRepository(retrofit: Retrofit) : InvitationRepository {
         return retrofit.create(InvitationService::class.java)
     }
 
     @Provides
     @Singleton
-    fun providePaymentService(retrofit: Retrofit): PaymentService {
+    fun providePaymentRepository(retrofit: Retrofit): PaymentRepository {
         return retrofit.create(PaymentService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideTicketService(retrofit: Retrofit): TicketService {
+    fun provideTicketRepository(retrofit: Retrofit): TicketRepository {
         return retrofit.create(TicketService::class.java)
     }
         @Provides
     @Singleton
-    fun provideActivityService(retrofit: Retrofit): ActivityService {
+    fun provideActivityRepository(retrofit: Retrofit): ActivityRepository {
         return retrofit.create(ActivityService::class.java)
     }
 }

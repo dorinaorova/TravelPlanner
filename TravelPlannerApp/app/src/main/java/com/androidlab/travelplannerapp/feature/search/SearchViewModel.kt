@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidlab.travelplannerapp.data.model.Travel
 import com.androidlab.travelplannerapp.data.model.UserInfo
-import com.androidlab.travelplannerapp.domain.usecases.search.GetFilterValuesUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchTravelUseCase
 import com.androidlab.travelplannerapp.domain.usecases.search.SearchUserUseCase
 import com.androidlab.travelplannerapp.domain.usecases.user.GetUserDataUseCase
@@ -23,7 +22,6 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val searchTravelUseCase: SearchTravelUseCase,
     private val searchUserUseCase: SearchUserUseCase,
-    private val filterValuesUseCase: GetFilterValuesUseCase,
     private val getUserDataUseCase: GetUserDataUseCase,
     private val likeTravelUseCase: LikeTravelUseCase
 )  : ViewModel() {
@@ -50,8 +48,7 @@ class SearchViewModel @Inject constructor(
     private var _users = mutableStateListOf<UserInfo>()
     val users : List<UserInfo>
         get() = _users
-
-
+  
     fun getOwnUserData(context: Context){
         viewModelScope.launch {
             val userId = getOwnUserId(context)

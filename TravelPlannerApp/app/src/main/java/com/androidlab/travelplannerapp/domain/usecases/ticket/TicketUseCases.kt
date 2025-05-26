@@ -1,39 +1,38 @@
 package com.androidlab.travelplannerapp.domain.usecases.ticket
 
 import com.androidlab.travelplannerapp.data.model.Ticket
-import com.androidlab.travelplannerapp.data.service.ticket.TicketService
+import com.androidlab.travelplannerapp.data.repository.TicketRepository
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
-import java.io.File
 import javax.inject.Inject
 
-class GetTicketsByTravelIdUseCase @Inject constructor(private val ticketService: TicketService) {
+class GetTicketsByTravelIdUseCase @Inject constructor(private val ticketRepository: TicketRepository) {
     operator fun invoke(id: String): Call<List<Ticket>>? {
-        return ticketService.getByTravelId(id)
+        return ticketRepository.getByTravelId(id)
     }
 }
 
-class GetTicketByIdUseCase @Inject constructor(private val ticketService: TicketService) {
+class GetTicketByIdUseCase @Inject constructor(private val ticketRepository: TicketRepository) {
     operator fun invoke(id: String): Call<Ticket>? {
-        return ticketService.getById(id)
+        return ticketRepository.getById(id)
     }
 }
 
-class CreateTicketUseCase @Inject constructor(private val ticketService: TicketService) {
+class CreateTicketUseCase @Inject constructor(private val ticketRepository: TicketRepository) {
     operator fun invoke(ticket: Ticket): Call<Ticket>? {
-        return ticketService.createTicket(ticket)
+        return ticketRepository.createTicket(ticket)
     }
 }
 
-class UploadTicketFileUseCase @Inject constructor(private val ticketService: TicketService) {
+class UploadTicketFileUseCase @Inject constructor(private val ticketRepository: TicketRepository) {
     operator fun invoke(file: MultipartBody.Part, id: String): Call<Ticket>? {
-        return ticketService.uploadTicketFile(file, id)
+        return ticketRepository.uploadTicketFile(file, id)
     }
 }
 
-class DownloadTicketFileUseCase @Inject constructor(private val ticketService: TicketService) {
+class DownloadTicketFileUseCase @Inject constructor(private val ticketRepository: TicketRepository) {
     operator fun invoke(fileName: String): Call<ResponseBody>? {
-        return ticketService.downloadTicketFile(fileName)
+        return ticketRepository.downloadTicketFile(fileName)
     }
 }
