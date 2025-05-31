@@ -1,12 +1,10 @@
 package com.dipterv.dipterv.controller
 
-import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.LoginDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
-import com.dipterv.dipterv.model.requestModel.LoginRequest
-import com.dipterv.dipterv.model.requestModel.RefreshTokenRequest
-import com.dipterv.dipterv.model.requestModel.RegisterRequest
-import com.dipterv.dipterv.repository.UserRepository
+import com.dipterv.dipterv.model.dto.requestModel.LoginRequestDTO
+import com.dipterv.dipterv.model.dto.requestModel.RefreshTokenDTO
+import com.dipterv.dipterv.model.dto.requestModel.RegisterDTO
 import com.dipterv.dipterv.security.JwtUtil
 import com.dipterv.dipterv.service.UserService
 import org.springframework.http.HttpStatus
@@ -17,7 +15,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
-import kotlin.math.log
 
 @RestController
 @RequestMapping("/auth")
@@ -28,7 +25,7 @@ class AuthController(
     private val jwtUtil: JwtUtil
 ){
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<Any> {
+    fun login(@RequestBody loginRequest: LoginRequestDTO): ResponseEntity<Any> {
         val authentication: Authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(loginRequest.userName, loginRequest.password)
         )
@@ -44,7 +41,7 @@ class AuthController(
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody request: RefreshTokenRequest): ResponseEntity<Any> {
+    fun refreshToken(@RequestBody request: RefreshTokenDTO): ResponseEntity<Any> {
         val refreshToken = request.refreshToken
         val username = jwtUtil.extractUsername(refreshToken)
         println(jwtUtil.validateToken(refreshToken, username))
@@ -58,13 +55,13 @@ class AuthController(
     }
 
     @PostMapping("/register")
-    fun register(@RequestBody registerRequest: RegisterRequest): UserInfoDTO {
+    fun register(@RequestBody registerRequest: RegisterDTO): UserInfoDTO {
         val encodedPassword = passwordEncoder.encode(registerRequest.password)
         return userService.register(registerRequest, encodedPassword)
     }
 
     @PostMapping("/refresh-token/check")
-    fun checkRefreshToken(@RequestBody request: RefreshTokenRequest) : Boolean{
+    fun checkRefreshToken(@RequestBody request: RefreshTokenDTO) : Boolean{
         try{
 
         val token = request.refreshToken

@@ -2,7 +2,7 @@ package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.TravelUpdateDTO
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TicketService
 import com.dipterv.dipterv.service.TravelService
@@ -63,11 +63,6 @@ class TravelController(
         return ResponseEntity.ok(travels)
     }
 
-    @GetMapping("/filterValues")
-    fun getFilterValues(): ResponseEntity<*>{
-        return ResponseEntity.ok(travelService.getFilterValues())
-    }
-
     @GetMapping("/user/{id}")
     fun getMyTravels(@PathVariable("id") id: String) : ResponseEntity<*>{
         try{
@@ -118,7 +113,7 @@ class TravelController(
     }
 
     @PutMapping("/update/{id}")
-    fun updateTravel(@RequestBody travel: TravelUpdateRequest, @PathVariable("id") id: String): ResponseEntity<*> {
+    fun updateTravel(@RequestBody travel: TravelUpdateDTO, @PathVariable("id") id: String): ResponseEntity<*> {
         try{
             val updatedTravel = travelService.update(id, travel)
             return ResponseEntity(updatedTravel, HttpStatus.OK)

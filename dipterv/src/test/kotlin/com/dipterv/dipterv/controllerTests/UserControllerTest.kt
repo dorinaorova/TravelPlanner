@@ -4,7 +4,7 @@ import com.dipterv.dipterv.controller.UserController
 import com.dipterv.dipterv.exception.NotFoundException
 import com.dipterv.dipterv.model.dto.FollowDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
-import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.UserUpdateDTO
 import com.dipterv.dipterv.security.JwtRequestFilter
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.UserService
@@ -78,7 +78,7 @@ class UserControllerTest(@Autowired val mockMvc: MockMvc)  {
 
     @Test
     fun whenUpdateUser_ReturnsUpdatedUser_WithStatusCode200() {
-        val updateRequest = UserUpdateRequest("name1", null, null, null, null,)
+        val updateRequest = UserUpdateDTO("name1", null, null, null, null,)
         val updatedUser = users[0]
         `when`(userService.updateUser("1", updateRequest)).thenReturn(updatedUser)
 
@@ -91,7 +91,7 @@ class UserControllerTest(@Autowired val mockMvc: MockMvc)  {
 
     @Test
     fun whenUpdateUser_UserNotFound_Returns404() {
-        val updateRequest = UserUpdateRequest("name", "username", "email", null, null)
+        val updateRequest = UserUpdateDTO("name", "username", "email", null, null)
 
 
         `when`(userService.updateUser("1", updateRequest)).thenThrow(NotFoundException("User not found"))

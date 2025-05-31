@@ -1,10 +1,9 @@
 package com.dipterv.dipterv.controller
 
 import com.dipterv.dipterv.exception.NotFoundException
-import com.dipterv.dipterv.model.documentModel.User
 import com.dipterv.dipterv.model.dto.FollowDTO
 import com.dipterv.dipterv.model.dto.UserInfoDTO
-import com.dipterv.dipterv.model.requestModel.UserUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.UserUpdateDTO
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.UserService
 import org.springframework.core.io.Resource
@@ -47,7 +46,7 @@ class UserController
     }
 
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable("id") id: String, @RequestBody user: UserUpdateRequest) : ResponseEntity<UserInfoDTO>{
+    fun updateUser(@PathVariable("id") id: String, @RequestBody user: UserUpdateDTO) : ResponseEntity<UserInfoDTO>{
         try{
             val updatedUser = userService.updateUser(id, user)
             return ResponseEntity(updatedUser, HttpStatus.OK)

@@ -2,7 +2,7 @@ package com.dipterv.dipterv.controllerTests
 
 import com.dipterv.dipterv.controller.TravelController
 import com.dipterv.dipterv.model.documentModel.Travel
-import com.dipterv.dipterv.model.requestModel.TravelUpdateRequest
+import com.dipterv.dipterv.model.dto.requestModel.TravelUpdateDTO
 import com.dipterv.dipterv.security.JwtRequestFilter
 import com.dipterv.dipterv.service.FileService
 import com.dipterv.dipterv.service.TicketService
@@ -106,7 +106,7 @@ class TravelControllerTest  (@Autowired val mockMvc: MockMvc){
 
     @Test
     fun whenUpdateTravel_ReturnsUpdatedTravelWithStatus200() {
-        val updateRequest = TravelUpdateRequest(null, null, null, "updatedCountry", null, null, null, null, null, null)
+        val updateRequest = TravelUpdateDTO(null, null, null, "updatedCountry", null, null, null, null, null, null)
         val updatedTravel = travel.copy(name = "Updated Trip")
 
         `when`(travelService.update("1", updateRequest)).thenReturn(updatedTravel)

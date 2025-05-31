@@ -1,6 +1,6 @@
-package com.dipterv.dipterv.model.requestModel
+package com.dipterv.dipterv.model.dto.requestModel
 
-data class TravelUpdateRequest(
+data class TravelUpdateDTO(
     var name: String?,
     var startDate: Long?,
     var endDate: Long?,
